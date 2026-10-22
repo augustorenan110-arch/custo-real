@@ -1,8 +1,9 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Receipt, CheckSquare, ScrollText, LogOut } from 'lucide-react';
+import { LayoutDashboard, Receipt, CheckSquare, ScrollText, LogOut, Clock, Users, ShieldCheck, Building2, Bot, Calculator } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
+import MoreMenu from '@/components/MoreMenu';
 
 const linkClass = ({ isActive }) =>
   `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
@@ -18,10 +19,22 @@ export default function AppShell() {
 
   const nav = [
     { to: '/painel', label: 'Início', icon: LayoutDashboard },
+    { to: '/ponto', label: 'Ponto', icon: Clock },
     { to: '/despesas', label: 'Despesas', icon: Receipt },
     ...(isAdmin ? [{ to: '/aprovacoes', label: 'Aprovações', icon: CheckSquare }] : []),
     { to: '/politica', label: 'Política', icon: ScrollText },
   ];
+  const adminNav = isAdmin
+    ? [
+        { to: '/colaboradores', label: 'Colaboradores', icon: Users },
+        { to: '/auditoria', label: 'Auditoria', icon: ShieldCheck },
+        { to: '/assistente', label: 'Assistente IA', icon: Bot },
+        { to: '/calculadoras', label: 'Calculadoras', icon: Calculator },
+        { to: '/empresa', label: 'Empresa', icon: Building2 },
+      ]
+    : [];
+  const mobileNav = nav.filter((n) => n.to !== '/politica');
+  const moreItems = [nav.find((n) => n.to === '/politica'), ...adminNav];
 
   const signOut = () => base44.auth.logout('/login');
 
@@ -30,7 +43,7 @@ export default function AppShell() {
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/10 bg-sidebar/80 p-5 backdrop-blur-xl lg:flex">
         <BrandInline />
         <nav className="mt-8 space-y-1">
-          {nav.map((n) => (
+          {[...nav, ...adminNav].map((n) => (
             <NavLink key={n.to} to={n.to} className={linkClass}>
               <n.icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
               {n.label}
@@ -81,7 +94,7 @@ export default function AppShell() {
 
       <nav className="fixed inset-x-0 bottom-0 z-40 rounded-t-3xl border-t border-primary/20 bg-sidebar/95 shadow-[0_-12px_40px_-12px_hsl(217_91%_60%/0.35)] backdrop-blur-xl lg:hidden">
         <div className="safe-bottom mx-auto flex max-w-2xl items-stretch justify-around px-2 pt-1.5">
-          {nav.map((n) => (
+          {mobileNav.map((n) => (
             <NavLink
               key={n.to}
               to={n.to}
@@ -95,6 +108,7 @@ export default function AppShell() {
               {n.label}
             </NavLink>
           ))}
+          <MoreMenu items={moreItems} />
         </div>
       </nav>
     </div>

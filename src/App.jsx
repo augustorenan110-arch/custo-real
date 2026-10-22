@@ -17,6 +17,12 @@ import Dashboard from './pages/Dashboard';
 import Expenses from './pages/Expenses';
 import Approvals from './pages/Approvals';
 import Policy from './pages/Policy';
+import Punch from './pages/Punch';
+import Employees from './pages/Employees';
+import Audit from './pages/Audit';
+import CompanySettings from './pages/CompanySettings';
+import Assistant from './pages/Assistant';
+import Calculators from './pages/Calculators';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 
@@ -59,6 +65,12 @@ const AuthenticatedApp = () => {
           <Route path="/despesas" element={<Expenses />} />
           <Route path="/aprovacoes" element={<Approvals />} />
           <Route path="/politica" element={<Policy />} />
+          <Route path="/ponto" element={<Punch />} />
+          <Route path="/colaboradores" element={<Employees />} />
+          <Route path="/auditoria" element={<Audit />} />
+          <Route path="/empresa" element={<CompanySettings />} />
+          <Route path="/assistente" element={<Assistant />} />
+          <Route path="/calculadoras" element={<Calculators />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

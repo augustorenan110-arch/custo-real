@@ -1,0 +1,70 @@
+{
+  "name": "Company",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Nome da empresa"
+    },
+    "cnpj": {
+      "type": "string",
+      "title": "CNPJ"
+    },
+    "activity": {
+      "type": "string",
+      "title": "Atividade"
+    },
+    "units": {
+      "type": "array",
+      "title": "Unidades",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "number"
+          },
+          "lng": {
+            "type": "number"
+          },
+          "radius_m": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "min_confidence": {
+      "type": "number",
+      "title": "Confian\u00e7a m\u00ednima do rosto (%)",
+      "default": 80
+    },
+    "workday_hours": {
+      "type": "number",
+      "title": "Jornada di\u00e1ria (horas)",
+      "default": 8
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

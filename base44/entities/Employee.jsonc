@@ -1,0 +1,77 @@
+{
+  "name": "Employee",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "title": "Nome completo"
+    },
+    "email": {
+      "type": "string",
+      "title": "E-mail (login)"
+    },
+    "cpf": {
+      "type": "string",
+      "title": "CPF"
+    },
+    "role_title": {
+      "type": "string",
+      "title": "Cargo"
+    },
+    "unit": {
+      "type": "string",
+      "title": "Unidade"
+    },
+    "salary": {
+      "type": "number",
+      "title": "Sal\u00e1rio bruto (R$)"
+    },
+    "admission_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Admiss\u00e3o"
+    },
+    "active": {
+      "type": "boolean",
+      "title": "Ativo",
+      "default": true
+    },
+    "face_ref_uri": {
+      "type": "string",
+      "title": "Foto de refer\u00eancia (privada)"
+    }
+  },
+  "required": [
+    "full_name",
+    "salary"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.email": "{{user.email}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

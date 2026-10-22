@@ -1,0 +1,88 @@
+{
+  "name": "TimeEntry",
+  "type": "object",
+  "properties": {
+    "employee_id": {
+      "type": "string",
+      "title": "Colaborador (id)"
+    },
+    "employee_name": {
+      "type": "string",
+      "title": "Colaborador"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "entrada",
+        "saida"
+      ],
+      "title": "Tipo"
+    },
+    "punched_at": {
+      "type": "string",
+      "title": "Data/hora (ISO)"
+    },
+    "day": {
+      "type": "string",
+      "format": "date",
+      "title": "Dia"
+    },
+    "confidence": {
+      "type": "number",
+      "title": "Confian\u00e7a do rosto (%)"
+    },
+    "selfie_uri": {
+      "type": "string",
+      "title": "Selfie (privada)"
+    },
+    "lat": {
+      "type": "number"
+    },
+    "lng": {
+      "type": "number"
+    },
+    "unit": {
+      "type": "string",
+      "title": "Unidade reconhecida"
+    },
+    "inside_unit": {
+      "type": "boolean",
+      "title": "Dentro da unidade"
+    }
+  },
+  "required": [
+    "employee_id",
+    "kind",
+    "punched_at",
+    "day"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
