@@ -1,0 +1,35 @@
+{
+  "name": "CompanyPolicy",
+  "type": "object",
+  "properties": {
+    "content": {
+      "type": "string",
+      "title": "Pol\u00edtica de despesas"
+    },
+    "updated_by": {
+      "type": "string",
+      "title": "Atualizado por"
+    }
+  },
+  "required": [
+    "content"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
