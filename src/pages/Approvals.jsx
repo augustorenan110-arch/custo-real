@@ -1,49 +1,57 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Check, X, FileImage, Loader2 } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import { useExpenses } from '@/hooks/useExpenses';
-import { brl, dateBR } from '@/lib/format';
-import { AiVerdict, StatusPill } from '@/components/ExpenseBits';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import ApprovalCard from '@/components/approvals/ApprovalCard';
 import { useToast } from '@/components/ui/use-toast';
 
 export default function Approvals() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: me } = useMe();
+  const { data: me, isLoading: loadingMe } = useMe();
   const { data: list = [], isLoading } = useExpenses();
   const [tab, setTab] = useState('pending');
-  const [notes, setNotes] = useState({});
   const [busy, setBusy] = useState('');
 
   const isAdmin = me?.role === 'admin';
 
-  if (me && !isAdmin) {
+  if (loadingMe) return <p className="text-sm text-muted-foreground">Carregando…</p>;
+
+  if (!isAdmin) {
     return (
-      <div className="glass rounded-2xl p-6 text-sm text-muted-foreground">
-        Apenas o RH pode aprovar despesas.
+      <div className="glass flex items-center gap-3 rounded-2xl p-6 text-sm text-muted-foreground">
+        <Lock className="h-5 w-5 text-primary" />
+        Apenas o RH (administradores) pode aprovar despesas.
       </div>
     );
   }
 
-  const shown = list.filter((e) => (tab === 'pending' ? e.status === 'pending' : e.status !== 'pending'));
+  const pendingList = list.filter((e) => e.status === 'pending');
+  const doneList = list.filter((e) => e.status !== 'pending');
+  const shown = tab === 'pending' ? pendingList : doneList;
 
-  async function review(id, status) {
+  async function review(id, status, note) {
     setBusy(id + status);
     try {
+      const fresh = await base44.entities.Expense.get(id);
+      if (fresh.status !== 'pending') {
+        await queryClient.invalidateQueries({ queryKey: ['expenses'] });
+        toast({ variant: 'destructive', title: 'Esta despesa já foi revisada ou cancelada' });
+        return;
+      }
       await base44.entities.Expense.update(id, {
         status,
-        review_note: notes[id] || '',
-        reviewed_by: me?.email || '',
+        review_note: note,
+        reviewed_by: me?.full_name || me?.email || '',
         reviewed_at: new Date().toISOString(),
       });
       await queryClient.invalidateQueries({ queryKey: ['expenses'] });
       toast({ title: status === 'approved' ? 'Despesa aprovada' : 'Despesa rejeitada' });
     } catch (e) {
-      toast({ variant: 'destructive', title: 'Não foi possível revisar', description: e.message });
+      await queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      toast({ variant: 'destructive', title: 'Não foi possível salvar a decisão', description: 'Atualize a lista e tente de novo.' });
     } finally {
       setBusy('');
     }
@@ -56,10 +64,15 @@ export default function Approvals() {
         expires_in: 180,
       });
       window.open(signed_url, '_blank', 'noopener');
-    } catch (e) {
-      toast({ variant: 'destructive', title: 'Recibo indisponível', description: e.message });
+    } catch {
+      toast({ variant: 'destructive', title: 'Recibo indisponível' });
     }
   }
+
+  const tabs = [
+    ['pending', 'Pendentes', pendingList.length],
+    ['done', 'Histórico', doneList.length],
+  ];
 
   return (
     <div className="space-y-4">
@@ -69,10 +82,7 @@ export default function Approvals() {
           <p className="text-sm text-muted-foreground">Revise e decida sobre as despesas enviadas.</p>
         </div>
         <div className="glass flex rounded-xl p-1 text-xs">
-          {[
-            ['pending', 'Pendentes'],
-            ['done', 'Histórico'],
-          ].map(([key, label]) => (
+          {tabs.map(([key, label, count]) => (
             <button
               key={key}
               onClick={() => setTab(key)}
@@ -80,88 +90,22 @@ export default function Approvals() {
                 tab === key ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
               }`}
             >
-              {label}
+              {label} ({count})
             </button>
           ))}
         </div>
       </div>
 
       {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
-      {!isLoading && shown.length === 0 && <p className="text-sm text-muted-foreground">Nada por aqui.</p>}
+      {!isLoading && shown.length === 0 && (
+        <div className="glass rounded-2xl p-6 text-center text-sm text-muted-foreground">
+          {tab === 'pending' ? 'Tudo em dia — nenhuma despesa aguardando aprovação.' : 'Nenhuma despesa revisada ainda.'}
+        </div>
+      )}
 
       <div className="grid gap-4">
         {shown.map((e) => (
-          <div key={e.id} className="glass space-y-3 rounded-2xl p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-xs text-muted-foreground">
-                  {e.employee_name || e.employee_email || 'Colaborador'}
-                </div>
-                <div className="truncate font-semibold">{e.merchant || e.category}</div>
-                <div className="text-xs text-muted-foreground">
-                  {e.category} · {dateBR(e.expense_date)}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="font-display text-xl font-bold">{brl(e.amount)}</div>
-                <StatusPill status={e.status} />
-              </div>
-            </div>
-
-            {e.description && <p className="text-sm text-foreground/70">{e.description}</p>}
-            <AiVerdict compliant={e.ai_compliant} notes={e.ai_notes} />
-
-            {e.receipt_file_uri && (
-              <button
-                onClick={() => openReceipt(e.receipt_file_uri)}
-                className="flex items-center gap-1 text-xs text-primary transition hover:underline"
-              >
-                <FileImage className="h-3.5 w-3.5" /> Ver recibo
-              </button>
-            )}
-
-            {e.status === 'pending' ? (
-              <>
-                <Input
-                  placeholder="Comentário (opcional)"
-                  value={notes[e.id] || ''}
-                  onChange={(ev) => setNotes({ ...notes, [e.id]: ev.target.value })}
-                  className="field border-white/15"
-                />
-                <div className="flex gap-2">
-                  <Button
-                    className="flex-1"
-                    onClick={() => review(e.id, 'approved')}
-                    disabled={busy !== ''}
-                  >
-                    {busy === e.id + 'approved' ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Check className="h-4 w-4" />
-                    )}
-                    Aprovar
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    className="flex-1"
-                    onClick={() => review(e.id, 'rejected')}
-                    disabled={busy !== ''}
-                  >
-                    {busy === e.id + 'rejected' ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <X className="h-4 w-4" />
-                    )}
-                    Rejeitar
-                  </Button>
-                </div>
-              </>
-            ) : (
-              e.review_note && (
-                <p className="text-xs text-muted-foreground">Comentário: {e.review_note}</p>
-              )
-            )}
-          </div>
+          <ApprovalCard key={e.id} expense={e} busy={busy} onReview={review} onReceipt={openReceipt} />
         ))}
       </div>
     </div>

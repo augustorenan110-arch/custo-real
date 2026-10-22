@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
-import { safeReturnTo } from "@/lib/authReturnTo";
+import { safeReturnTo, hasReturnTo } from "@/lib/authReturnTo";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ export default function Login() {
       await base44.auth.loginViaEmailPassword(email, password);
       window.location.href = returnTo;
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      setError("E-mail ou senha incorretos. Verifique os dados e tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ export default function Login() {
         <>
           Ainda não tem conta?{" "}
           <Link
-            to={"/register" + (returnTo !== "/" ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
+            to={"/register" + (hasReturnTo() ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
             className="text-primary font-medium hover:underline"
           >
             Criar conta
@@ -87,7 +87,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               autoFocus
-              placeholder="you@example.com"
+              placeholder="voce@empresa.com.br"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-10 h-12"

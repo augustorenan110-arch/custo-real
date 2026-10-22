@@ -20,7 +20,7 @@ const ICON_BG = ['bg-primary/15', 'bg-success/15', 'bg-warning/15'];
 function Stat({ icon: Icon, label, value, sub }) {
   return (
     <div className="glass flex gap-3 rounded-2xl p-4">
-      <Icon className="h-5 w-5 shrink-0 text-foreground/70" strokeWidth={1.7} />
+      <Icon className="h-5 w-5 shrink-0 text-primary" strokeWidth={1.7} />
       <div>
         <p className="text-xs text-foreground/75">{label}</p>
         <p className="font-display text-xl font-semibold leading-tight">{value}</p>
@@ -80,7 +80,7 @@ export default function Dashboard() {
         <Initials name={name} />
       </header>
 
-      <div className="glass rounded-2xl p-5">
+      <div className="glass glow rounded-2xl border-primary/25 p-5">
         <p className="text-sm text-foreground/75">
           {isAdmin ? 'Custo total aprovado' : 'Total reembolsado'}
         </p>

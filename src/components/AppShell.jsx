@@ -23,7 +23,7 @@ export default function AppShell() {
     { to: '/politica', label: 'Política', icon: ScrollText },
   ];
 
-  const signOut = () => base44.auth.logout('/');
+  const signOut = () => base44.auth.logout('/login');
 
   return (
     <div className="min-h-screen lg:flex">
@@ -79,15 +79,15 @@ export default function AppShell() {
         </main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-background/95 backdrop-blur-xl lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 rounded-t-3xl border-t border-primary/20 bg-sidebar/95 shadow-[0_-12px_40px_-12px_hsl(217_91%_60%/0.35)] backdrop-blur-xl lg:hidden">
         <div className="safe-bottom mx-auto flex max-w-2xl items-stretch justify-around px-2 pt-1.5">
           {nav.map((n) => (
             <NavLink
               key={n.to}
               to={n.to}
               className={({ isActive }) =>
-                `flex flex-1 flex-col items-center gap-1 rounded-lg py-1.5 text-[11px] transition ${
-                  isActive ? 'text-primary' : 'text-muted-foreground'
+                `flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] transition ${
+                  isActive ? 'bg-primary/10 font-semibold text-primary' : 'text-muted-foreground'
                 }`
               }
             >

@@ -9,7 +9,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
-import { safeReturnTo } from "@/lib/authReturnTo";
+import { safeReturnTo, hasReturnTo } from "@/lib/authReturnTo";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -24,7 +24,7 @@ export default function Register() {
     e.preventDefault();
     setError("");
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("As senhas não coincidem.");
       return;
     }
     setLoading(true);
@@ -32,7 +32,7 @@ export default function Register() {
       await base44.auth.register({ email, password });
       setShowOtp(true);
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError("Não foi possível criar a conta. Este e-mail já pode estar cadastrado ou a senha é fraca (use 8+ caracteres).");
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export default function Register() {
       }
       window.location.href = safeReturnTo();
     } catch (err) {
-      setError(err.message || "Invalid verification code");
+      setError("Código inválido ou expirado. Confira o e-mail e tente de novo.");
     } finally {
       setLoading(false);
     }
@@ -116,7 +116,7 @@ export default function Register() {
           )}
         </Button>
         <p className="text-center text-sm text-muted-foreground mt-4">
-          Didn't receive the code?{" "}
+          Não recebeu o código?{" "}
           <button onClick={handleResend} className="text-primary font-medium hover:underline">
             Reenviar código
           </button>
@@ -134,7 +134,7 @@ export default function Register() {
         <>
           Já tem uma conta?{" "}
           <Link
-            to={"/login" + (safeReturnTo() !== "/" ? "?returnTo=" + encodeURIComponent(safeReturnTo()) : "")}
+            to={"/login" + (hasReturnTo() ? "?returnTo=" + encodeURIComponent(safeReturnTo()) : "")}
             className="text-primary font-medium hover:underline"
           >
             Entrar
@@ -148,7 +148,7 @@ export default function Register() {
         onClick={handleGoogle}
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
-        Continue with Google
+        Continuar com Google
       </Button>
 
       <div className="relative mb-6">
@@ -176,7 +176,7 @@ export default function Register() {
               type="email"
               autoComplete="email"
               autoFocus
-              placeholder="you@example.com"
+              placeholder="voce@empresa.com.br"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-10 h-12"
@@ -220,7 +220,7 @@ export default function Register() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Creating account...
+              Criando conta...
             </>
           ) : (
             "Criar conta"
