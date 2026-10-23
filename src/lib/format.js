@@ -16,3 +16,18 @@ export const dateBR = (d) => {
 };
 
 export const todayISO = () => new Date().toISOString().slice(0, 10);
+
+export const onlyDigits = (v) => String(v || '').replace(/\D/g, '');
+
+export const cnpjBR = (v) => {
+  const d = onlyDigits(v);
+  return d.length === 14 ? d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5') : v || '—';
+};
+
+export const cpfBR = (v) => {
+  const d = onlyDigits(v);
+  return d.length === 11 ? d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4') : v || '—';
+};
+
+const pad = (n) => String(n).padStart(2, '0');
+export const localISO = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;

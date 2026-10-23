@@ -18,6 +18,7 @@ import Expenses from './pages/Expenses';
 import Approvals from './pages/Approvals';
 import Policy from './pages/Policy';
 import Punch from './pages/Punch';
+import Espelho from './pages/Espelho';
 import Employees from './pages/Employees';
 import Audit from './pages/Audit';
 import CompanySettings from './pages/CompanySettings';
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
           <Route path="/aprovacoes" element={<Approvals />} />
           <Route path="/politica" element={<Policy />} />
           <Route path="/ponto" element={<Punch />} />
+          <Route path="/espelho" element={<Espelho />} />
           <Route path="/colaboradores" element={<Employees />} />
           <Route path="/auditoria" element={<Audit />} />
           <Route path="/empresa" element={<CompanySettings />} />

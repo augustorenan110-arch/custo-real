@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Receipt, CheckSquare, ScrollText, LogOut, Clock, Users, ShieldCheck, Building2, Bot, Calculator } from 'lucide-react';
+import { LayoutDashboard, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
@@ -20,6 +20,7 @@ export default function AppShell() {
   const nav = [
     { to: '/painel', label: 'Início', icon: LayoutDashboard },
     { to: '/ponto', label: 'Ponto', icon: Clock },
+    { to: '/espelho', label: 'Espelho de Ponto', icon: CalendarClock },
     { to: '/despesas', label: 'Despesas', icon: Receipt },
     ...(isAdmin ? [{ to: '/aprovacoes', label: 'Aprovações', icon: CheckSquare }] : []),
     { to: '/politica', label: 'Política', icon: ScrollText },
@@ -33,8 +34,12 @@ export default function AppShell() {
         { to: '/empresa', label: 'Empresa', icon: Building2 },
       ]
     : [];
-  const mobileNav = nav.filter((n) => n.to !== '/politica');
-  const moreItems = [nav.find((n) => n.to === '/politica'), ...adminNav];
+  const mobileNav = nav.filter((n) => n.to !== '/politica' && n.to !== '/espelho');
+  const moreItems = [
+    nav.find((n) => n.to === '/politica'),
+    nav.find((n) => n.to === '/espelho'),
+    ...adminNav,
+  ];
 
   const signOut = () => base44.auth.logout('/login');
 
