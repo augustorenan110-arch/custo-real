@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { base44 } from '@/api/base44Client';
 
 // Menu "Mais" do celular: lista as telas que não cabem na barra inferior.
 export default function MoreMenu({ items }) {
@@ -33,6 +34,15 @@ export default function MoreMenu({ items }) {
                 {n.label}
               </NavLink>
             ))}
+            <button
+              onClick={() => {
+                setOpen(false);
+                base44.auth.logout('/login');
+              }}
+              className="mt-1 flex items-center gap-3 rounded-xl border-t border-white/10 px-3 pt-3 pb-1 text-sm text-muted-foreground hover:text-destructive"
+            >
+              <LogOut className="h-5 w-5" strokeWidth={1.7} /> Sair
+            </button>
           </div>
         </SheetContent>
       </Sheet>

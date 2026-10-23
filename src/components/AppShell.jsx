@@ -47,13 +47,19 @@ export default function AppShell() {
     <div className="min-h-screen lg:flex">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/10 bg-sidebar/80 p-5 backdrop-blur-xl lg:flex">
         <BrandInline />
-        <nav className="mt-8 space-y-1">
+        <nav className="mt-8 flex-1 space-y-1 overflow-y-auto pr-1">
           {[...nav, ...adminNav].map((n) => (
             <NavLink key={n.to} to={n.to} className={linkClass}>
               <n.icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
               {n.label}
             </NavLink>
           ))}
+          <button
+            onClick={signOut}
+            className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition hover:bg-white/5 hover:text-destructive"
+          >
+            <LogOut className="h-[18px] w-[18px]" strokeWidth={1.7} /> Sair
+          </button>
         </nav>
         <div className="mt-auto space-y-4 pt-8">
           <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
@@ -65,12 +71,6 @@ export default function AppShell() {
               </div>
             </div>
           </div>
-          <button
-            onClick={signOut}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-white/5 hover:text-destructive"
-          >
-            <LogOut className="h-4 w-4" strokeWidth={1.7} /> Sair
-          </button>
           <BrandFooter />
         </div>
       </aside>
