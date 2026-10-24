@@ -71,6 +71,7 @@ export async function cadastrarEmpresaCliente({ me, referralCode, form }) {
     owner_whatsapp: form.whatsapp,
     employee_count: Number(form.funcionarios) || 0,
     accountant_id: me?.id,
+    accountant_name: nomeContador,
     status_assinatura: 'trialing',
     plano_atual: 'trial_premium',
     trial_ends_at: trialEndsAt,

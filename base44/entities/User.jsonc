@@ -22,6 +22,32 @@
     "ip_consentimento": {
       "type": "string",
       "title": "IP do consentimento"
+    },
+    "is_accountant": {
+      "type": "boolean",
+      "title": "\u00c9 contador",
+      "default": false
+    },
+    "referral_code": {
+      "type": "string",
+      "title": "C\u00f3digo de indica\u00e7\u00e3o (ex: CONTADOR123)"
+    },
+    "office_name": {
+      "type": "string",
+      "title": "Escrit\u00f3rio cont\u00e1bil"
+    },
+    "whatsapp": {
+      "type": "string",
+      "title": "WhatsApp"
+    },
+    "cnpj_escritorio": {
+      "type": "string",
+      "title": "CNPJ do escrit\u00f3rio"
+    },
+    "commission_balance": {
+      "type": "number",
+      "title": "Saldo de comiss\u00e3o (R$)",
+      "default": 0
     }
   },
   "required": [

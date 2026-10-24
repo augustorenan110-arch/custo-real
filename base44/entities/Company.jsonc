@@ -22,6 +22,10 @@
       "type": "string",
       "title": "Contador respons\u00e1vel (id)"
     },
+    "accountant_name": {
+      "type": "string",
+      "title": "Contador respons\u00e1vel"
+    },
     "employee_count": {
       "type": "number",
       "title": "Qtd de funcion\u00e1rios"

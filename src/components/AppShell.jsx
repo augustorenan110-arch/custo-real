@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { LayoutDashboard, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator } from 'lucide-react';
+import { LayoutDashboard, Home, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator, ScanFace, Trophy, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import { useCompany } from '@/hooks/useHr';
@@ -39,7 +39,8 @@ export default function AppShell() {
   const name = me?.full_name || me?.email || '';
 
   const nav = [
-    { to: '/painel', label: 'Início', icon: LayoutDashboard },
+    { to: '/p', label: 'Início', icon: Home },
+    { to: '/painel', label: 'Painel', icon: LayoutDashboard },
     { to: '/ponto', label: 'Ponto', icon: Clock },
     { to: '/espelho', label: 'Espelho de Ponto', icon: CalendarClock },
     { to: '/despesas', label: 'Despesas', icon: Receipt },
@@ -55,11 +56,32 @@ export default function AppShell() {
         { to: '/empresa', label: 'Empresa', icon: Building2 },
       ]
     : [];
-  const mobileNav = nav.filter((n) => n.to !== '/politica' && n.to !== '/espelho');
+  const planoLabel =
+    company?.status_assinatura === 'trialing' || company?.plano_atual === 'trial_premium'
+      ? 'PREMIUM - 7 dias'
+      : company?.plano_atual === 'starter'
+        ? 'STARTER'
+        : 'PREMIUM';
+  const extrasNav = [
+    { to: '/ranking', label: 'Ranking Custo Real', icon: Trophy },
+    { to: '/rescisao', label: 'Simular Rescisão', icon: Calculator },
+    { to: '/relatorio-contador', label: 'Relatório Contador', icon: ScrollText },
+    { to: '/planos', label: `Meu Plano (${planoLabel})`, icon: Sparkles },
+  ];
+  const mobileNav = [
+    { to: '/p', label: 'Início', icon: Home },
+    { to: '/ponto', label: 'Ponto', icon: ScanFace },
+    { to: '/espelho', label: 'Espelho', icon: CalendarClock },
+    { to: '/despesas', label: 'Despesas', icon: Receipt },
+  ];
+  // Menu "Mais" do celular — pedido pelo cliente: sem Política.
   const moreItems = [
-    nav.find((n) => n.to === '/politica'),
-    nav.find((n) => n.to === '/espelho'),
-    ...adminNav,
+    { to: '/colaboradores', label: 'Meus Funcionários', icon: Users },
+    { to: '/ranking', label: 'Ranking Custo Real', icon: Trophy },
+    { to: '/rescisao', label: 'Simular Rescisão', icon: Calculator },
+    { to: '/relatorio-contador', label: 'Relatório Contador', icon: ScrollText },
+    { to: '/ponto', label: 'Ponto Facial', icon: ScanFace },
+    { to: '/planos', label: `Meu Plano (${planoLabel})`, icon: Sparkles },
   ];
 
   const signOut = () => base44.auth.logout('/login');
@@ -69,7 +91,7 @@ export default function AppShell() {
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/10 bg-sidebar/80 p-5 backdrop-blur-xl lg:flex">
         <BrandInline />
         <nav className="mt-8 flex-1 space-y-1 overflow-y-auto pr-1">
-          {[...nav, ...adminNav].map((n) => (
+          {[...nav, ...adminNav, ...extrasNav].map((n) => (
             <NavLink key={n.to} to={n.to} className={linkClass}>
               <n.icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
               {n.label}

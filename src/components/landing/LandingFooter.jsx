@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Scale, Mail, ArrowRight } from 'lucide-react';
 import { Logo, Wordmark } from '@/components/Brand';
+import StoreButtons from '@/components/StoreButtons';
 
 export default function LandingFooter({ startTo }) {
   return (
@@ -86,7 +87,9 @@ export default function LandingFooter({ startTo }) {
           </div>
         </div>
 
-        <p className="mt-8 border-t border-white/10 pt-5 text-center text-[11px] text-muted-foreground">
+        <StoreButtons />
+
+        <p className="mt-2 border-t border-white/10 pt-5 text-center text-[11px] text-muted-foreground">
           © {new Date().getFullYear()} Custo Real · custo-real.com · Todos os direitos reservados
         </p>
       </div>

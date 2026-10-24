@@ -28,6 +28,13 @@ import Audit from './pages/Audit';
 import CompanySettings from './pages/CompanySettings';
 import Assistant from './pages/Assistant';
 import Calculators from './pages/Calculators';
+import Contador from './pages/Contador';
+import PainelContador from './pages/PainelContador';
+import Ativar from './pages/Ativar';
+import AppHome from './pages/AppHome';
+import Ranking from './pages/Ranking';
+import RelatorioContador from './pages/RelatorioContador';
+import Indicacao from './pages/Indicacao';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 
@@ -66,8 +73,13 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/contador" element={<Contador />} />
+      <Route path="/ativar/:id" element={<Ativar />} />
+      <Route path="/r/:code" element={<Indicacao />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route path="/painel-contador" element={<PainelContador />} />
         <Route element={<AppShell />}>
+          <Route path="/p" element={<AppHome />} />
           <Route path="/painel" element={<Dashboard />} />
           <Route path="/despesas" element={<Expenses />} />
           <Route path="/aprovacoes" element={<Approvals />} />
@@ -80,6 +92,8 @@ const AuthenticatedApp = () => {
           <Route path="/assistente" element={<Assistant />} />
           <Route path="/calculadoras" element={<Calculators />} />
           <Route path="/rescisao" element={<Rescisao />} />
+          <Route path="/ranking" element={<Ranking />} />
+          <Route path="/relatorio-contador" element={<RelatorioContador />} />
           <Route path="/planos" element={<Planos />} />
         </Route>
       </Route>

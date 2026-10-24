@@ -77,7 +77,7 @@ export default function Dashboard() {
         <div>
           <h1 className="text-2xl font-semibold">Olá, {firstName || 'colaborador'}!</h1>
           <p className="text-sm text-muted-foreground">
-            {isAdmin ? 'Resumo dos custos da sua empresa.' : 'Resumo das suas despesas.'}
+            {isAdmin ? 'Resumo dos custos da sua empresa.' : 'Resumo do custo real da sua empresa.'}
           </p>
         </div>
         <Initials name={name} />
@@ -87,7 +87,7 @@ export default function Dashboard() {
 
       <div className="glass glow rounded-2xl border-primary/25 p-5">
         <p className="text-sm text-foreground/75">
-          {isAdmin ? 'Custo total aprovado' : 'Total reembolsado'}
+          {isAdmin ? 'Custo total aprovado' : 'Passivo total oculto: R$ 0,00'}
         </p>
         <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
           <span className="font-display text-3xl font-semibold">{brl(s.approved)}</span>
@@ -98,7 +98,9 @@ export default function Dashboard() {
             </span>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">em relação ao mês anterior</p>
+        <p className="text-xs text-muted-foreground">
+          {isAdmin ? 'em relação ao mês anterior' : 'cadastre funcionários para calcular'}
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
