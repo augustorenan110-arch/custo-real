@@ -21,7 +21,7 @@ const FAQ = [
 
 export default function FaqSection() {
   return (
-    <section id="faq" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
+    <section id="faq" className="lazy-section mx-auto max-w-3xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
       <h2 className="font-tech text-center text-2xl font-bold sm:text-3xl">Perguntas frequentes</h2>
       <Accordion type="single" collapsible className="mt-8 space-y-3">
         {FAQ.map((item, i) => (

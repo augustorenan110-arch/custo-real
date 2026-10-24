@@ -7,6 +7,7 @@ import PainSection from '@/components/landing/PainSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import HowItWorks from '@/components/landing/HowItWorks';
 import BeforeAfter from '@/components/landing/BeforeAfter';
+import SocialProof from '@/components/landing/SocialProof';
 import PlansSection from '@/components/landing/PlansSection';
 import FaqSection from '@/components/landing/FaqSection';
 import LandingFooter from '@/components/landing/LandingFooter';
@@ -61,6 +62,7 @@ export default function Landing() {
         <FeaturesSection />
         <HowItWorks />
         <BeforeAfter />
+        <SocialProof />
         <PlansSection startTo={startTo} />
         <FaqSection />
         <LandingFooter startTo={startTo} />

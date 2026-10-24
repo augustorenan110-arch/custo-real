@@ -129,7 +129,7 @@ export default function Register() {
     <AuthLayout
       icon={UserPlus}
       title="Crie sua conta"
-      subtitle="Cadastre-se para começar a controlar despesas"
+      subtitle="Cadastre-se para ver o custo REAL dos seus funcionários em 30 segundos — 7 dias grátis no PREMIUM"
       footer={
         <>
           Já tem uma conta?{" "}

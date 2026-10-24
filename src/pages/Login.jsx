@@ -66,7 +66,7 @@ export default function Login() {
         Continuar com Google
       </button>
       <p className="mb-6 text-center text-[11px] text-muted-foreground">
-        Primeiro acesso cria sua conta com 7 dias grátis no PREMIUM, sem cartão.
+        Cadastre-se para ver o custo REAL dos seus funcionários em 30 segundos — 7 dias grátis no PREMIUM.
       </p>
 
       <div className="relative mb-6">

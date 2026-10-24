@@ -62,7 +62,7 @@ export default function PlansSection({ startTo }) {
   };
 
   return (
-    <section id="planos" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
+    <section id="planos" className="lazy-section mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
       <h2 className="font-tech text-center text-2xl font-bold sm:text-3xl">Planos</h2>
       <p className="mt-3 text-center text-sm text-foreground/65">
         7 dias grátis no PREMIUM, sem cartão. Cancele quando quiser.

@@ -36,7 +36,7 @@ const FEATURES = [
 
 export default function FeaturesSection() {
   return (
-    <section id="funcionalidades" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
+    <section id="funcionalidades" className="lazy-section mx-auto max-w-6xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
       <h2 className="font-tech text-center text-2xl font-bold sm:text-3xl">
         A tecnologia que mostra o <span className="text-primary">custo real</span> do seu time
       </h2>

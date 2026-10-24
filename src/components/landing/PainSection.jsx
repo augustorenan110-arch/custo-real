@@ -21,7 +21,7 @@ const PAINS = [
 
 export default function PainSection() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 lg:py-20">
+    <section className="lazy-section mx-auto max-w-6xl px-5 py-16 sm:px-8 lg:py-20">
       <h2 className="font-tech text-center text-2xl font-bold sm:text-3xl">
         3 formas que você está <span className="text-cost-tech">perdendo dinheiro</span>
       </h2>

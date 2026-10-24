@@ -4,34 +4,14 @@ import { motion } from 'framer-motion';
 import { Check, ShieldAlert, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { calcRescisao } from '@/lib/rescisao';
+import { custoDemissao } from '@/lib/campanha';
 import { brl } from '@/lib/format';
-
-const todayISO = () => new Date().toISOString().slice(0, 10);
 
 export default function HeroCalculator({ panelTo = '/register' }) {
   const [salary, setSalary] = useState(2000);
   const [months, setMonths] = useState(8);
 
-  const admission = useMemo(() => {
-    const d = new Date();
-    d.setMonth(d.getMonth() - Number(months));
-    return d.toISOString().slice(0, 10);
-  }, [months]);
-
-  const fgtsAcumulado = Math.round(Number(salary) * 0.08 * Number(months) * 100) / 100;
-
-  const r = useMemo(
-    () =>
-      calcRescisao({
-        salario_base: Number(salary) || 0,
-        data_admissao: admission,
-        data_demissao: todayISO(),
-        tipo_demissao: 'sem_justa_causa',
-        saldo_fgts_total: fgtsAcumulado,
-      }),
-    [salary, admission, fgtsAcumulado],
-  );
+  const { rows, fgtsAcumulado, total } = useMemo(() => custoDemissao(salary, months), [salary, months]);
 
   return (
     <div className="tech-card relative overflow-hidden rounded-3xl p-5 sm:p-6">
@@ -47,9 +27,7 @@ export default function HeroCalculator({ panelTo = '/register' }) {
       </div>
 
       <p className="mt-4 text-xs text-foreground/70">Custo para demitir HOJE sem justa causa</p>
-      <p className="text-cost-tech font-tech text-3xl font-extrabold sm:text-4xl">
-        {r ? brl(r.total) : 'R$ 0,00'}
-      </p>
+      <p className="text-cost-tech font-tech text-3xl font-extrabold sm:text-4xl">{brl(total)}</p>
       <p className="mt-1 text-[11px] text-muted-foreground">
         Funcionário de {brl(salary)} · {months} {months === 1 ? 'mês' : 'meses'} de casa · limite CLT
       </p>
@@ -81,19 +59,24 @@ export default function HeroCalculator({ panelTo = '/register' }) {
         </div>
       </div>
 
-      <div className="mt-5 space-y-1.5 rounded-2xl border border-white/10 bg-black/25 p-3">
-        {r?.rows.map(([label, value]) => (
-          <div key={label} className="flex items-center justify-between text-xs">
+      <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-1.5 rounded-2xl border border-white/10 bg-black/25 p-3 sm:grid-cols-2">
+        {rows.map(([label, value]) => (
+          <div key={label} className="flex items-center justify-between gap-3 text-xs">
             <span className="text-foreground/70">{label}</span>
             <span className="font-medium tabular-nums">{brl(value)}</span>
           </div>
         ))}
       </div>
 
+      <p className="mt-3 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
+        <span>FGTS acumulado no período (já depositado)</span>
+        <span className="tabular-nums">{brl(fgtsAcumulado)}</span>
+      </p>
+
       <ul className="mt-4 space-y-2 text-xs text-foreground/75">
         <li className="flex gap-2">
-          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-save-tech" /> FGTS acumulado {brl(fgtsAcumulado)} +
-          multa 40% {brl(r?.multa || 0)}
+          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-save-tech" /> Multa de 40% sobre o FGTS acumulado de
+          R$ {fgtsAcumulado.toFixed(2).replace('.', ',')}
         </li>
         <li className="flex gap-2">
           <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-save-tech" /> 13º + férias + 1/3 provisionados

@@ -123,6 +123,12 @@
     background-size: 26px 26px;
   }
 
+  /* Adia o render das seções abaixo da dobra até elas entrarem na tela. */
+  .lazy-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
+
   .tech-card {
     background-color: rgb(19 19 22 / 0.72);
     border: 1px solid #2a2a2e;

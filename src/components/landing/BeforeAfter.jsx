@@ -11,7 +11,7 @@ const AFTER = [
 
 export default function BeforeAfter() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 lg:py-20">
+    <section className="lazy-section mx-auto max-w-6xl px-5 py-16 sm:px-8 lg:py-20">
       <h2 className="font-tech text-center text-2xl font-bold sm:text-3xl">
         O que muda na sua empresa em <span className="text-primary">30 dias</span>
       </h2>

@@ -21,7 +21,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section id="como-funciona" className="mx-auto max-w-3xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
+    <section id="como-funciona" className="lazy-section mx-auto max-w-3xl scroll-mt-24 px-5 py-16 sm:px-8 lg:py-20">
       <h2 className="font-tech text-center text-2xl font-bold sm:text-3xl">Como funciona</h2>
       <p className="mt-3 text-center text-sm text-foreground/65">
         Do cadastro ao custo real na tela em menos de 5 minutos.

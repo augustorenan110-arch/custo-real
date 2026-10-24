@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useInView } from 'framer-motion';
 import { ScanFace, TrendingUp, Trophy, Check, WifiOff } from 'lucide-react';
 import CountUp from '@/components/landing/CountUp';
+import { CAMPANHA } from '@/lib/campanha';
 
 const ROWS = [
   { name: 'Lucas M.', pts: 98 },
@@ -44,7 +45,7 @@ function ScreenCost() {
     <div className="flex h-full flex-col justify-center gap-4 px-5">
       <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Custo para demitir hoje</p>
       <p className="text-2xl font-bold text-cost-tech">
-        <CountUp value={5838.65} prefix="R$ " decimals={2} />
+        <CountUp value={CAMPANHA.total} prefix="R$ " decimals={2} />
       </p>
       <div className="space-y-2.5">
         {bars.map(([label, pct], i) => (
@@ -96,20 +97,25 @@ function ScreenRanking() {
 }
 
 export default function PhoneMockup({ className = '' }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { margin: '120px' });
   const [i, setI] = useState(0);
   const screens = [ScreenCheckin, ScreenCost, ScreenRanking];
 
+  // Só anima quando o celular está na tela: mantém o scroll leve no celular.
   useEffect(() => {
+    if (!inView) return undefined;
     const t = setInterval(() => setI((v) => (v + 1) % screens.length), 3000);
     return () => clearInterval(t);
-  }, []);
+  }, [inView]);
 
   const Screen = screens[i];
 
   return (
     <motion.div
+      ref={ref}
       className={`relative mx-auto w-[248px] ${className}`}
-      animate={{ y: [0, -12, 0] }}
+      animate={inView ? { y: [0, -12, 0] } : { y: 0 }}
       transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
     >
       <div className="absolute -inset-6 rounded-[3rem] bg-primary/20 blur-3xl" />

@@ -20,10 +20,17 @@ export default function LandingFooter({ startTo }) {
               to={startTo}
               className="inline-flex items-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-bold text-[#08080a] shadow-lg"
             >
-              Ver custo real dos meus funcionários — grátis por 7 dias <ArrowRight className="h-4 w-4" />
+              Ver custo real dos meus funcionários — grátis por 7 dias
+              <motion.span
+                className="inline-flex"
+                animate={{ x: [0, 6, 0], opacity: [0.65, 1, 0.65] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <ArrowRight className="h-4 w-4" />
+              </motion.span>
             </Link>
           </motion.div>
-          <p className="mt-3 text-[11px] text-white/75">Sem cartão de crédito · Cancele em 1 clique</p>
+          <p className="mt-3 text-[11px] text-white/75">Sem cartão, cancela em 1 clique</p>
         </div>
       </section>
 
