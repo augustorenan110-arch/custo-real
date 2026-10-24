@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarClock, FileDown } from 'lucide-react';
+import { CalendarClock, FileDown, PenLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,7 @@ import { localISO } from '@/lib/format';
 import { buildEspelho, espelhoPdf, monthLabel } from '@/lib/espelho';
 import EspelhoTable from '@/components/hr/EspelhoTable';
 import EspelhoSummary from '@/components/hr/EspelhoSummary';
+import JustifyPunchDialog from '@/components/hr/JustifyPunchDialog';
 
 export default function Espelho() {
   const { data: me } = useMe();
@@ -17,6 +18,7 @@ export default function Espelho() {
   const { data: employees = [], isLoading } = useEmployees();
   const [pickedId, setPickedId] = useState('');
   const [month, setMonth] = useState(() => localISO().slice(0, 7));
+  const [justifyOpen, setJustifyOpen] = useState(false);
 
   const isAdmin = me?.role === 'admin';
   const active = employees.filter((e) => e.active !== false);
@@ -82,13 +84,21 @@ export default function Espelho() {
           </p>
           <EspelhoSummary totals={sheet.totals} />
           <EspelhoTable rows={sheet.rows} />
-          <Button
-            className="w-full"
-            disabled={!sheet.rows.some((r) => r.entrada !== '—')}
-            onClick={() => espelhoPdf({ company, employee, month, sheet })}
-          >
-            <FileDown className="h-4 w-4" /> Gerar PDF para Assinatura
-          </Button>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Button
+              className="w-full"
+              disabled={!sheet.rows.some((r) => r.entrada !== '—')}
+              onClick={() => espelhoPdf({ company, employee, month, sheet })}
+            >
+              <FileDown className="h-4 w-4" /> Gerar PDF para Assinatura
+            </Button>
+            {isAdmin && (
+              <Button variant="outline" className="w-full" onClick={() => setJustifyOpen(true)}>
+                <PenLine className="h-4 w-4" /> Justificar / Ajustar Ponto
+              </Button>
+            )}
+          </div>
+          <JustifyPunchDialog open={justifyOpen} onOpenChange={setJustifyOpen} employee={employee} />
         </>
       )}
     </div>

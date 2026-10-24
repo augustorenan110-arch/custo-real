@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { Check, Sparkles, Crown, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -18,10 +19,30 @@ export default function Planos() {
   const { data: me } = useMe();
   const { data: company } = useCompany();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [cycle, setCycle] = useState('monthly');
   const [busy, setBusy] = useState('');
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get('checkout');
+    if (checkout === 'success') {
+      toast({ title: 'Pagamento confirmado', description: 'Estamos ativando o seu plano agora.' });
+      queryClient.invalidateQueries({ queryKey: ['company'] });
+    } else if (checkout === 'cancel') {
+      toast({ title: 'Checkout cancelado', description: 'Nenhuma cobrança foi feita.' });
+    }
+  }, []);
+
   async function subscribe(plan, priceId) {
+    const isFramed = window.self !== window.top;
+    const checkoutTab = isFramed ? window.open('', '_blank') : null;
+    if (isFramed && !checkoutTab) {
+      toast({ variant: 'destructive', title: 'Permita pop-ups para concluir o pagamento' });
+      return;
+    }
+    if (checkoutTab) checkoutTab.opener = null;
+
     setBusy(priceId);
     try {
       const res = await base44.functions.invoke('planCheckout', {
@@ -32,16 +53,16 @@ export default function Planos() {
         email: me?.email,
       });
       const url = res?.data?.url;
-      if (url) {
-        window.location.href = url;
-        return;
-      }
-      toast({ variant: 'destructive', title: 'Checkout indisponível', description: res?.data?.error });
-    } catch {
+      if (!url) throw new Error(res?.data?.error || 'Checkout indisponível');
+      if (checkoutTab) checkoutTab.location.replace(url);
+      else window.location.assign(url);
+      return;
+    } catch (error) {
+      checkoutTab?.close();
       toast({
         variant: 'destructive',
-        title: 'Checkout indisponível agora',
-        description: 'Fale com o time pelo e-mail contato@custo-real.com.br para ativar seu plano.',
+        title: 'Checkout indisponível',
+        description: error?.response?.data?.error || error?.message || 'Tente novamente em instantes.',
       });
     } finally {
       setBusy('');
