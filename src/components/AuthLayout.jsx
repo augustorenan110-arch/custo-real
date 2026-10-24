@@ -28,7 +28,12 @@ export default function AuthLayout({ title, subtitle, footer, children }) {
         </div>
         <div className="glass glow rounded-3xl p-6 sm:p-8">{children}</div>
         {footer && <p className="mt-6 text-center text-sm text-muted-foreground">{footer}</p>}
-        <p className="mt-8 text-center text-[11px] text-muted-foreground">
+        <div className="mt-8 flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
+          <Link to="/privacidade" className="transition hover:text-foreground">Política de Privacidade</Link>
+          <span className="h-3 w-px bg-white/15" />
+          <Link to="/termos" className="transition hover:text-foreground">Termos de Uso</Link>
+        </div>
+        <p className="mt-3 text-center text-[11px] text-muted-foreground">
           Custo Real · RH IA. Sua empresa mais forte.
         </p>
       </div>

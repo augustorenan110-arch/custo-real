@@ -9,6 +9,10 @@ import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
 import Landing from './pages/Landing';
 import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import DeleteData from './pages/DeleteData';
+import Planos from './pages/Planos';
+import Rescisao from './pages/Rescisao';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -56,6 +60,8 @@ const AuthenticatedApp = () => {
       {/* Add your page Route elements here */}
       <Route path="/" element={<Landing />} />
       <Route path="/privacidade" element={<Privacy />} />
+      <Route path="/termos" element={<Terms />} />
+      <Route path="/excluir-dados" element={<DeleteData />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -73,6 +79,8 @@ const AuthenticatedApp = () => {
           <Route path="/empresa" element={<CompanySettings />} />
           <Route path="/assistente" element={<Assistant />} />
           <Route path="/calculadoras" element={<Calculators />} />
+          <Route path="/rescisao" element={<Rescisao />} />
+          <Route path="/planos" element={<Planos />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

@@ -1,19 +1,25 @@
 import { useState } from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, ShieldAlert } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useMe } from '@/hooks/useMe';
 import { useEmployees } from '@/hooks/useHr';
 import PunchPanel from '@/components/hr/PunchPanel';
+import ConsentDialog from '@/components/hr/ConsentDialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function Punch() {
   const { data: me } = useMe();
   const { data: employees = [], isLoading } = useEmployees();
   const [pickedId, setPickedId] = useState('');
+  const [granted, setGranted] = useState(null);
+  const [refused, setRefused] = useState(false);
 
   const isAdmin = me?.role === 'admin';
   const active = employees.filter((e) => e.active !== false);
   const mine = active.find((e) => (e.email || '').toLowerCase() === (me?.email || '').toLowerCase());
   const employee = isAdmin ? active.find((e) => e.id === pickedId) : mine;
+
+  const consent = granted ?? me?.consentimento_biometria === true;
 
   return (
     <div className="space-y-5">
@@ -53,10 +59,40 @@ export default function Punch() {
         </div>
       )}
 
-      {employee?.face_ref_uri && (
+      {employee?.face_ref_uri && refused && (
+        <div className="glass rounded-2xl p-5">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <ShieldAlert className="h-4 w-4 text-warning" /> Ponto facial bloqueado sem a autorização de biometria
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Você escolheu não autorizar o uso da foto facial e da localização. O RH deve registrar o ponto por
+            outro meio. Você pode autorizar depois em Configurações → Privacidade e Dados.
+          </p>
+          <Link to="/privacidade" className="mt-2 inline-block text-xs text-primary hover:underline">
+            Ver como tratamos seus dados
+          </Link>
+        </div>
+      )}
+
+      {employee?.face_ref_uri && !consent && !refused && (
+        <div className="glass rounded-2xl p-5 text-sm text-muted-foreground">
+          Autorize a biometria na janela abaixo para liberar a câmera e bater o ponto.
+        </div>
+      )}
+
+      {employee?.face_ref_uri && consent && (
         <div className="glass rounded-2xl p-5">
           <PunchPanel key={employee.id} employee={employee} />
         </div>
+      )}
+
+      {employee?.face_ref_uri && !consent && !refused && (
+        <ConsentDialog
+          open
+          forceOpen
+          onAuthorized={() => setGranted(true)}
+          onRefused={() => setRefused(true)}
+        />
       )}
     </div>
   );

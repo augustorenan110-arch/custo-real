@@ -48,6 +48,18 @@
     "inside_unit": {
       "type": "boolean",
       "title": "Dentro da unidade"
+    },
+    "note": {
+      "type": "string",
+      "title": "Observa\u00e7\u00e3o / justificativa"
+    },
+    "edited_by": {
+      "type": "string",
+      "title": "Editado por"
+    },
+    "edited_at": {
+      "type": "string",
+      "title": "Editado em (ISO)"
     }
   },
   "required": [

@@ -44,6 +44,33 @@
       "type": "number",
       "title": "Jornada di\u00e1ria (horas)",
       "default": 8
+    },
+    "plano_atual": {
+      "type": "string",
+      "title": "Plano atual",
+      "enum": [
+        "trial_premium",
+        "starter",
+        "premium"
+      ]
+    },
+    "status_assinatura": {
+      "type": "string",
+      "title": "Status da assinatura",
+      "enum": [
+        "trialing",
+        "ativo",
+        "expirado",
+        "cancelado"
+      ]
+    },
+    "trial_ends_at": {
+      "type": "string",
+      "title": "Fim do teste (ISO)"
+    },
+    "limite_funcionarios": {
+      "type": "number",
+      "title": "Limite de funcion\u00e1rios"
     }
   },
   "required": [

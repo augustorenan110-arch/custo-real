@@ -39,6 +39,28 @@
     "face_ref_uri": {
       "type": "string",
       "title": "Foto de refer\u00eancia (privada)"
+    },
+    "termination_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Data da demiss\u00e3o"
+    },
+    "termination_type": {
+      "type": "string",
+      "title": "Tipo de demiss\u00e3o",
+      "enum": [
+        "sem_justa_causa",
+        "justa_causa",
+        "pedido"
+      ]
+    },
+    "termination_total": {
+      "type": "number",
+      "title": "Gasto total da demiss\u00e3o (R$)"
+    },
+    "termination_breakdown": {
+      "type": "string",
+      "title": "Hist\u00f3rico do c\u00e1lculo de rescis\u00e3o (JSON)"
     }
   },
   "required": [

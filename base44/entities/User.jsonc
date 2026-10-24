@@ -1,4 +1,6 @@
 {
+  "name": "User",
+  "type": "object",
   "properties": {
     "role": {
       "type": "string",
@@ -7,11 +9,22 @@
         "admin",
         "user"
       ]
+    },
+    "consentimento_biometria": {
+      "type": "boolean",
+      "title": "Consentimento de biometria",
+      "default": false
+    },
+    "data_consentimento": {
+      "type": "string",
+      "title": "Data do consentimento (ISO)"
+    },
+    "ip_consentimento": {
+      "type": "string",
+      "title": "IP do consentimento"
     }
   },
   "required": [
     "role"
-  ],
-  "name": "User",
-  "type": "object"
+  ]
 }
