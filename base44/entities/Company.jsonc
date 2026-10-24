@@ -4,7 +4,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "title": "Nome da empresa"
+      "title": "Nome da empresa (fantasia)"
     },
     "cnpj": {
       "type": "string",
@@ -13,6 +13,18 @@
     "activity": {
       "type": "string",
       "title": "Atividade"
+    },
+    "owner_whatsapp": {
+      "type": "string",
+      "title": "WhatsApp do dono"
+    },
+    "accountant_id": {
+      "type": "string",
+      "title": "Contador respons\u00e1vel (id)"
+    },
+    "employee_count": {
+      "type": "number",
+      "title": "Qtd de funcion\u00e1rios"
     },
     "units": {
       "type": "array",
@@ -79,14 +91,22 @@
   "rls": {
     "read": {},
     "create": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "created_by_id": "{{user.id}}"
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.accountant_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
     },
     "delete": {
       "user_condition": {
