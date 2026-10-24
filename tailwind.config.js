@@ -71,6 +71,7 @@ module.exports = {
   			}
   		},
   		fontFamily: {
+  			tech: ['var(--font-tech)'],
   			heading: ['var(--font-heading)'],
   			body: ['var(--font-body)'],
   			display: ['var(--font-display)'],

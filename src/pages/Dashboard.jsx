@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Clock, AlertTriangle, CheckCircle2, Receipt, ChevronRight, Plus, TrendingUp } from 'lucide-react';
 import { useMe } from '@/hooks/useMe';
+import { useCompany } from '@/hooks/useHr';
+import TrialBanner from '@/components/plan/TrialBanner';
 import { useExpenses } from '@/hooks/useExpenses';
 import { brl, dateBR, statusLabel } from '@/lib/format';
 import { Initials } from '@/components/Brand';
@@ -32,6 +34,7 @@ function Stat({ icon: Icon, label, value, sub }) {
 
 export default function Dashboard() {
   const { data: me } = useMe();
+  const { data: company } = useCompany();
   const { data: list = [], isLoading } = useExpenses();
   const isAdmin = me?.role === 'admin';
 
@@ -79,6 +82,8 @@ export default function Dashboard() {
         </div>
         <Initials name={name} />
       </header>
+
+      <TrialBanner company={company} />
 
       <div className="glass glow rounded-2xl border-primary/25 p-5">
         <p className="text-sm text-foreground/75">

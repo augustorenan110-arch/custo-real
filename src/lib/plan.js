@@ -15,9 +15,9 @@ export const PLANS = [
     tagline: 'Para equipes pequenas',
     monthly: { priceId: 'custo_real_starter_monthly', price: 29.9, label: 'R$ 29,90/mês' },
     yearly: { priceId: 'custo_real_starter_yearly', price: 297, label: 'R$ 297/ano' },
-    limite_funcionarios: 10,
+    limite_funcionarios: 5,
     punches: '1.000 batidas/mês',
-    perks: ['Ponto facial com prova de vida', 'GPS na batida', 'Espelho de ponto em PDF', 'Despesas com conferência da IA'],
+    perks: ['Ponto facial com prova de vida', 'GPS na batida', 'Ranking de custo real', 'Espelho de ponto em PDF'],
   },
   {
     id: 'premium',

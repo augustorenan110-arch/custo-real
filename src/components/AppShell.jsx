@@ -1,7 +1,11 @@
+import { useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { LayoutDashboard, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
+import { useCompany } from '@/hooks/useHr';
+import { TRIAL_PLAN, trialEndDate } from '@/lib/plan';
 import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
 import MoreMenu from '@/components/MoreMenu';
 
@@ -14,7 +18,24 @@ const linkClass = ({ isActive }) =>
 
 export default function AppShell() {
   const { data: me } = useMe();
+  const { data: company } = useCompany();
+  const queryClient = useQueryClient();
   const isAdmin = me?.role === 'admin';
+
+  // Primeiro acesso (e-mail ou Google): abre 7 dias de teste PREMIUM no plano STARTER.
+  useEffect(() => {
+    if (!isAdmin || company === undefined || company?.plano_atual) return;
+    const trial = {
+      plano_atual: TRIAL_PLAN.plan,
+      status_assinatura: 'trialing',
+      trial_ends_at: trialEndDate(),
+      limite_funcionarios: TRIAL_PLAN.limite,
+    };
+    const run = company?.id
+      ? base44.entities.Company.update(company.id, trial)
+      : base44.entities.Company.create({ name: me?.full_name || 'Minha empresa', ...trial });
+    run.then(() => queryClient.invalidateQueries({ queryKey: ['company'] })).catch(() => {});
+  }, [isAdmin, company, me?.full_name, queryClient]);
   const name = me?.full_name || me?.email || '';
 
   const nav = [

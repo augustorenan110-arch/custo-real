@@ -31,7 +31,7 @@ async function validSignature(payload: string, header: string, secret: string) {
   return timingSafeEqual(hex, parts.v1);
 }
 
-const LIMITS: Record<string, number | null> = { starter: 10, premium: null };
+const LIMITS: Record<string, number | null> = { starter: 5, premium: null };
 
 export default async function (req: Request): Promise<Response> {
   try {

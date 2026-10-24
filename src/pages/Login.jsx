@@ -54,14 +54,20 @@ export default function Login() {
         </>
       }
     >
-      <Button
-        variant="outline"
-        className="w-full h-12 text-sm font-medium mb-6"
+      <p className="mb-3 text-center text-xs text-muted-foreground">
+        Entrar com Google para começar em 5 segundos
+      </p>
+      <button
+        type="button"
         onClick={handleGoogle}
+        className="mb-2 flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#DADCE0] bg-[#FFFFFF] text-sm font-medium text-[#3C4043] transition hover:bg-[#F8F9FA] active:bg-[#F1F3F4]"
       >
-        <GoogleIcon className="w-5 h-5 mr-2" />
+        <GoogleIcon className="h-5 w-5" />
         Continuar com Google
-      </Button>
+      </button>
+      <p className="mb-6 text-center text-[11px] text-muted-foreground">
+        Primeiro acesso cria sua conta com 7 dias grátis no PREMIUM, sem cartão.
+      </p>
 
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
