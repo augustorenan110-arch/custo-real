@@ -11,13 +11,14 @@ import AnimatedIcon from '@/components/ui/AnimatedIcon';
 import InternalBackBar from '@/components/InternalBackBar';
 import { brl } from '@/lib/format';
 import { useExpenses } from '@/hooks/useExpenses';
-import { useTimeEntries, useCompany, useEmployees } from '@/hooks/useHr';
+import { useTimeEntries, useCompany, useEmployees, useFaltas } from '@/hooks/useHr';
 import { useMe } from '@/hooks/useMe';
-import { buildPayslip, calcularCustoEmpresa } from '@/lib/payroll';
+import { buildPayslip, calcularCustoEmpresa, resumoFaltas } from '@/lib/payroll';
 import { buildTimesheet, fmtMinutes } from '@/lib/timesheet';
 import { payslipPdf, timesheetPdf, expensesPdf } from '@/lib/pdf';
 import { freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
 import FaceEnroll from '@/components/hr/FaceEnroll';
+import FaltaSection from '@/components/hr/FaltaSection';
 import EmployeePassivoAlert from '@/components/hr/EmployeePassivoAlert';
 import TrialCountdown from '@/components/plan/TrialCountdown';
 import PaywallModal from '@/components/PaywallModal';
@@ -40,6 +41,7 @@ export default function EmployeeDetail({ employee, onClose }) {
   const { data: company } = useCompany();
   const { data: employees = [] } = useEmployees();
   const { data: entries = [] } = useTimeEntries(employee?.id, month);
+  const { data: faltas = [], refetch: refetchFaltas } = useFaltas(employee?.id, month);
   const { data: allExpenses = [] } = useExpenses();
 
   if (!employee) return null;
@@ -56,12 +58,14 @@ export default function EmployeeDetail({ employee, onClose }) {
   );
   const approved = mine.filter((e) => e.status === 'approved');
   const sheet = buildTimesheet(entries, month, company?.workday_hours || 8);
+  const faltasMes = resumoFaltas(faltas, employee.salary);
   const slip = buildPayslip({
     gross: employee.salary,
     extraHours: sheet.extra / 60,
     transport,
+    faltaDiscount: faltasMes.desconto,
   });
-  const custo = calcularCustoEmpresa(slip.total);
+  const custo = calcularCustoEmpresa(slip.base);
   const inss = slip.deductions.find((d) => d.label === 'INSS')?.value || 0;
   const vt = slip.deductions.find((d) => d.label.startsWith('Vale-transporte'))?.value || 0;
 
@@ -92,8 +96,8 @@ export default function EmployeeDetail({ employee, onClose }) {
           buttonClassName={ROSTO_CTA}
         />
 
-        <div className="mb-4 grid grid-cols-12 items-end gap-3">
-          <div className="col-span-7">
+        <div className="mb-4 mt-6 flex w-full flex-col gap-4">
+          <div className="w-full">
             <label htmlFor="m" className="mb-1.5 block text-xs font-medium text-[#94A3B8]">Mês de referência</label>
             <div className="relative">
               <input
@@ -109,8 +113,15 @@ export default function EmployeeDetail({ employee, onClose }) {
             </div>
           </div>
 
-          <div className="col-span-5">
-            <label className="invisible mb-1.5 block text-xs font-medium text-[#94A3B8]">Transporte</label>
+          <FaltaSection
+            employee={employee}
+            month={month}
+            mesLabel={labelMes(month)}
+            onSaved={refetchFaltas}
+          />
+
+          <div className="w-full">
+            <label className="mb-1.5 block text-xs font-medium text-[#94A3B8]">Vale-transporte</label>
             <label className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#334155] bg-[#1E293B] transition-all hover:border-[#22C55E]">
               <input
                 type="checkbox"
@@ -136,6 +147,14 @@ export default function EmployeeDetail({ employee, onClose }) {
               <span className="text-[#cbd5e1]">Salário base</span>
               <span className="font-medium text-white">{brl(slip.total)}</span>
             </div>
+            {faltasMes.desconto > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-[#94A3B8]">
+                  (-) Faltas não justificadas ({faltasMes.naoJustificadas})
+                </span>
+                <span className="text-[#f87171]">-{brl(faltasMes.desconto)}</span>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-[#94A3B8]">(-) INSS 7,5% - 9%</span>
               <span className="text-[#f87171]">{brl(inss)}</span>

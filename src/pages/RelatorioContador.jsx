@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useToast } from '@/components/ui/use-toast';
-import { useCompany, useEmployees } from '@/hooks/useHr';
+import { useCompany, useEmployees, useFaltasDoMes } from '@/hooks/useHr';
 import { brl } from '@/lib/format';
 import { calcularTotaisEmpresa } from '@/lib/payroll';
 import { buildTimesheet } from '@/lib/timesheet';
@@ -36,6 +36,8 @@ export default function RelatorioContador() {
       return page?.items || page || [];
     },
   });
+
+  const { data: faltas = [] } = useFaltasDoMes(month);
 
   const ponto = useMemo(() => {
     const mapa = {};
@@ -69,6 +71,7 @@ export default function RelatorioContador() {
         month,
         incluir,
         ponto,
+        faltas,
         emitidoEm: new Date(),
       });
       setPdfUrl(URL.createObjectURL(doc.output('blob')));

@@ -38,20 +38,61 @@ export function calcIrrf(gross, inss, dependents = 0) {
 
 const round = (n) => Math.round(n * 100) / 100;
 
-export function buildPayslip({ gross, extraHours = 0, hourValue, transport = false, dependents = 0 }) {
+export function buildPayslip({
+  gross,
+  extraHours = 0,
+  hourValue,
+  transport = false,
+  dependents = 0,
+  faltaDiscount = 0,
+}) {
+  const faltas = round(Math.max(0, faltaDiscount));
   const extras = round(extraHours * (hourValue ?? gross / 220) * 1.5);
   const earnings = [{ label: 'Salário base', value: round(gross) }];
   if (extras > 0) earnings.push({ label: `Horas extras (${extraHours.toFixed(1)}h a 50%)`, value: extras });
   const total = round(earnings.reduce((s, e) => s + e.value, 0));
-  const inss = calcInss(total);
-  const irrf = calcIrrf(total, inss, dependents);
+  const base = round(Math.max(0, total - faltas));
+  const inss = calcInss(base);
+  const irrf = calcIrrf(base, inss, dependents);
   const deductions = [
     { label: 'INSS', value: inss },
     { label: 'IRRF', value: irrf },
   ];
+  if (faltas > 0) deductions.push({ label: 'Faltas não justificadas (dia + DSR)', value: faltas });
   if (transport) deductions.push({ label: 'Vale-transporte (6%)', value: round(Math.min(gross * 0.06, gross)) });
   const totalDed = round(deductions.reduce((s, d) => s + d.value, 0));
-  return { earnings, deductions, total, totalDed, net: round(total - totalDed), fgts: round(total * 0.08) };
+  return {
+    earnings,
+    deductions,
+    total,
+    base,
+    totalDed,
+    net: round(total - totalDed),
+    fgts: round(base * 0.08),
+  };
+}
+
+// ─── Faltas ──────────────────────────────────────────────────────────────────
+export const DIAS_BASE_MES = 30;
+
+/** Uma falta não justificada desconta o dia perdido + o DSR (domingo). */
+export function calcularDescontoFalta(salario) {
+  const dia = round((Number(salario) || 0) / DIAS_BASE_MES);
+  return { dia, dsr: dia, total: round(dia * 2) };
+}
+
+/** Quantidades e desconto total das faltas lançadas no mês. */
+export function resumoFaltas(faltas = [], salario = 0) {
+  const naoJustificadas = faltas.filter((f) => f.tipo === 'nao_justificada');
+  const unitario = calcularDescontoFalta(salario).total;
+  const desconto = round(
+    naoJustificadas.reduce((s, f) => s + (Number(f.desconto_total) || unitario), 0),
+  );
+  return {
+    justificadas: faltas.length - naoJustificadas.length,
+    naoJustificadas: naoJustificadas.length,
+    desconto,
+  };
 }
 
 // ─── Custo real do empregador ────────────────────────────────────────────────

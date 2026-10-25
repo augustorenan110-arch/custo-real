@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf';
 import { brl, cnpjBR, dateBR } from '@/lib/format';
 import { custoDemissao } from '@/lib/campanha';
 import { monthsBetween } from '@/lib/rescisao';
-import { calcularTotaisEmpresa } from '@/lib/payroll';
+import { calcularTotaisEmpresa, resumoFaltas } from '@/lib/payroll';
 import { fmtMinutes } from '@/lib/timesheet';
 
 const MESES = [
@@ -26,12 +26,14 @@ export function buildRelatorioContador({
   month,
   incluir = {},
   ponto = {},
+  faltas = [],
   emitidoEm = new Date(),
 }) {
   const doc = new jsPDF();
   const hoje = emitidoEm.toISOString().slice(0, 10);
   const totais = calcularTotaisEmpresa(funcionarios, hoje);
   const mes = mesReferencia(month);
+  const faltasMes = resumoFaltas(faltas, 0);
 
   let y = 40;
   const quebra = (altura = 8) => {
@@ -93,6 +95,9 @@ export function buildRelatorioContador({
   linha(`FGTS 8%: ${brl(totais.fgts)}`);
   linha(`INSS Patronal 20% + Terceiros 5,8% + RAT 2%: ${brl(totais.patronal)}`);
   linha(`Provisões 13º + Férias + 1/3 (1/12 por mês): ${brl(totais.provisoes)}`);
+  linha(
+    `Faltas: ${faltasMes.justificadas} Justificadas (R$0) / ${faltasMes.naoJustificadas} Não Justificadas (Desconto ${brl(faltasMes.desconto)})`,
+  );
   linha(`CUSTO REAL TOTAL DO MÊS: ${brl(totais.custoReal)}`, { size: 11, style: 'bold', gap: 8 });
 
   const detalhes = funcionarios

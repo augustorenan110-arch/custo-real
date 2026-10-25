@@ -1,0 +1,106 @@
+{
+  "name": "Falta",
+  "type": "object",
+  "properties": {
+    "employee_id": {
+      "type": "string",
+      "title": "Colaborador (id)"
+    },
+    "employee_name": {
+      "type": "string",
+      "title": "Colaborador"
+    },
+    "data": {
+      "type": "string",
+      "format": "date",
+      "title": "Data da falta"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "justificada",
+        "nao_justificada"
+      ],
+      "title": "Tipo"
+    },
+    "motivo": {
+      "type": "string",
+      "title": "Motivo"
+    },
+    "atestado_uri": {
+      "type": "string",
+      "title": "Atestado (arquivo privado)"
+    },
+    "desconto_salario": {
+      "type": "number",
+      "title": "Desconto do dia (R$)"
+    },
+    "desconto_dsr": {
+      "type": "number",
+      "title": "Desconto DSR (R$)"
+    },
+    "desconto_total": {
+      "type": "number",
+      "title": "Desconto total (R$)"
+    },
+    "mes_referencia": {
+      "type": "string",
+      "title": "M\u00eas de refer\u00eancia (AAAA-MM)"
+    }
+  },
+  "required": [
+    "employee_id",
+    "data",
+    "tipo"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

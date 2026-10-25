@@ -37,3 +37,25 @@ export function useAuditLogs() {
     queryFn: async () => items(await base44.entities.AuditLog.list({ sort: '-created_date', limit: 200 })),
   });
 }
+
+export function useFaltas(employeeId, month) {
+  return useQuery({
+    queryKey: ['faltas', employeeId, month],
+    enabled: !!employeeId && !!month,
+    queryFn: async () =>
+      items(
+        await base44.entities.Falta.filter(
+          { employee_id: employeeId, mes_referencia: month },
+          { sort: '-data', limit: 100 },
+        ),
+      ),
+  });
+}
+
+export function useFaltasDoMes(month) {
+  return useQuery({
+    queryKey: ['faltas-mes', month],
+    queryFn: async () =>
+      items(await base44.entities.Falta.filter({ mes_referencia: month }, { sort: '-data', limit: 300 })),
+  });
+}
