@@ -10,6 +10,7 @@ import { calcularTotaisEmpresa } from '@/lib/payroll';
 import { buildTimesheet } from '@/lib/timesheet';
 import { buildRelatorioContador, mesReferencia, nomeArquivoRelatorio } from '@/lib/relatorioContador';
 import RelatorioForm from '@/components/contador/RelatorioForm';
+import AjudaRelatorio from '@/components/contador/AjudaRelatorio';
 
 const thisMonth = () => new Date().toISOString().slice(0, 7);
 
@@ -21,6 +22,7 @@ export default function RelatorioContador() {
   const [incluir, setIncluir] = useState({ passivo: true, ranking: true, ponto: true });
   const [gerando, setGerando] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [ajudaOpen, setAjudaOpen] = useState(false);
   const { toast } = useToast();
 
   const { data: registros = [] } = useQuery({
@@ -98,11 +100,37 @@ export default function RelatorioContador() {
       </button>
 
       <header>
-        <h1 className="text-xl font-black text-white">Relatório para Contador</h1>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="text-xl font-black text-white">Relatório para Contador</h1>
+          <button
+            type="button"
+            onClick={() => setAjudaOpen(!ajudaOpen)}
+            style={{
+              width: '28px',
+              height: '28px',
+              background: '#1E293B',
+              borderRadius: '50%',
+              color: '#94A3B8',
+              fontWeight: 'bold',
+              border: 'none',
+              cursor: 'pointer',
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '15px',
+              lineHeight: 1,
+            }}
+          >
+            ?
+          </button>
+        </div>
         <p className="text-sm text-[#94A3B8]">
           Gere um PDF com validade contábil para enviar ao seu escritório
         </p>
       </header>
+
+      <AjudaRelatorio open={ajudaOpen} />
 
       <RelatorioForm
         month={month}
