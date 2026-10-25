@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, ExternalLink, FileText, MessageCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, FileText, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useToast } from '@/components/ui/use-toast';
 import { useCompany, useEmployees } from '@/hooks/useHr';
 import { brl } from '@/lib/format';
 import { calcularTotaisEmpresa } from '@/lib/payroll';
@@ -20,6 +21,7 @@ export default function RelatorioContador() {
   const [incluir, setIncluir] = useState({ passivo: true, ranking: true, ponto: true });
   const [gerando, setGerando] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
+  const { toast } = useToast();
 
   const { data: registros = [] } = useQuery({
     queryKey: ['relatorio-ponto', month],
@@ -67,8 +69,15 @@ export default function RelatorioContador() {
         ponto,
         emitidoEm: new Date(),
       });
+      setPdfUrl(URL.createObjectURL(doc.output('blob')));
       doc.save(nomeArquivoRelatorio(empresa?.name, month));
-      setPdfUrl(String(doc.output('bloburl')));
+      toast({ title: 'PDF gerado!', description: 'Verifique seus downloads.' });
+    } catch (e) {
+      toast({
+        title: 'Não foi possível gerar o PDF',
+        description: String(e?.message || e),
+        variant: 'destructive',
+      });
     } finally {
       setGerando(false);
     }
@@ -123,30 +132,20 @@ export default function RelatorioContador() {
           />
 
           <a
-            href={pdfUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#334155] bg-[#1E293B] text-sm font-medium text-white transition hover:border-[#22C55E]"
-          >
-            <ExternalLink size={16} /> Abrir PDF em nova aba
-          </a>
-
-          <a
             href={`https://wa.me/?text=${encodeURIComponent(mensagem)}`}
             target="_blank"
             rel="noreferrer"
             className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] font-bold text-black transition hover:bg-[#16a34a]"
           >
-            <MessageCircle size={18} /> Enviar para contador no WhatsApp
+            <MessageCircle size={18} /> Enviar no WhatsApp do Contador
           </a>
 
-          <button
-            type="button"
-            onClick={() => navigate('/p')}
-            className="h-11 w-full rounded-xl border border-[#334155] bg-[#08080A] text-sm text-[#94A3B8] transition hover:text-white"
+          <Link
+            to="/p"
+            className="flex h-11 w-full items-center justify-center rounded-xl border border-[#334155] bg-[#08080A] text-sm text-[#94A3B8] transition hover:text-white"
           >
-            Voltar para o painel
-          </button>
+            Voltar ao Início
+          </Link>
         </div>
       )}
     </div>

@@ -58,28 +58,37 @@ export function buildRelatorioContador({
       y += 5;
     }
   };
-  const secao = (n, titulo) => {
+  let nSecao = 0;
+  const secao = (titulo) => {
+    nSecao += 1;
     y += 4;
-    linha(`${n}. ${titulo}`, { size: 12, style: 'bold', gap: 8 });
+    linha(`${nSecao}. ${titulo}`, { size: 12, style: 'bold', gap: 8 });
   };
+
+  const emitido = `${emitidoEm.toLocaleDateString('pt-BR')} ${emitidoEm.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })}`;
 
   // Cabeçalho
   doc.setFillColor(8, 8, 10);
-  doc.rect(0, 0, 210, 26, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(15);
+  doc.rect(0, 0, 210, 28, 'F');
+  doc.setTextColor(34, 197, 94);
+  doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
-  doc.text('CUSTO REAL - RELATÓRIO CONTÁBIL', 12, 13);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
+  doc.text('CUSTO REAL', 12, 14);
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(10);
+  doc.text('RH IA - Relatório Contábil', 12, 20);
+  doc.setFontSize(8);
   doc.text(
-    `${empresa?.name || 'Empresa'} · CNPJ ${cnpjBR(empresa?.cnpj)} · ${funcionarios.length} funcionário(s) · ${mes}`,
+    `Mês: ${mes} | Empresa: ${empresa?.name || '—'} | CNPJ ${cnpjBR(empresa?.cnpj)} | ${funcionarios.length} funcionários | Gerado ${emitido}`,
     12,
-    20,
+    25,
   );
 
   // 1. Resumo financeiro
-  secao(1, 'RESUMO FINANCEIRO DO MÊS');
+  secao('RESUMO FINANCEIRO');
   linha(`Folha base: ${brl(totais.folha)}`);
   linha(`FGTS 8%: ${brl(totais.fgts)}`);
   linha(`INSS Patronal 20% + Terceiros 5,8% + RAT 2%: ${brl(totais.patronal)}`);
@@ -96,7 +105,7 @@ export function buildRelatorioContador({
 
   // 2. Passivo oculto
   if (incluir.passivo !== false) {
-    secao(2, 'PASSIVO OCULTO - CUSTO DE DEMISSÃO HOJE');
+    secao('PASSIVO OCULTO - CUSTO DE DEMISSÃO HOJE');
     linha(`${brl(totais.passivo)} - valor total se demitir todo o time hoje`, {
       size: 11,
       style: 'bold',
@@ -117,7 +126,7 @@ export function buildRelatorioContador({
 
   // 3. Ranking de risco
   if (incluir.ranking !== false) {
-    secao(3, 'RANKING DE RISCO POR FUNCIONÁRIO');
+    secao('RANKING DE RISCO POR FUNCIONÁRIO');
     if (!detalhes.length) linha('Nenhum funcionário cadastrado.');
     detalhes.forEach(({ f, det }, i) =>
       linha(`${i + 1}. ${f.full_name} - ${brl(det.total)} (salário ${brl(f.salary)})`),
@@ -127,7 +136,7 @@ export function buildRelatorioContador({
 
   // 4. Ponto
   if (incluir.ponto !== false) {
-    secao(4, `RISCO TRABALHISTA - PONTO EM ${mes.toUpperCase()}`);
+    secao(`RISCO TRABALHISTA - PONTO EM ${mes.toUpperCase()}`);
     if (!funcionarios.length) linha('Nenhum funcionário cadastrado.');
     for (const f of funcionarios) {
       const p = ponto[f.id] || { worked: 0, late: 0, extra: 0, dias: 0 };
@@ -148,15 +157,11 @@ export function buildRelatorioContador({
   }
 
   // Rodapé
-  const emitido = `${emitidoEm.toLocaleDateString('pt-BR')} às ${emitidoEm.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })}`;
-  doc.setFontSize(8);
+  doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(110, 110, 110);
-  doc.text(`Documento gerado pelo Custo Real em ${emitido} - validade contábil.`, 12, 285);
-  doc.text('Não substitui a contabilidade oficial, mas serve como prova de gestão de risco trabalhista.', 12, 290);
+  doc.setTextColor(100, 100, 100);
+  doc.text('Documento gerado por Custo Real RH IA - Validade contábil - Não substitui contabilidade oficial', 12, 285);
+  doc.text('www.custo-real.com | Assinado digitalmente', 12, 288);
 
   return doc;
 }

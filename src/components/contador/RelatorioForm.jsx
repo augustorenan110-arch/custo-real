@@ -10,17 +10,21 @@ export default function RelatorioForm({ month, onMonth, incluir, onToggle, onGen
   return (
     <>
       <div className="space-y-3 rounded-xl border border-[#334155] bg-[#1E293B] p-4">
-        <label htmlFor="mes" className="block text-xs font-bold text-white">Mês de referência</label>
-        <div className="relative">
-          <input
-            id="mes"
-            type="month"
-            value={month}
-            onChange={(e) => onMonth(e.target.value)}
-            className="h-11 w-full rounded-xl border border-[#334155] bg-[#08080A] px-4 pr-12 text-sm font-medium text-white focus:border-[#22C55E] focus:outline-none"
-          />
-          <div className="pointer-events-none absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md bg-[#334155]">
-            <Calendar size={14} color="#94A3B8" />
+        <div className="space-y-2">
+          <label htmlFor="mes" className="text-[13px] font-bold text-white">Mês de referência</label>
+          <div className="relative w-full max-w-full">
+            <input
+              id="mes"
+              type="month"
+              value={month}
+              onChange={(e) => onMonth(e.target.value)}
+              style={{ colorScheme: 'dark' }}
+              className="h-[44px] w-full max-w-full rounded-xl border border-[#334155] bg-[#08080A] px-4 pr-11 text-left text-[14px] text-white focus:border-[#22C55E] focus:outline-none"
+            />
+            <Calendar
+              size={18}
+              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#64748b]"
+            />
           </div>
         </div>
 
@@ -44,7 +48,7 @@ export default function RelatorioForm({ month, onMonth, incluir, onToggle, onGen
         className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] font-black text-black transition-all hover:bg-[#16a34a] disabled:opacity-60"
       >
         {gerando ? <Loader2 size={20} className="animate-spin" /> : <FileText size={20} />}
-        GERAR PDF CONTÁBIL
+        {gerando ? 'GERANDO...' : 'GERAR PDF CONTÁBIL'}
       </button>
     </>
   );
