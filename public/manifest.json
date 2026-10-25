@@ -1,20 +1,20 @@
 {
-  "name": "Custo Real RH IA",
+  "name": "Custo Real - RH IA",
   "short_name": "Custo Real",
   "description": "Gestão de pessoas e custos com inteligência artificial.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0b1220",
-  "theme_color": "#0b1220",
+  "background_color": "#08080A",
+  "theme_color": "#0A1931",
   "icons": [
     {
-      "src": "/logo-cr.png",
+      "src": "/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo-cr.png",
+      "src": "/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
