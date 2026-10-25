@@ -1,4 +1,4 @@
-import { Calendar, FileText, Loader2 } from 'lucide-react';
+import { FileText, Loader2 } from 'lucide-react';
 
 const OPCOES = [
   { key: 'passivo', label: 'Incluir custo real de demissão (passivo oculto)' },
@@ -9,36 +9,105 @@ const OPCOES = [
 export default function RelatorioForm({ month, onMonth, incluir, onToggle, onGenerate, gerando }) {
   return (
     <>
-      <div className="space-y-3 rounded-xl border border-[#334155] bg-[#1E293B] p-4">
-        <div className="space-y-2">
-          <label htmlFor="mes" className="text-[13px] font-bold text-white">Mês de referência</label>
-          <div className="relative w-full max-w-full">
-            <input
-              id="mes"
-              type="month"
-              value={month}
-              onChange={(e) => onMonth(e.target.value)}
-              style={{ colorScheme: 'dark' }}
-              className="h-[44px] w-full max-w-full rounded-xl border border-[#334155] bg-[#08080A] px-4 pr-11 text-left text-[14px] text-white focus:border-[#22C55E] focus:outline-none"
-            />
-            <Calendar
-              size={18}
-              className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-[#64748b]"
-            />
-          </div>
+      <div
+        style={{
+          background: '#1E293B',
+          borderRadius: '16px',
+          padding: '16px',
+          width: '100%',
+          boxSizing: 'border-box',
+        }}
+      >
+        <label
+          htmlFor="mes"
+          style={{ display: 'block', color: 'white', fontSize: '13px', fontWeight: 'bold', marginBottom: '10px' }}
+        >
+          Mês de referência
+        </label>
+
+        <div
+          style={{
+            background: '#08080A',
+            border: '1px solid #334155',
+            borderRadius: '12px',
+            height: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 14px',
+            width: '100%',
+            boxSizing: 'border-box',
+          }}
+        >
+          <input
+            id="mes"
+            type="month"
+            value={month}
+            onChange={(e) => onMonth(e.target.value)}
+            style={{
+              flex: 1,
+              minWidth: 0,
+              height: '100%',
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              color: 'white',
+              fontSize: '14px',
+              textAlign: 'center',
+              colorScheme: 'dark',
+            }}
+          />
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#64748b"
+            strokeWidth="2"
+            style={{ flexShrink: 0 }}
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <path d="M16 2v4M8 2v4M3 10h18" />
+          </svg>
         </div>
 
-        {OPCOES.map((o) => (
-          <label key={o.key} className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              checked={!!incluir[o.key]}
-              onChange={() => onToggle(o.key)}
-              className="h-4 w-4 shrink-0 accent-[#22C55E]"
-            />
-            <span className="text-sm text-white">{o.label}</span>
-          </label>
-        ))}
+        <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {OPCOES.map((o) => {
+            const marcado = !!incluir[o.key];
+            return (
+              <label
+                key={o.key}
+                style={{ display: 'flex', gap: '8px', alignItems: 'center', cursor: 'pointer' }}
+              >
+                <input
+                  type="checkbox"
+                  checked={marcado}
+                  onChange={() => onToggle(o.key)}
+                  style={{ display: 'none' }}
+                />
+                <span
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    flexShrink: 0,
+                    background: marcado ? '#22C55E' : '#08080A',
+                    border: marcado ? 'none' : '1px solid #334155',
+                    borderRadius: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#000',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                  }}
+                >
+                  {marcado ? '✓' : ''}
+                </span>
+                <span style={{ color: '#cbd5e1', fontSize: '13px' }}>{o.label}</span>
+              </label>
+            );
+          })}
+        </div>
       </div>
 
       <button
