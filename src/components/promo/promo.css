@@ -1,0 +1,234 @@
+/* /video-promo — anúncio animado de 15s (reels 9:16 e feed 1:1) */
+
+.vp-root {
+  background: #08080a;
+}
+
+/* --u é a unidade base do palco: 1% da largura em reels, 0.74% em 1:1,
+   para que o mesmo conteúdo caiba nas duas telas sem cortar texto. */
+.vp-stage {
+  position: relative;
+  overflow: hidden;
+  background: #08080a;
+  container-type: inline-size;
+  --u: 1cqw;
+}
+
+.vp-square {
+  --u: 0.74cqw;
+}
+
+.vp-track {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 400%;
+  animation: autoSlide 15s cubic-bezier(0.66, 0, 0.34, 1) infinite;
+}
+
+.vp-slide {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 25%;
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: calc(7 * var(--u)) calc(6 * var(--u));
+  text-align: center;
+}
+
+/* Seção 1: 0-3s · Seção 2: 3-7s · Seção 3: 7-11s · Seção 4: 11-15s */
+@keyframes autoSlide {
+  0%,
+  17% {
+    transform: translateY(0);
+  }
+  22%,
+  44% {
+    transform: translateY(-25%);
+  }
+  48%,
+  70% {
+    transform: translateY(-50%);
+  }
+  74%,
+  100% {
+    transform: translateY(-75%);
+  }
+}
+
+@keyframes vpIn1 {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  7%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vpIn2 {
+  0%,
+  19% {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+  26%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vpIn3 {
+  0%,
+  46% {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+  53%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes vpIn4 {
+  0%,
+  72% {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+  80%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.vp-in-1,
+.vp-in-2,
+.vp-in-3,
+.vp-in-4 {
+  animation-duration: 15s;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+.vp-in-1 {
+  animation-name: vpIn1;
+}
+.vp-in-2 {
+  animation-name: vpIn2;
+}
+.vp-in-3 {
+  animation-name: vpIn3;
+}
+.vp-in-4 {
+  animation-name: vpIn4;
+}
+
+@keyframes vpPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+.vp-pulse {
+  animation: vpPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes vpBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.vp-blink {
+  animation: vpBlink 0.75s steps(2, end) infinite;
+}
+
+@keyframes vpGlow {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 0 0 22px rgba(34, 197, 94, 0);
+  }
+}
+
+.vp-glow {
+  animation: vpGlow 1.6s ease-in-out infinite;
+}
+
+@keyframes vpGlowBg {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.vp-glow-bg {
+  background: radial-gradient(58% 42% at 50% 40%, rgba(0, 123, 255, 0.34), transparent 72%);
+  animation: vpGlowBg 3.4s ease-in-out infinite;
+}
+
+@keyframes vpFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.vp-float {
+  animation: vpFloat 2.4s ease-in-out infinite;
+}
+
+/* Tipografia proporcional ao palco */
+.vp-h1 {
+  font-size: clamp(16px, calc(7 * var(--u)), 54px);
+  line-height: 1.15;
+}
+
+.vp-h2 {
+  font-size: clamp(13px, calc(5.2 * var(--u)), 40px);
+  line-height: 1.2;
+}
+
+.vp-body {
+  font-size: clamp(10px, calc(3.5 * var(--u)), 24px);
+  line-height: 1.35;
+}
+
+.vp-small {
+  font-size: clamp(9px, calc(2.9 * var(--u)), 18px);
+  line-height: 1.35;
+}
+
+.vp-btn {
+  font-size: clamp(10px, calc(4.2 * var(--u)), 30px);
+  padding: calc(3.4 * var(--u)) calc(7 * var(--u));
+  border-radius: calc(2.4 * var(--u));
+}

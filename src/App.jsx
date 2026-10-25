@@ -13,6 +13,7 @@ import Terms from './pages/Terms';
 import DeleteData from './pages/DeleteData';
 import Planos from './pages/Planos';
 import Rescisao from './pages/Rescisao';
+import VideoPromo from './pages/VideoPromo';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -76,6 +77,7 @@ const AuthenticatedApp = () => {
       <Route path="/contador" element={<Contador />} />
       <Route path="/ativar/:id" element={<Ativar />} />
       <Route path="/r/:code" element={<Indicacao />} />
+      <Route path="/video-promo" element={<VideoPromo />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/painel-contador" element={<PainelContador />} />
         <Route element={<AppShell />}>
