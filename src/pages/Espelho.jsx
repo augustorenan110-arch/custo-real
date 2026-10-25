@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useMe } from '@/hooks/useMe';
 import { useCompany, useEmployees, useTimeEntries } from '@/hooks/useHr';
+import { isFree, trialDaysLeft } from '@/lib/plan';
+import PaywallModal from '@/components/PaywallModal';
 import { localISO } from '@/lib/format';
 import { buildEspelho, espelhoPdf, monthLabel } from '@/lib/espelho';
 import EspelhoTable from '@/components/hr/EspelhoTable';
@@ -19,8 +21,12 @@ export default function Espelho() {
   const [pickedId, setPickedId] = useState('');
   const [month, setMonth] = useState(() => localISO().slice(0, 7));
   const [justifyOpen, setJustifyOpen] = useState(false);
+  const [paywall, setPaywall] = useState(false);
 
   const isAdmin = me?.role === 'admin';
+  const contador = !!me?.is_accountant || me?.tipo_conta === 'escritorio';
+  // Espelho em PDF é recurso do plano completo: no teste grátis fica bloqueado.
+  const gratis = !!company && isFree(company) && !contador;
   const active = employees.filter((e) => e.active !== false);
   const employee = isAdmin
     ? active.find((e) => e.id === pickedId)
@@ -88,9 +94,11 @@ export default function Espelho() {
             <Button
               className="w-full"
               disabled={!sheet.rows.some((r) => r.entrada !== '—')}
-              onClick={() => espelhoPdf({ company, employee, month, sheet })}
+              onClick={() =>
+                gratis ? setPaywall(true) : espelhoPdf({ company, employee, month, sheet })
+              }
             >
-              <FileDown className="h-4 w-4" /> Gerar PDF para Assinatura
+              <FileDown className="h-4 w-4" /> {gratis ? '🔒 Gerar PDF para Assinatura' : 'Gerar PDF para Assinatura'}
             </Button>
             {isAdmin && (
               <Button variant="outline" className="w-full" onClick={() => setJustifyOpen(true)}>
@@ -99,6 +107,13 @@ export default function Espelho() {
             )}
           </div>
           <JustifyPunchDialog open={justifyOpen} onOpenChange={setJustifyOpen} employee={employee} />
+          <PaywallModal
+            open={paywall}
+            onClose={() => setPaywall(false)}
+            companyId={company?.id}
+            email={me?.email}
+            daysLeft={trialDaysLeft(company)}
+          />
         </>
       )}
     </div>

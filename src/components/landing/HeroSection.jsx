@@ -37,7 +37,7 @@ export default function HeroSection({ startTo, panelTo }) {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <Link
               to={startTo}
-              className="cta-blue glow inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold sm:w-auto"
+              className="cta-green glow inline-flex h-14 w-full animate-pulse items-center justify-center gap-2 rounded-xl px-6 text-[16px] font-bold sm:w-auto"
             >
               Ver meu passivo grátis <ArrowRight className="h-4 w-4" />
             </Link>

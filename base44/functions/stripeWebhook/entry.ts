@@ -69,7 +69,16 @@ export default async function (req: Request): Promise<Response> {
           status_assinatura: 'ativo',
         };
         if (LIMITS[plan] !== null) data.limite_funcionarios = LIMITS[plan];
+        const empresa = await base44.asServiceRole.entities.Company.get(companyId);
         await base44.asServiceRole.entities.Company.update(companyId, data);
+
+        // Espelha o plano pago no usuário dono da empresa (tabela users).
+        const dono = empresa?.created_by_id;
+        if (dono) {
+          const usuario: Record<string, unknown> = { plano: 'pago_59', tipo_conta: 'empresa' };
+          if (LIMITS[plan] !== null) usuario.limite_funcionarios = LIMITS[plan];
+          await base44.asServiceRole.entities.User.update(dono, usuario);
+        }
       }
     } else if (event.type === 'customer.subscription.updated') {
       const status = String(object.status || '');

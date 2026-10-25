@@ -19,7 +19,7 @@ export default function LandingFooter({ startTo }) {
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} className="mt-7 inline-block">
             <Link
               to={startTo}
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-7 py-4 text-sm font-bold text-[#08080a] shadow-lg"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#22C55E] px-7 py-4 text-sm font-bold text-black shadow-lg transition hover:bg-[#16a34a]"
             >
               Ver custo real dos meus funcionários — grátis por 7 dias
               <motion.span

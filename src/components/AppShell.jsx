@@ -5,9 +5,10 @@ import { LayoutDashboard, Home, Receipt, CheckSquare, ScrollText, LogOut, Clock,
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import { useCompany } from '@/hooks/useHr';
-import { TRIAL_PLAN, trialEndDate } from '@/lib/plan';
+import { TRIAL_PLAN, trialEndDate, freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
 import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
 import MoreMenu from '@/components/MoreMenu';
+import PaywallModal from '@/components/PaywallModal';
 
 const linkClass = ({ isActive }) =>
   `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
@@ -22,13 +23,15 @@ export default function AppShell() {
   const queryClient = useQueryClient();
   const isAdmin = me?.role === 'admin';
 
-  // Primeiro acesso (e-mail ou Google): abre 7 dias de teste PREMIUM no plano STARTER.
+  // Primeiro acesso (e-mail ou Google): abre 7 dias de teste grátis (3 funcionários).
   useEffect(() => {
     if (!isAdmin || company === undefined || company?.plano_atual) return;
+    const hoje = new Date().toISOString().slice(0, 10);
     const trial = {
       plano_atual: TRIAL_PLAN.plan,
       status_assinatura: 'trialing',
       trial_ends_at: trialEndDate(),
+      data_cadastro: hoje,
       limite_funcionarios: TRIAL_PLAN.limite,
     };
     const run = company?.id
@@ -36,6 +39,23 @@ export default function AppShell() {
       : base44.entities.Company.create({ name: me?.full_name || 'Minha empresa', ...trial });
     run.then(() => queryClient.invalidateQueries({ queryKey: ['company'] })).catch(() => {});
   }, [isAdmin, company, me?.full_name, queryClient]);
+
+  // Tabela users: completa tipo_conta / plano / data_cadastro / limite_funcionarios.
+  useEffect(() => {
+    if (!me?.id || me?.tipo_conta || company === undefined) return;
+    const gratis = !company || isFree(company);
+    base44.auth
+      .updateMe({
+        tipo_conta: 'empresa',
+        plano: gratis ? 'gratis_7dias' : 'pago_59',
+        data_cadastro: me?.data_cadastro || new Date().toISOString().slice(0, 10),
+        ...(gratis ? { limite_funcionarios: TRIAL_PLAN.limite } : {}),
+      })
+      .catch(() => {});
+  }, [me?.id, me?.tipo_conta, me?.data_cadastro, company]);
+  const contador = !!me?.is_accountant || me?.tipo_conta === 'escritorio';
+  // Teste grátis vencido: o dono só sai do paywall assinando o plano completo.
+  const bloqueioTotal = isAdmin && !contador && freeBloqueado(company);
   const name = me?.full_name || me?.email || '';
 
   const nav = [
@@ -159,6 +179,18 @@ export default function AppShell() {
           <MoreMenu items={moreItems} />
         </div>
       </nav>
+
+      {bloqueioTotal && (
+        <PaywallModal
+          open
+          blocking
+          companyId={company?.id}
+          email={me?.email}
+          daysLeft={trialDaysLeft(company)}
+          onClose={() => {}}
+          onVerificar={() => queryClient.invalidateQueries({ queryKey: ['company'] })}
+        />
+      )}
     </div>
   );
 }

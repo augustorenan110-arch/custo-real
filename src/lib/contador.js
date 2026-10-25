@@ -24,6 +24,23 @@ export const linkIndicacao = (code) => `custo-real.com/r/${code || 'SEU-CODIGO'}
 
 export const comissaoDe = (clientes = 0) => Number(clientes || 0) * PLANO_CLIENTE.comissao;
 
+/** Salva o cadastro do escritório no usuário logado e devolve o código de indicação. */
+export async function salvarCadastroContador({ me, form }) {
+  const code = me?.referral_code || gerarReferralCode(me?.id);
+  await base44.auth.updateMe({
+    is_accountant: true,
+    tipo_conta: 'escritorio',
+    plano: 'escritorio_parceiro',
+    office_name: form.escritorio,
+    whatsapp: form.whatsapp,
+    cnpj_escritorio: form.cnpj,
+    referral_code: code,
+    data_cadastro: me?.data_cadastro || new Date().toISOString().slice(0, 10),
+    commission_balance: me?.commission_balance || 0,
+  });
+  return code;
+}
+
 export const maskCnpj = (value = '') => {
   const digits = value.replace(/\D/g, '').slice(0, 14);
   return digits
@@ -75,7 +92,8 @@ export async function cadastrarEmpresaCliente({ me, referralCode, form }) {
     status_assinatura: 'trialing',
     plano_atual: 'trial_premium',
     trial_ends_at: trialEndsAt,
-    limite_funcionarios: 50,
+    data_cadastro: new Date().toISOString().slice(0, 10),
+    limite_funcionarios: 3,
   });
 
   const mensagem =

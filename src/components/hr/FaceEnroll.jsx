@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useToast } from '@/components/ui/use-toast';
 import CameraCapture from '@/components/hr/CameraCapture';
 
-export default function FaceEnroll({ employee }) {
+export default function FaceEnroll({ employee, label, buttonClassName }) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const queryClient = useQueryClient();
@@ -38,8 +38,8 @@ export default function FaceEnroll({ employee }) {
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-        <ScanFace className="h-4 w-4" /> {employee.face_ref_uri ? 'Atualizar rosto' : 'Cadastrar rosto'}
+      <Button variant="outline" size="sm" className={buttonClassName} onClick={() => setOpen(true)}>
+        <ScanFace className="h-4 w-4" /> {label || (employee.face_ref_uri ? 'Atualizar rosto' : 'Cadastrar rosto')}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-sm">

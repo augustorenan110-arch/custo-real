@@ -2,11 +2,15 @@
 // Os IDs abaixo são os preços criados no Stripe / RevenueCat.
 export const TRIAL_DAYS = 7;
 
+/** Plano gratuito: 7 dias de teste e no máximo 3 funcionários. */
 export const TRIAL_PLAN = {
   plan: 'trial_premium',
   limite: 3,
-  punches: 100,
 };
+
+export const FREE_LIMIT = 3;
+
+const PLANOS_GRATIS = ['trial_premium', 'gratis_7dias'];
 
 export const PLANS = [
   {
@@ -50,14 +54,30 @@ export const trialDaysLeft = (company) => {
   return Math.max(0, Math.ceil(ms / 86400000));
 };
 
-export const isTrialActive = (company) =>
-  company?.plano_atual === 'trial_premium' && trialDaysLeft(company) > 0;
+/** Plano gratuito (teste de 7 dias) — sem assinatura paga. */
+export const isFree = (company) => !company?.plano_atual || PLANOS_GRATIS.includes(company.plano_atual);
 
-export const trialExpired = (company) =>
-  company?.plano_atual === 'trial_premium' && trialDaysLeft(company) <= 0;
+export const isTrialActive = (company) => isFree(company) && trialDaysLeft(company) > 0;
+
+/** Teste grátis vencido: holerites e recursos liberados ficam bloqueados. */
+export const freeBloqueado = (company) => isFree(company) && trialDaysLeft(company) <= 0;
+
+export const trialExpired = (company) => freeBloqueado(company);
 
 /** PREMIUM liberado (assinatura ou teste PREMIUM em andamento). */
 export const hasPremium = (company) => isTrialActive(company) || company?.plano_atual === 'premium';
+
+/** Limite de funcionários: 3 no plano grátis, 5 no STARTER, ilimitado no PREMIUM. */
+export const limiteFuncionarios = (company) => {
+  if (isFree(company)) return FREE_LIMIT;
+  if (company?.plano_atual === 'premium') return null;
+  return company?.limite_funcionarios ?? 5;
+};
+
+export const limiteAtingido = (company, total = 0) => {
+  const limite = limiteFuncionarios(company);
+  return limite !== null && total >= limite;
+};
 
 export const planLabel = (company) => {
   if (isTrialActive(company)) return `Teste PREMIUM · faltam ${trialDaysLeft(company)} dia(s)`;

@@ -39,8 +39,8 @@ export default function StoreButtons() {
               loading="lazy"
               className="h-14 w-[180px] rounded-lg object-contain"
             />
-            <span className="mt-2 inline-block rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 text-[10px] text-muted-foreground">
-              Em breve - use no navegador
+            <span className="mt-2 inline-block rounded-full border border-[#22C55E]/40 bg-[#052e16] px-2.5 py-1 text-[10px] font-semibold text-[#22C55E]">
+              ✅ FUNCIONANDO 100% NO NAVEGADOR - Ponto facial + GPS sem baixar nada
             </span>
           </motion.a>
         ))}

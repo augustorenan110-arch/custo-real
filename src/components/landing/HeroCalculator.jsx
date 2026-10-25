@@ -93,7 +93,7 @@ export default function HeroCalculator({ panelTo = '/register' }) {
       <motion.div whileHover={{ scale: 1.02 }} className="mt-4">
         <Link
           to={panelTo}
-          className="cta-blue glow block w-full rounded-xl px-5 py-3 text-center text-sm font-semibold"
+          className="cta-green glow block h-14 w-full animate-pulse rounded-xl px-5 py-3 text-center text-[16px] font-bold"
         >
           Quero ver dos meus funcionários
         </Link>

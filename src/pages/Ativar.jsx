@@ -100,7 +100,7 @@ export default function Ativar() {
             </p>
             <Link
               to="/p"
-              className="cta-blue mt-4 block rounded-xl px-5 py-3 text-center text-sm font-semibold"
+              className="cta-green mt-4 block rounded-xl px-5 py-3 text-center text-sm font-bold"
             >
               Entrar no app e ver meu passivo
             </Link>

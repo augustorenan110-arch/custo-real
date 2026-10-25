@@ -10,6 +10,36 @@
         "user"
       ]
     },
+    "tipo_conta": {
+      "type": "string",
+      "title": "Tipo de conta",
+      "enum": [
+        "super_admin",
+        "empresa",
+        "escritorio"
+      ],
+      "default": "empresa"
+    },
+    "plano": {
+      "type": "string",
+      "title": "Plano do usu\u00e1rio",
+      "enum": [
+        "gratis_7dias",
+        "pago_59",
+        "escritorio_parceiro"
+      ],
+      "default": "gratis_7dias"
+    },
+    "data_cadastro": {
+      "type": "string",
+      "format": "date",
+      "title": "Data do cadastro"
+    },
+    "limite_funcionarios": {
+      "type": "number",
+      "title": "Limite de funcion\u00e1rios (3 no gr\u00e1tis)",
+      "default": 3
+    },
     "consentimento_biometria": {
       "type": "boolean",
       "title": "Consentimento de biometria",

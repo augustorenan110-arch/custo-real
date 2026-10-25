@@ -52,7 +52,7 @@ export default function PlansSection({ startTo }) {
         <Link
           to={startTo}
           className={`mt-6 block rounded-xl px-5 py-3 text-center text-sm font-semibold ${
-            highlight ? 'cta-blue glow' : 'border border-white/20 text-foreground/90 hover:border-primary/60'
+            highlight ? 'cta-green glow font-bold' : 'border border-white/20 text-foreground/90 hover:border-primary/60'
           }`}
         >
           Começar e parar de perder dinheiro

@@ -65,6 +65,7 @@
       "type": "string",
       "title": "Plano atual",
       "enum": [
+        "gratis_7dias",
         "trial_premium",
         "starter",
         "premium"
@@ -83,6 +84,11 @@
     "trial_ends_at": {
       "type": "string",
       "title": "Fim do teste (ISO)"
+    },
+    "data_cadastro": {
+      "type": "string",
+      "format": "date",
+      "title": "Data do cadastro"
     },
     "limite_funcionarios": {
       "type": "number",

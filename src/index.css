@@ -145,6 +145,17 @@
     background-color: #1d4ed8;
   }
 
+  .cta-green {
+    background-color: #22c55e;
+    color: #000000;
+    font-weight: 700;
+    border-radius: 0.75rem;
+  }
+
+  .cta-green:hover {
+    background-color: #16a34a;
+  }
+
   .text-cost-tech {
     color: #ef4444;
   }

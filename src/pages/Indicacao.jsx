@@ -23,7 +23,7 @@ export default function Indicacao() {
         </p>
         <Link
           to="/register"
-          className="cta-blue glow mt-6 inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold"
+          className="cta-green glow mt-6 inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold"
         >
           Ver meu custo real agora <ArrowRight className="h-4 w-4" />
         </Link>

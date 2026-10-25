@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { Plus, Users, ScanFace } from 'lucide-react';
+import { Plus, Users, ScanFace, Lock } from 'lucide-react';
 import { useMe } from '@/hooks/useMe';
 import { useEmployees, useCompany } from '@/hooks/useHr';
 import { brl } from '@/lib/format';
+import { limiteAtingido, trialDaysLeft } from '@/lib/plan';
 import { Button } from '@/components/ui/button';
 import { Initials } from '@/components/Brand';
 import EmployeeForm from '@/components/hr/EmployeeForm';
 import EmployeeDetail from '@/components/hr/EmployeeDetail';
+import TrialCountdown from '@/components/plan/TrialCountdown';
+import PaywallModal from '@/components/PaywallModal';
 
 export default function Employees() {
   const { data: me, isLoading: loadingMe } = useMe();
@@ -14,6 +17,7 @@ export default function Employees() {
   const { data: company } = useCompany();
   const [creating, setCreating] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [paywall, setPaywall] = useState(false);
 
   if (loadingMe) return <p className="text-sm text-muted-foreground">Carregando…</p>;
   if (me?.role !== 'admin') {
@@ -21,20 +25,36 @@ export default function Employees() {
   }
 
   const selected = employees.find((e) => e.id === selectedId) || null;
+  const ativos = employees.filter((e) => e.active !== false);
+  const bloqueado = !!company && limiteAtingido(company, ativos.length);
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
+      <TrialCountdown company={company} usados={ativos.length} />
+
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
             <Users className="h-6 w-6 text-primary" /> Colaboradores
           </h1>
           <p className="text-sm text-muted-foreground">Fichas, rosto, holerite, espelho e gastos.</p>
         </div>
-        <Button onClick={() => setCreating(true)}>
-          <Plus className="h-4 w-4" /> Novo
-        </Button>
+        {!bloqueado && (
+          <Button onClick={() => setCreating(true)}>
+            <Plus className="h-4 w-4" /> Novo
+          </Button>
+        )}
       </div>
+
+      {bloqueado && (
+        <button
+          type="button"
+          onClick={() => setPaywall(true)}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#1E293B] p-4 text-xs font-semibold text-[#94A3B8] transition hover:text-white"
+        >
+          <Lock className="h-4 w-4" /> Limite do plano grátis atingido - Desbloqueie por R$59,90
+        </button>
+      )}
 
       {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
       {!isLoading && employees.length === 0 && (
@@ -63,8 +83,16 @@ export default function Employees() {
         ))}
       </div>
 
-      <EmployeeForm open={creating} onOpenChange={setCreating} units={company?.units || []} />
+      <EmployeeForm open={creating && !bloqueado} onOpenChange={setCreating} units={company?.units || []} />
       <EmployeeDetail employee={selected} onClose={() => setSelectedId(null)} />
+
+      <PaywallModal
+        open={paywall}
+        onClose={() => setPaywall(false)}
+        companyId={company?.id}
+        email={me?.email}
+        daysLeft={trialDaysLeft(company)}
+      />
     </div>
   );
 }

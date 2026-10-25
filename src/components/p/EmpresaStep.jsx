@@ -34,7 +34,8 @@ export default function EmpresaStep({ nome, onCreated }) {
         status_assinatura: 'trialing',
         plano_atual: 'trial_premium',
         trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        limite_funcionarios: 50,
+        data_cadastro: new Date().toISOString().slice(0, 10),
+        limite_funcionarios: 3,
       });
       toast({ title: 'Empresa cadastrada!', description: `Agora cadastre o primeiro funcionário de ${empresa.name}.` });
       onCreated?.(empresa);

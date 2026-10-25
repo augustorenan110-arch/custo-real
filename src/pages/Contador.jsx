@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import GoogleIcon from '@/components/GoogleIcon';
 import StoreButtons from '@/components/StoreButtons';
 import { toast } from '@/components/ui/use-toast';
-import { maskCnpj, validaCnpj, maskPhone, gerarReferralCode } from '@/lib/contador';
+import { maskCnpj, validaCnpj, maskPhone, salvarCadastroContador } from '@/lib/contador';
 import { useMe } from '@/hooks/useMe';
 
 const DESTAQUES = [
@@ -38,14 +38,7 @@ export default function Contador() {
     }
     setSalvando(true);
     try {
-      await base44.auth.updateMe({
-        is_accountant: true,
-        office_name: form.escritorio,
-        whatsapp: form.whatsapp,
-        cnpj_escritorio: form.cnpj,
-        referral_code: me?.referral_code || gerarReferralCode(me?.id),
-        commission_balance: me?.commission_balance || 0,
-      });
+      await salvarCadastroContador({ me, form });
       await refetch();
       toast({ title: 'Cadastro de contador pronto', description: 'Agora cadastre sua primeira empresa cliente.' });
       navigate('/painel-contador');
