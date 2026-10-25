@@ -1,8 +1,19 @@
 import { Component, useMemo } from 'react';
-import Lottie from 'lottie-react';
+import * as lottieReact from 'lottie-react';
 import { pulseRing, scanLine } from '@/lib/lottie';
 
 const BUILDERS = { pulse: pulseRing, scan: scanLine };
+
+// O empacotador pode entregar o componente em camadas diferentes (import.default.default).
+// Só aceitamos algo que o React realmente consiga renderizar como elemento.
+const ehComponente = (c) =>
+  typeof c === 'function' || (typeof c === 'object' && c !== null && typeof c.$$typeof === 'symbol');
+
+const Lottie = [
+  lottieReact.default?.default,
+  lottieReact.default,
+  lottieReact,
+].find(ehComponente) || null;
 
 // Se a animação não puder ser renderizada, o ícone continua aparecendo.
 class AnimacaoSegura extends Component {
@@ -37,9 +48,11 @@ export default function AnimatedIcon({
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
-      <AnimacaoSegura>
-        <Lottie animationData={data} loop autoplay className="absolute inset-0 h-full w-full" />
-      </AnimacaoSegura>
+      {Lottie && (
+        <AnimacaoSegura>
+          <Lottie animationData={data} loop autoplay className="absolute inset-0 h-full w-full" />
+        </AnimacaoSegura>
+      )}
       <Icon size={Math.round(size * 0.66)} strokeWidth={strokeWidth} color={color} className="relative" />
     </span>
   );
