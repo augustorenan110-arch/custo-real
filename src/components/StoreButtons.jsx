@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import AnimatedIcon from '@/components/ui/AnimatedIcon';
 
 const LOJAS = [
   {
@@ -39,8 +41,9 @@ export default function StoreButtons() {
               loading="lazy"
               className="h-14 w-[180px] rounded-lg object-contain"
             />
-            <span className="mt-2 inline-block rounded-full border border-[#22C55E]/40 bg-[#052e16] px-2.5 py-1 text-[10px] font-semibold text-[#22C55E]">
-              ✅ FUNCIONANDO 100% NO NAVEGADOR - Ponto facial + GPS sem baixar nada
+            <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[#22C55E]/40 bg-[#052e16] px-2.5 py-1 text-left text-[10px] font-semibold text-[#22C55E]">
+              <AnimatedIcon icon={Check} size={16} color="#22C55E" />
+              FUNCIONANDO 100% NO NAVEGADOR - Ponto facial + GPS
             </span>
           </motion.a>
         ))}

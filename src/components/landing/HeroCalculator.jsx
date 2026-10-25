@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, ShieldAlert, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, ShieldAlert, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { custoDemissao } from '@/lib/campanha';
@@ -93,9 +93,9 @@ export default function HeroCalculator({ panelTo = '/register' }) {
       <motion.div whileHover={{ scale: 1.02 }} className="mt-4">
         <Link
           to={panelTo}
-          className="cta-green glow block h-14 w-full animate-pulse rounded-xl px-5 py-3 text-center text-[16px] font-bold"
+          className="cta-green glow flex h-14 w-full animate-pulse items-center justify-center gap-2 rounded-xl px-5 text-center text-[16px] font-bold uppercase"
         >
-          Quero ver dos meus funcionários
+          Ver meu passivo grátis <ArrowRight size={18} strokeWidth={2.6} />
         </Link>
       </motion.div>
     </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { AlertTriangle, Check, Loader2, X } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Check, Clock, Loader2, Lock, X } from 'lucide-react';
+import AnimatedIcon from '@/components/ui/AnimatedIcon';
 import { startPlanCheckout } from '@/lib/checkout';
 
 const BLOQUEADOS = [
@@ -60,8 +61,8 @@ export default function PaywallModal({
           </button>
         )}
 
-        <AlertTriangle className="h-9 w-9 text-[#ef4444]" strokeWidth={2.2} />
-        <h2 className="mt-3 text-xl font-bold text-[#ef4444]">🚨 SEU NEGÓCIO ESTÁ DESPROTEGIDO</h2>
+        <AnimatedIcon icon={AlertTriangle} size={28} color="#ef4444" strokeWidth={2.4} />
+        <h2 className="mt-3 text-xl font-bold text-[#ef4444]">SEU NEGÓCIO ESTÁ DESPROTEGIDO</h2>
         <p className="mt-2 text-sm leading-relaxed text-white">
           Você tem {passivo} de passivo oculto com o Matheus Santos e mais 2 funcionários sem ponto facial registrado.
         </p>
@@ -70,8 +71,8 @@ export default function PaywallModal({
 
         <div className="space-y-2 rounded-xl bg-[#1E293B] p-4">
           {BLOQUEADOS.map((item) => (
-            <p key={item} className="text-sm text-[#94A3B8]">
-              🔒 {item}
+            <p key={item} className="flex items-start gap-2 text-sm text-[#94A3B8]">
+              <AnimatedIcon icon={Lock} size={18} color="#94A3B8" className="mt-0.5" /> {item}
             </p>
           ))}
         </div>
@@ -79,7 +80,7 @@ export default function PaywallModal({
         <div className="mt-3 space-y-2 rounded-xl border border-[#22C55E] bg-[#052e16] p-4">
           {LIBERADOS.map((item) => (
             <p key={item} className="flex items-start gap-2 text-sm text-[#bbf7d0]">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#22C55E]" /> {item}
+              <AnimatedIcon icon={Check} size={18} color="#22C55E" className="mt-0.5" /> {item}
             </p>
           ))}
         </div>
@@ -93,14 +94,16 @@ export default function PaywallModal({
           className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] text-[16px] font-bold text-black transition animate-pulse hover:bg-[#16a34a] disabled:opacity-70"
         >
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-          DESBLOQUEAR MINHA PROTEÇÃO POR R$59,90/MÊS →
+          DESBLOQUEAR MINHA PROTEÇÃO POR R$59,90/MÊS
+          <ArrowRight size={18} strokeWidth={2.6} />
         </button>
 
         <p className="mt-3 text-center text-[11px] leading-relaxed text-[#94A3B8]">
           Menos de R$2 por dia para não pagar {passivo} de uma vez. Cancela quando quiser. Sem fidelidade.
         </p>
-        <p className="mt-2 text-center text-[11px] font-semibold text-[#facc15]">
-          ⏳ Seu teste grátis vence em {daysLeft} dia(s). Depois disso, seus holerites ficam bloqueados.
+        <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-[11px] font-semibold text-[#facc15]">
+          <AnimatedIcon icon={Clock} size={16} color="#facc15" />
+          Seu teste grátis vence em {daysLeft} dia(s). Depois disso, seus holerites ficam bloqueados.
         </p>
 
         {blocking && onVerificar && (

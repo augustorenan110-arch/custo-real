@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { LayoutDashboard, Home, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator, ScanFace, Trophy, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -9,6 +9,24 @@ import { TRIAL_PLAN, trialEndDate, freeBloqueado, isFree, trialDaysLeft } from '
 import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
 import MoreMenu from '@/components/MoreMenu';
 import PaywallModal from '@/components/PaywallModal';
+import InternalBackBar from '@/components/InternalBackBar';
+
+// Telas internas ganham o botão "voltar" (as abas principais não).
+const TELAS_INTERNAS = [
+  '/painel',
+  '/espelho',
+  '/colaboradores',
+  '/despesas',
+  '/aprovacoes',
+  '/auditoria',
+  '/empresa',
+  '/assistente',
+  '/calculadoras',
+  '/rescisao',
+  '/ranking',
+  '/relatorio-contador',
+  '/planos',
+];
 
 const linkClass = ({ isActive }) =>
   `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
@@ -20,6 +38,7 @@ const linkClass = ({ isActive }) =>
 export default function AppShell() {
   const { data: me } = useMe();
   const { data: company } = useCompany();
+  const { pathname } = useLocation();
   const queryClient = useQueryClient();
   const isAdmin = me?.role === 'admin';
 
@@ -156,6 +175,11 @@ export default function AppShell() {
         </header>
 
         <main className="mx-auto max-w-3xl px-4 pb-28 pt-5 sm:px-6 lg:pb-12 lg:pt-10">
+          {TELAS_INTERNAS.includes(pathname) && (
+            <div className="sticky top-[60px] z-20 -mx-4 mb-4 bg-background/90 px-4 py-2 backdrop-blur lg:top-0">
+              <InternalBackBar label="Voltar para o início" />
+            </div>
+          )}
           <Outlet />
         </main>
       </div>

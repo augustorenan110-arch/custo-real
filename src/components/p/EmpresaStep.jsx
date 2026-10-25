@@ -49,7 +49,7 @@ export default function EmpresaStep({ nome, onCreated }) {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-xl font-semibold">Olá, {nome || 'chefe'}! Vamos calcular seu passivo real em 30s 👇</h1>
+        <h1 className="text-xl font-semibold">Olá, {nome || 'chefe'}! Vamos calcular seu passivo real em 30 segundos.</h1>
       </header>
 
       <form onSubmit={salvar} className="cta-blue rounded-2xl p-5">

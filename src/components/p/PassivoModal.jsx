@@ -1,5 +1,7 @@
+import { AlertTriangle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import AnimatedIcon from '@/components/ui/AnimatedIcon';
 import { brl } from '@/lib/format';
 
 export default function PassivoModal({ open, onOpenChange, funcionario, passivo, onVerRanking }) {
@@ -9,8 +11,9 @@ export default function PassivoModal({ open, onOpenChange, funcionario, passivo,
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="glass max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-display text-lg">
-            🚨 PASSIVO DETECTADO: {brl(passivo.total)}
+          <DialogTitle className="flex items-center gap-2 font-display text-lg">
+            <AnimatedIcon icon={AlertTriangle} size={20} color="#ef4444" />
+            PASSIVO DETECTADO: {brl(passivo.total)}
           </DialogTitle>
           <DialogDescription>
             {funcionario?.full_name} · custo de demissão hoje, sem justa causa.

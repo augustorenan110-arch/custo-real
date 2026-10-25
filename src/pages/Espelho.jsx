@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { CalendarClock, FileDown, PenLine } from 'lucide-react';
+import { CalendarClock, FileDown, Lock, PenLine } from 'lucide-react';
+import AnimatedIcon from '@/components/ui/AnimatedIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -98,7 +99,8 @@ export default function Espelho() {
                 gratis ? setPaywall(true) : espelhoPdf({ company, employee, month, sheet })
               }
             >
-              <FileDown className="h-4 w-4" /> {gratis ? '🔒 Gerar PDF para Assinatura' : 'Gerar PDF para Assinatura'}
+              <AnimatedIcon icon={gratis ? Lock : FileDown} size={16} color={gratis ? '#facc15' : '#ffffff'} />
+              {gratis ? 'Gerar PDF para Assinatura - bloqueado' : 'Gerar PDF para Assinatura'}
             </Button>
             {isAdmin && (
               <Button variant="outline" className="w-full" onClick={() => setJustifyOpen(true)}>

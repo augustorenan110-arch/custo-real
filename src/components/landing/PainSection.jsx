@@ -1,19 +1,19 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Banknote, Scale, TrendingDown } from 'lucide-react';
 
 const PAINS = [
   {
-    icon: '≠',
+    icon: Banknote,
     title: 'R$ 0 na planilha ≠ R$ 0 no bolso',
     text: 'O FGTS acumulado e a multa de 40% não aparecem na sua planilha de custos, mas saem da conta bancária no dia da demissão.',
   },
   {
-    icon: '⚖',
+    icon: Scale,
     title: 'Ponto manual = processo trabalhista',
     text: 'Sem prova de vida e sem GPS, o funcionário contesta o horário e a Justiça costuma ficar do lado dele. Processos de R$ 8 mil a R$ 40 mil.',
   },
   {
-    icon: '📉',
+    icon: TrendingDown,
     title: 'Você contrata por R$ 2.000 e deve R$ 5.838',
     text: 'Saldo de salário, aviso prévio, 13º, férias, 1/3, FGTS e multa ficam invisíveis até a hora de demitir. Aí já é tarde para planejar.',
   },
@@ -44,7 +44,7 @@ export default function PainSection() {
               animate={{ opacity: [1, 0.55, 1], boxShadow: ['0 0 0 0 rgba(239,68,68,0.35)', '0 0 0 10px rgba(239,68,68,0)', '0 0 0 0 rgba(239,68,68,0)'] }}
               transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.3 }}
             >
-              {p.icon}
+              <p.icon className="h-5 w-5" strokeWidth={2} />
             </motion.span>
             <h3 className="mt-4 font-semibold">{p.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-foreground/65">{p.text}</p>

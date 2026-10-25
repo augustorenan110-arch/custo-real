@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import CameraCapture from '@/components/hr/CameraCapture';
+import AnimatedIcon from '@/components/ui/AnimatedIcon';
 
 export default function FaceEnroll({ employee, label, buttonClassName }) {
   const [open, setOpen] = useState(false);
@@ -39,7 +40,8 @@ export default function FaceEnroll({ employee, label, buttonClassName }) {
   return (
     <>
       <Button variant="outline" size="sm" className={buttonClassName} onClick={() => setOpen(true)}>
-        <ScanFace className="h-4 w-4" /> {label || (employee.face_ref_uri ? 'Atualizar rosto' : 'Cadastrar rosto')}
+        <AnimatedIcon icon={ScanFace} size={24} color="#08080A" animation="scan" />
+        {label || (employee.face_ref_uri ? 'Atualizar rosto' : 'Cadastrar rosto')}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-sm">

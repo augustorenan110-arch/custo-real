@@ -1,9 +1,19 @@
 import { useState } from 'react';
-import { CalendarClock, CalendarDays, FileText, Receipt } from 'lucide-react';
+import {
+  BarChart3,
+  CalendarClock,
+  CalendarDays,
+  FileCheck,
+  FileLock,
+  Lock,
+  ShieldAlert,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import AnimatedIcon from '@/components/ui/AnimatedIcon';
+import InternalBackBar from '@/components/InternalBackBar';
 import { brl } from '@/lib/format';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useTimeEntries, useCompany, useEmployees } from '@/hooks/useHr';
@@ -60,6 +70,8 @@ export default function EmployeeDetail({ employee, onClose }) {
           <DialogTitle>{employee.full_name}</DialogTitle>
         </DialogHeader>
 
+        <InternalBackBar label="Voltar para colaboradores" onBack={onClose} />
+
         <TrialCountdown company={company} usados={usados} />
 
         <p className="text-xs text-muted-foreground">
@@ -72,8 +84,8 @@ export default function EmployeeDetail({ employee, onClose }) {
           employee={employee}
           label={
             employee.face_ref_uri
-              ? '📸 ATUALIZAR ROSTO COM PROVA DE VIDA - ANTI FRAUDE'
-              : '📸 CADASTRAR ROSTO COM PROVA DE VIDA - ANTI FRAUDE'
+              ? 'ATUALIZAR ROSTO COM PROVA DE VIDA - ANTI FRAUDE'
+              : 'CADASTRAR ROSTO COM PROVA DE VIDA - ANTI FRAUDE'
           }
           buttonClassName={ROSTO_CTA}
         />
@@ -115,15 +127,18 @@ export default function EmployeeDetail({ employee, onClose }) {
           <div className="flex justify-between text-xs text-muted-foreground"><span>FGTS</span><span>{brl(slip.fgts)}</span></div>
         </div>
 
-        <div className="rounded-xl border-l-4 border-red-500 bg-[#1E293B] p-3 text-xs">
-          <span className="text-red-400">
-            ⚠️ Ponto no mês: {fmtMinutes(sheet.worked)} trabalhadas = risco trabalhista. Peça para bater ponto facial.
-          </span>
-          {(sheet.late > 0 || sheet.extra > 0) && (
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Atrasos {fmtMinutes(sheet.late)} · extras {fmtMinutes(sheet.extra)}
-            </p>
-          )}
+        <div className="flex items-start gap-2 rounded-xl border border-[#f97316] bg-[#451a03] p-3 text-xs">
+          <AnimatedIcon icon={ShieldAlert} size={20} color="#ef4444" className="mt-0.5" />
+          <div className="min-w-0">
+            <span className="text-[#fed7aa]">
+              Ponto no mês: {fmtMinutes(sheet.worked)} trabalhadas = risco trabalhista. Peça para bater ponto facial.
+            </span>
+            {(sheet.late > 0 || sheet.extra > 0) && (
+              <p className="mt-1 text-[11px] text-[#fdba74]">
+                Atrasos {fmtMinutes(sheet.late)} · extras {fmtMinutes(sheet.extra)}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="glass rounded-xl p-3 text-xs">
@@ -139,14 +154,16 @@ export default function EmployeeDetail({ employee, onClose }) {
             className="w-full bg-[#22C55E] font-bold text-black hover:bg-[#16a34a]"
             onClick={() => (expirado ? setPaywall(true) : payslipPdf({ company, employee, month, slip }))}
           >
-            <FileText className="h-4 w-4" /> {expirado ? '🔒 Holerite PDF' : 'Holerite PDF'}
+            <AnimatedIcon icon={expirado ? Lock : FileCheck} size={16} color="#08080A" />
+            {expirado ? 'Holerite PDF - bloqueado' : 'Holerite PDF'}
           </Button>
           <Button
             variant="outline"
             className="w-full bg-[#1E293B]"
             onClick={() => (gratis ? setPaywall(true) : timesheetPdf({ company, employee, month, sheet }))}
           >
-            <CalendarClock className="h-4 w-4" /> {gratis ? '🔒 Espelho PDF' : 'Espelho PDF'}
+            <AnimatedIcon icon={FileLock} size={16} color="#facc15" />
+            {gratis ? 'Espelho PDF - bloqueado' : 'Espelho PDF'}
           </Button>
           <Button
             variant="outline"
@@ -154,7 +171,8 @@ export default function EmployeeDetail({ employee, onClose }) {
             disabled={!mine.length}
             onClick={() => (gratis ? setPaywall(true) : expensesPdf({ company, employee, expenses: mine }))}
           >
-            <Receipt className="h-4 w-4" /> {gratis ? '🔒 Gastos PDF' : 'Gastos PDF'}
+            <AnimatedIcon icon={BarChart3} size={16} color="#ffffff" />
+            {gratis ? 'Gastos PDF - bloqueado' : 'Gastos PDF'}
           </Button>
         </div>
 
