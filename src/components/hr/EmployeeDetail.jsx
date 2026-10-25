@@ -19,6 +19,7 @@ import { payslipPdf, timesheetPdf, expensesPdf } from '@/lib/pdf';
 import { freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
 import FaceEnroll from '@/components/hr/FaceEnroll';
 import FaltaSection from '@/components/hr/FaltaSection';
+import BeneficiosCalculadora from '@/components/hr/BeneficiosCalculadora';
 import EmployeePassivoAlert from '@/components/hr/EmployeePassivoAlert';
 import TrialCountdown from '@/components/plan/TrialCountdown';
 import PaywallModal from '@/components/PaywallModal';
@@ -32,10 +33,19 @@ const labelMes = (m) => {
 };
 const ROSTO_CTA =
   'h-12 w-full rounded-xl bg-[#22C55E] font-bold text-black hover:bg-[#16a34a]';
+const EXTRAS_ZERO = {
+  vt: 0,
+  va: 0,
+  vr: 0,
+  horaExtra: 0,
+  vtAtivo: false,
+  vtCustoTotal: 0,
+  vtDescontoFuncionario: 0,
+};
 
 export default function EmployeeDetail({ employee, onClose }) {
   const [month, setMonth] = useState(thisMonth());
-  const [transport, setTransport] = useState(false);
+  const [beneficios, setBeneficios] = useState(EXTRAS_ZERO);
   const [paywall, setPaywall] = useState(false);
   const { data: me } = useMe();
   const { data: company } = useCompany();
@@ -62,12 +72,11 @@ export default function EmployeeDetail({ employee, onClose }) {
   const slip = buildPayslip({
     gross: employee.salary,
     extraHours: sheet.extra / 60,
-    transport,
+    transportDiscount: beneficios.vtDescontoFuncionario,
     faltaDiscount: faltasMes.desconto,
   });
-  const custo = calcularCustoEmpresa(slip.base);
+  const custo = calcularCustoEmpresa(slip.base, beneficios);
   const inss = slip.deductions.find((d) => d.label === 'INSS')?.value || 0;
-  const vt = slip.deductions.find((d) => d.label.startsWith('Vale-transporte'))?.value || 0;
 
   return (
     <Dialog open={!!employee} onOpenChange={(o) => !o && onClose()}>
@@ -120,18 +129,7 @@ export default function EmployeeDetail({ employee, onClose }) {
             onSaved={refetchFaltas}
           />
 
-          <div className="w-full">
-            <label className="mb-1.5 block text-xs font-medium text-[#94A3B8]">Vale-transporte</label>
-            <label className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#334155] bg-[#1E293B] transition-all hover:border-[#22C55E]">
-              <input
-                type="checkbox"
-                checked={transport}
-                onChange={(e) => setTransport(e.target.checked)}
-                className="h-4 w-4 shrink-0 accent-[#22C55E]"
-              />
-              <span className="whitespace-nowrap text-xs font-medium text-white sm:text-sm">Vale-transporte</span>
-            </label>
-          </div>
+          <BeneficiosCalculadora employee={employee} onExtras={setBeneficios} />
         </div>
 
         <div className="mb-4 space-y-3 rounded-xl border border-[#334155] bg-[#1E293B] p-4">
@@ -183,6 +181,30 @@ export default function EmployeeDetail({ employee, onClose }) {
               <span className="text-[#94A3B8]">Provisão 13º + Férias + 1/3 (1/12 por mês)</span>
               <span className="shrink-0 text-white">{brl(custo.provisoes)}</span>
             </div>
+            {custo.vt > 0 && (
+              <div className="flex justify-between text-xs">
+                <span className="text-[#94A3B8]">Vale-transporte (empresa)</span>
+                <span className="text-white">{brl(custo.vt)}</span>
+              </div>
+            )}
+            {custo.va > 0 && (
+              <div className="flex justify-between text-xs">
+                <span className="text-[#94A3B8]">Vale-alimentação PAT (empresa)</span>
+                <span className="text-white">{brl(custo.va)}</span>
+              </div>
+            )}
+            {custo.vr > 0 && (
+              <div className="flex justify-between text-xs">
+                <span className="text-[#94A3B8]">Vale-refeição PAT (empresa)</span>
+                <span className="text-white">{brl(custo.vr)}</span>
+              </div>
+            )}
+            {custo.horaExtra > 0 && (
+              <div className="flex justify-between text-xs">
+                <span className="text-[#94A3B8]">Horas extras + FGTS</span>
+                <span className="text-white">{brl(custo.horaExtra)}</span>
+              </div>
+            )}
             <div className="-mx-1 mt-2 flex justify-between rounded-lg border border-[#f59e0b]/30 bg-[#f59e0b]/10 p-2.5 text-sm font-black">
               <span className="text-[#fbbf24]">TOTAL QUE VOCÊ PAGA</span>
               <span className="text-base text-[#fbbf24]">{brl(custo.total)}</span>
@@ -190,9 +212,11 @@ export default function EmployeeDetail({ employee, onClose }) {
           </div>
 
           <p className="text-center text-[10px] text-[#64748b]">
-            {transport
-              ? `*Com vale-transporte: ${brl(vt)} descontados (6%) do funcionário.`
-              : '*Sem vale-transporte. Ao ativar, 6% do salário é descontado do funcionário.'}
+            {beneficios.vtAtivo
+              ? `*Vale-transporte: empresa paga ${brl(beneficios.vt)}/mês · funcionário desconta ${brl(
+                  beneficios.vtDescontoFuncionario,
+                )} (6%).`
+              : '*Sem vale-transporte. Ative na calculadora acima para entrar no Custo Real.'}
           </p>
         </div>
 

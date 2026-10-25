@@ -61,6 +61,86 @@
     "termination_breakdown": {
       "type": "string",
       "title": "Hist\u00f3rico do c\u00e1lculo de rescis\u00e3o (JSON)"
+    },
+    "vt_ativo": {
+      "type": "boolean",
+      "title": "Vale-transporte ativo",
+      "default": false
+    },
+    "vt_valor_passagem": {
+      "type": "number",
+      "title": "Valor da passagem (R$)"
+    },
+    "vt_dias_uteis": {
+      "type": "number",
+      "title": "Dias \u00fateis do VT"
+    },
+    "vt_dois_vales": {
+      "type": "boolean",
+      "title": "VT ida e volta",
+      "default": true
+    },
+    "vt_custo_empresa": {
+      "type": "number",
+      "title": "VT custo da empresa (R$)"
+    },
+    "vt_custo_total": {
+      "type": "number",
+      "title": "VT custo total (R$)"
+    },
+    "va_ativo": {
+      "type": "boolean",
+      "title": "Vale-alimenta\u00e7\u00e3o ativo",
+      "default": false
+    },
+    "va_valor_diario": {
+      "type": "number",
+      "title": "VA valor di\u00e1rio (R$)"
+    },
+    "va_dias_uteis": {
+      "type": "number",
+      "title": "Dias \u00fateis do benef\u00edcio"
+    },
+    "va_desconto_pat": {
+      "type": "number",
+      "title": "Desconto PAT do funcion\u00e1rio (%)"
+    },
+    "va_custo_empresa": {
+      "type": "number",
+      "title": "VA custo da empresa (R$)"
+    },
+    "va_custo_total": {
+      "type": "number",
+      "title": "VA custo total (R$)"
+    },
+    "vr_ativo": {
+      "type": "boolean",
+      "title": "Vale-refei\u00e7\u00e3o ativo",
+      "default": false
+    },
+    "vr_valor_diario": {
+      "type": "number",
+      "title": "VR valor di\u00e1rio (R$)"
+    },
+    "vr_custo_empresa": {
+      "type": "number",
+      "title": "VR custo da empresa (R$)"
+    },
+    "vr_custo_total": {
+      "type": "number",
+      "title": "VR custo total (R$)"
+    },
+    "horas_extras_50": {
+      "type": "number",
+      "title": "Horas extras 50%"
+    },
+    "horas_extras_100": {
+      "type": "number",
+      "title": "Horas extras 100%"
+    },
+    "custo_hora_extra": {
+      "type": "number",
+      "title": "Custo das horas extras + FGTS (R$)"
     }
   },
   "required": [
