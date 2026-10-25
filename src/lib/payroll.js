@@ -1,3 +1,7 @@
+import { custoDemissao } from '@/lib/campanha';
+import { monthsBetween } from '@/lib/rescisao';
+import { todayISO } from '@/lib/format';
+
 // Tabelas simplificadas (INSS progressivo e IRRF) — valores de referência 2025.
 const INSS_BANDS = [
   [1518.0, 0.075],
@@ -48,4 +52,52 @@ export function buildPayslip({ gross, extraHours = 0, hourValue, transport = fal
   if (transport) deductions.push({ label: 'Vale-transporte (6%)', value: round(Math.min(gross * 0.06, gross)) });
   const totalDed = round(deductions.reduce((s, d) => s + d.value, 0));
   return { earnings, deductions, total, totalDed, net: round(total - totalDed), fgts: round(total * 0.08) };
+}
+
+// ─── Custo real do empregador ────────────────────────────────────────────────
+// FGTS 8% + INSS patronal 20% + terceiros 5,8% + RAT 2% + provisões mensais de
+// 13º e férias + 1/3. Para um salário de R$ 2.000: 160 + 556 + 277,77.
+export const CUSTO_EMPRESA = {
+  fgts: 0.08,
+  patronal: 0.278,
+  provisoes: 0.138885,
+};
+
+export function calcularCustoEmpresa(salario) {
+  const s = round(Number(salario) || 0);
+  const fgts = round(s * CUSTO_EMPRESA.fgts);
+  const patronal = round(s * CUSTO_EMPRESA.patronal);
+  const provisoes = round(s * CUSTO_EMPRESA.provisoes);
+  return { salario: s, fgts, patronal, provisoes, total: round(s + fgts + patronal + provisoes) };
+}
+
+/** Folha base, custo real do mês e passivo de demissão de um colaborador. */
+export function custoRealFuncionario(funcionario, hoje = todayISO()) {
+  const salario = Number(funcionario?.salary) || 0;
+  const custo = calcularCustoEmpresa(salario);
+  const meses = monthsBetween(funcionario?.admission_date, hoje);
+  return {
+    folha: salario,
+    custoReal: custo.total,
+    passivo: custoDemissao(salario, meses).total,
+    meses,
+    custo,
+  };
+}
+
+/** Totais da empresa: folha base, custo real do mês e passivo de demissão. */
+export function calcularTotaisEmpresa(funcionarios = [], hoje = todayISO()) {
+  return funcionarios.reduce(
+    (acc, f) => {
+      const { folha, custoReal, passivo, custo } = custoRealFuncionario(f, hoje);
+      acc.folha = round(acc.folha + folha);
+      acc.fgts = round(acc.fgts + custo.fgts);
+      acc.patronal = round(acc.patronal + custo.patronal);
+      acc.provisoes = round(acc.provisoes + custo.provisoes);
+      acc.custoReal = round(acc.custoReal + custoReal);
+      acc.passivo = round(acc.passivo + passivo);
+      return acc;
+    },
+    { folha: 0, fgts: 0, patronal: 0, provisoes: 0, custoReal: 0, passivo: 0 },
+  );
 }

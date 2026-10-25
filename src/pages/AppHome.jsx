@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
@@ -50,11 +50,6 @@ export default function AppHome() {
 
   const passivoDe = (f) => custoDemissao(f?.salary, monthsBetween(f?.admission_date, hojeISO()));
 
-  const totalPassivo = useMemo(
-    () => funcionarios.reduce((acc, f) => acc + passivoDe(f).total, 0),
-    [funcionarios],
-  );
-
   const recarregar = () => {
     queryClient.invalidateQueries({ queryKey: ['minhas-empresas'] });
     queryClient.invalidateQueries({ queryKey: ['meus-funcionarios'] });
@@ -104,5 +99,5 @@ export default function AppHome() {
     );
   }
 
-  return <ResumoReal empresa={empresa} funcionarios={funcionarios} passivoTotal={totalPassivo} />;
+  return <ResumoReal empresa={empresa} funcionarios={funcionarios} />;
 }

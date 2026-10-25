@@ -13,7 +13,7 @@ import { brl } from '@/lib/format';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useTimeEntries, useCompany, useEmployees } from '@/hooks/useHr';
 import { useMe } from '@/hooks/useMe';
-import { buildPayslip } from '@/lib/payroll';
+import { buildPayslip, calcularCustoEmpresa } from '@/lib/payroll';
 import { buildTimesheet, fmtMinutes } from '@/lib/timesheet';
 import { payslipPdf, timesheetPdf, expensesPdf } from '@/lib/pdf';
 import { freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
@@ -23,12 +23,17 @@ import TrialCountdown from '@/components/plan/TrialCountdown';
 import PaywallModal from '@/components/PaywallModal';
 
 const thisMonth = () => new Date().toISOString().slice(0, 7);
+const labelMes = (m) => {
+  const d = new Date(`${m}-01T12:00:00`);
+  return Number.isNaN(d.getTime())
+    ? ''
+    : d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase().replace(' DE ', '/');
+};
 const ROSTO_CTA =
   'h-12 w-full rounded-xl bg-[#22C55E] font-bold text-black hover:bg-[#16a34a]';
 
 export default function EmployeeDetail({ employee, onClose }) {
   const [month, setMonth] = useState(thisMonth());
-  const [dependents, setDependents] = useState(0);
   const [transport, setTransport] = useState(false);
   const [paywall, setPaywall] = useState(false);
   const { data: me } = useMe();
@@ -55,8 +60,10 @@ export default function EmployeeDetail({ employee, onClose }) {
     gross: employee.salary,
     extraHours: sheet.extra / 60,
     transport,
-    dependents: Number(dependents) || 0,
   });
+  const custo = calcularCustoEmpresa(slip.total);
+  const inss = slip.deductions.find((d) => d.label === 'INSS')?.value || 0;
+  const vt = slip.deductions.find((d) => d.label.startsWith('Vale-transporte'))?.value || 0;
 
   return (
     <Dialog open={!!employee} onOpenChange={(o) => !o && onClose()}>
@@ -86,53 +93,88 @@ export default function EmployeeDetail({ employee, onClose }) {
         />
 
         <div className="mb-4 grid grid-cols-12 items-end gap-3">
-          <div className="col-span-5">
-            <label htmlFor="m" className="mb-1 block text-xs text-[#94A3B8]">Mês</label>
+          <div className="col-span-7">
+            <label htmlFor="m" className="mb-1.5 block text-xs font-medium text-[#94A3B8]">Mês de referência</label>
             <div className="relative">
               <input
                 id="m"
                 type="month"
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
-                className="h-10 w-full rounded-lg border border-[#334155] bg-[#1E293B] px-3 pr-10 text-sm text-white focus:border-[#22C55E] focus:outline-none"
+                className="h-11 w-full rounded-xl border border-[#334155] bg-[#1E293B] px-4 pr-12 text-sm font-medium text-white focus:border-[#22C55E] focus:outline-none focus:ring-1 focus:ring-[#22C55E]"
               />
-              <Calendar
-                size={16}
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b]"
-              />
+              <div className="pointer-events-none absolute right-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md bg-[#334155]">
+                <Calendar size={14} color="#94A3B8" />
+              </div>
             </div>
           </div>
 
-          <div className="col-span-3">
-            <label htmlFor="d" className="mb-1 block text-xs text-[#94A3B8]">Dependentes</label>
-            <input
-              id="d"
-              type="number"
-              min="0"
-              value={dependents}
-              onChange={(e) => setDependents(e.target.value)}
-              className="h-10 w-full rounded-lg border border-[#334155] bg-[#1E293B] px-3 text-center text-sm text-white focus:border-[#22C55E] focus:outline-none"
-            />
-          </div>
-
-          <div className="col-span-4 flex h-10 items-center">
-            <label className="flex h-10 w-full cursor-pointer items-center gap-2 rounded-lg border border-[#334155] bg-[#1E293B] px-3">
+          <div className="col-span-5">
+            <label className="invisible mb-1.5 block text-xs font-medium text-[#94A3B8]">Transporte</label>
+            <label className="flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#334155] bg-[#1E293B] transition-all hover:border-[#22C55E]">
               <input
                 type="checkbox"
                 checked={transport}
                 onChange={(e) => setTransport(e.target.checked)}
                 className="h-4 w-4 shrink-0 accent-[#22C55E]"
               />
-              <span className="truncate text-xs text-white">Vale-transporte</span>
+              <span className="whitespace-nowrap text-xs font-medium text-white sm:text-sm">Vale-transporte</span>
             </label>
           </div>
         </div>
 
-        <div className="glass space-y-1 rounded-xl p-3 text-sm">
-          <div className="flex justify-between"><span>Proventos</span><b>{brl(slip.total)}</b></div>
-          <div className="flex justify-between"><span>Descontos</span><b>{brl(slip.totalDed)}</b></div>
-          <div className="flex justify-between text-primary"><span>Líquido</span><b>{brl(slip.net)}</b></div>
-          <div className="flex justify-between text-xs text-muted-foreground"><span>FGTS</span><span>{brl(slip.fgts)}</span></div>
+        <div className="mb-4 space-y-3 rounded-xl border border-[#334155] bg-[#1E293B] p-4">
+          <div className="flex items-center justify-between border-b border-[#334155] pb-2">
+            <span className="text-xs font-bold tracking-wider text-[#94A3B8]">
+              FOLHA DO MÊS - {labelMes(month)}
+            </span>
+            <span className="rounded-full bg-[#22C55E] px-2 py-0.5 text-[10px] font-bold text-black">CALCULADO</span>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-[#cbd5e1]">Salário base</span>
+              <span className="font-medium text-white">{brl(slip.total)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[#94A3B8]">(-) INSS 7,5% - 9%</span>
+              <span className="text-[#f87171]">{brl(inss)}</span>
+            </div>
+            <div className="-mx-1 flex justify-between rounded-lg bg-[#08080A] p-2 text-sm font-bold">
+              <span className="text-[#22C55E]">Líquido pro funcionário</span>
+              <span className="text-[#22C55E]">{brl(slip.net)}</span>
+            </div>
+          </div>
+
+          <div className="space-y-2 border-t border-dashed border-[#334155] pt-3">
+            <p className="text-xs font-bold text-[#f59e0b]">CUSTO REAL PRA SUA EMPRESA:</p>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#94A3B8]">Salário</span>
+              <span className="text-white">{brl(custo.salario)}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#94A3B8]">FGTS 8%</span>
+              <span className="text-white">{brl(custo.fgts)}</span>
+            </div>
+            <div className="flex justify-between gap-3 text-xs">
+              <span className="text-[#94A3B8]">INSS Patronal 20% + Terceiros 5,8% + RAT 2%</span>
+              <span className="shrink-0 text-white">{brl(custo.patronal)}</span>
+            </div>
+            <div className="flex justify-between gap-3 text-xs">
+              <span className="text-[#94A3B8]">Provisão 13º + Férias + 1/3 (1/12 por mês)</span>
+              <span className="shrink-0 text-white">{brl(custo.provisoes)}</span>
+            </div>
+            <div className="-mx-1 mt-2 flex justify-between rounded-lg border border-[#f59e0b]/30 bg-[#f59e0b]/10 p-2.5 text-sm font-black">
+              <span className="text-[#fbbf24]">TOTAL QUE VOCÊ PAGA</span>
+              <span className="text-base text-[#fbbf24]">{brl(custo.total)}</span>
+            </div>
+          </div>
+
+          <p className="text-center text-[10px] text-[#64748b]">
+            {transport
+              ? `*Com vale-transporte: ${brl(vt)} descontados (6%) do funcionário.`
+              : '*Sem vale-transporte. Ao ativar, 6% do salário é descontado do funcionário.'}
+          </p>
         </div>
 
         <div className="flex items-start gap-2 rounded-xl border border-[#f97316] bg-[#451a03] p-3 text-xs">

@@ -24,7 +24,6 @@ const TELAS_INTERNAS = [
   '/calculadoras',
   '/rescisao',
   '/ranking',
-  '/relatorio-contador',
   '/planos',
 ];
 
