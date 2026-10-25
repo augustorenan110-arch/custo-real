@@ -1,16 +1,11 @@
 import { useState } from 'react';
 import {
   BarChart3,
-  CalendarClock,
-  CalendarDays,
+  Calendar,
   FileCheck,
-  FileLock,
   Lock,
   ShieldAlert,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import AnimatedIcon from '@/components/ui/AnimatedIcon';
 import InternalBackBar from '@/components/InternalBackBar';
@@ -90,34 +85,47 @@ export default function EmployeeDetail({ employee, onClose }) {
           buttonClassName={ROSTO_CTA}
         />
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="min-w-0 space-y-1">
-            <Label htmlFor="m">Mês</Label>
-            <div className="relative min-w-0">
-              <Input
+        <div className="mb-4 grid grid-cols-12 items-end gap-3">
+          <div className="col-span-5">
+            <label htmlFor="m" className="mb-1 block text-xs text-[#94A3B8]">Mês</label>
+            <div className="relative">
+              <input
                 id="m"
                 type="month"
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
-                className="field min-w-0 truncate pr-8 text-sm"
+                className="h-10 w-full rounded-lg border border-[#334155] bg-[#1E293B] px-3 pr-10 text-sm text-white focus:border-[#22C55E] focus:outline-none"
               />
-              <CalendarDays className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Calendar
+                size={16}
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b]"
+              />
             </div>
           </div>
-          <div className="min-w-0 space-y-1">
-            <Label htmlFor="d">Dependentes</Label>
-            <Input
+
+          <div className="col-span-3">
+            <label htmlFor="d" className="mb-1 block text-xs text-[#94A3B8]">Dependentes</label>
+            <input
               id="d"
               type="number"
               min="0"
               value={dependents}
               onChange={(e) => setDependents(e.target.value)}
-              className="field min-w-0"
+              className="h-10 w-full rounded-lg border border-[#334155] bg-[#1E293B] px-3 text-center text-sm text-white focus:border-[#22C55E] focus:outline-none"
             />
           </div>
-          <label className="col-span-2 flex items-end gap-2 pb-2 text-xs sm:col-span-1">
-            <input type="checkbox" checked={transport} onChange={(e) => setTransport(e.target.checked)} /> Vale-transporte
-          </label>
+
+          <div className="col-span-4 flex h-10 items-center">
+            <label className="flex h-10 w-full cursor-pointer items-center gap-2 rounded-lg border border-[#334155] bg-[#1E293B] px-3">
+              <input
+                type="checkbox"
+                checked={transport}
+                onChange={(e) => setTransport(e.target.checked)}
+                className="h-4 w-4 shrink-0 accent-[#22C55E]"
+              />
+              <span className="truncate text-xs text-white">Vale-transporte</span>
+            </label>
+          </div>
         </div>
 
         <div className="glass space-y-1 rounded-xl p-3 text-sm">
@@ -149,31 +157,48 @@ export default function EmployeeDetail({ employee, onClose }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          <Button
-            className="w-full bg-[#22C55E] font-bold text-black hover:bg-[#16a34a]"
+        <div className="mt-4 flex flex-col gap-3">
+          <button
+            type="button"
             onClick={() => (expirado ? setPaywall(true) : payslipPdf({ company, employee, month, slip }))}
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] font-bold text-black transition-all hover:bg-[#16a34a]"
           >
-            <AnimatedIcon icon={expirado ? Lock : FileCheck} size={16} color="#08080A" />
-            {expirado ? 'Holerite PDF - bloqueado' : 'Holerite PDF'}
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full bg-[#1E293B]"
-            onClick={() => (gratis ? setPaywall(true) : timesheetPdf({ company, employee, month, sheet }))}
-          >
-            <AnimatedIcon icon={FileLock} size={16} color="#facc15" />
-            {gratis ? 'Espelho PDF - bloqueado' : 'Espelho PDF'}
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full bg-[#1E293B]"
-            disabled={!mine.length}
-            onClick={() => (gratis ? setPaywall(true) : expensesPdf({ company, employee, expenses: mine }))}
-          >
-            <AnimatedIcon icon={BarChart3} size={16} color="#ffffff" />
-            {gratis ? 'Gastos PDF - bloqueado' : 'Gastos PDF'}
-          </Button>
+            <AnimatedIcon icon={expirado ? Lock : FileCheck} size={18} color="#08080A" />
+            Holerite PDF
+          </button>
+
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => (gratis ? setPaywall(true) : timesheetPdf({ company, employee, month, sheet }))}
+              className={`flex h-11 w-full items-center justify-center gap-2 rounded-xl border bg-[#1E293B] font-medium transition-colors ${
+                gratis ? 'border-[#334155] text-[#94A3B8] hover:border-[#eab308]' : 'border-[#334155] text-white hover:border-[#22C55E]'
+              }`}
+            >
+              <AnimatedIcon icon={gratis ? Lock : FileCheck} size={18} color={gratis ? '#94A3B8' : '#22C55E'} />
+              <span className="text-sm">Espelho PDF</span>
+              {gratis && <span className="rounded-full bg-[#334155] px-2 py-0.5 text-[10px]">bloqueado</span>}
+            </button>
+
+            <button
+              type="button"
+              disabled={!mine.length && !gratis}
+              onClick={() => (gratis ? setPaywall(true) : expensesPdf({ company, employee, expenses: mine }))}
+              className={`flex h-11 w-full items-center justify-center gap-2 rounded-xl border bg-[#1E293B] font-medium transition-colors disabled:opacity-50 ${
+                gratis ? 'border-[#334155] text-[#94A3B8] hover:border-[#eab308]' : 'border-[#334155] text-white hover:border-[#22C55E]'
+              }`}
+            >
+              <AnimatedIcon icon={gratis ? Lock : BarChart3} size={18} color={gratis ? '#94A3B8' : '#ffffff'} />
+              <span className="text-sm">Gastos PDF</span>
+              {gratis && <span className="rounded-full bg-[#334155] px-2 py-0.5 text-[10px]">bloqueado</span>}
+            </button>
+          </div>
+
+          {(gratis || expirado) && (
+            <p className="mt-1 text-center text-[11px] text-[#64748b]">
+              Desbloqueie por R$59,90/mês para liberar todos os PDFs com validade jurídica
+            </p>
+          )}
         </div>
 
         <PaywallModal
