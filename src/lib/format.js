@@ -19,6 +19,14 @@ export const todayISO = () => new Date().toISOString().slice(0, 10);
 
 export const onlyDigits = (v) => String(v || '').replace(/\D/g, '');
 
+// Máscara de digitação: 000.000.000-00
+export const mascaraCpf = (v) =>
+  onlyDigits(v)
+    .slice(0, 11)
+    .replace(/^(\d{3})(\d)/, '$1.$2')
+    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1-$2');
+
 export const cnpjBR = (v) => {
   const d = onlyDigits(v);
   return d.length === 14 ? d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5') : v || '—';

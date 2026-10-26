@@ -40,6 +40,8 @@ import Entrar from './pages/Entrar';
 import EntrarEmpresa from './pages/EntrarEmpresa';
 import EmpresaCadastro from './pages/EmpresaCadastro';
 import EntrarFuncionario from './pages/EntrarFuncionario';
+import FuncionarioCriarConta from './pages/FuncionarioCriarConta';
+import FuncionarioRecuperarSenha from './pages/FuncionarioRecuperarSenha';
 import MeuInicio from './pages/MeuInicio';
 import MeuHolerite from './pages/MeuHolerite';
 import Indicacao from './pages/Indicacao';
@@ -90,6 +92,8 @@ const AuthenticatedApp = () => {
       <Route path="/entrar/empresa" element={<EntrarEmpresa />} />
       <Route path="/entrar/empresa/cadastro" element={<EmpresaCadastro />} />
       <Route path="/entrar/funcionario" element={<EntrarFuncionario />} />
+      <Route path="/entrar/funcionario/criar-acesso" element={<FuncionarioCriarConta />} />
+      <Route path="/entrar/funcionario/esqueci-senha" element={<FuncionarioRecuperarSenha />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/entrar" replace />} />}>
         <Route path="/painel-contador" element={<PainelContador />} />
         <Route element={<AppShell />}>

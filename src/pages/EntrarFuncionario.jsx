@@ -6,14 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/components/AuthLayout';
-import { onlyDigits } from '@/lib/format';
-
-const mascaraCpf = (v) =>
-  onlyDigits(v)
-    .slice(0, 11)
-    .replace(/^(\d{3})(\d)/, '$1.$2')
-    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-    .replace(/\.(\d{3})(\d)/, '.$1-$2');
+import { mascaraCpf, onlyDigits } from '@/lib/format';
 
 export default function EntrarFuncionario() {
   const [cpf, setCpf] = useState('');
@@ -98,9 +91,19 @@ export default function EntrarFuncionario() {
         </Button>
       </form>
 
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
+        <Link to="/entrar/funcionario/criar-acesso" className="font-medium text-primary hover:underline">
+          Criar meu acesso
+        </Link>
+        <span className="h-3 w-px bg-white/15" />
+        <Link to="/entrar/funcionario/esqueci-senha" className="font-medium text-primary hover:underline">
+          Esqueci minha senha
+        </Link>
+      </div>
+
       <p className="mt-4 text-center text-xs text-muted-foreground">
-        Primeiro acesso? Abra o convite que o seu RH enviou por e-mail para criar a senha e depois entre aqui com o
-        seu CPF. Se aparecer “CPF não encontrado”, peça ao RH para cadastrar o seu acesso.
+        O primeiro acesso usa o CPF e o e-mail que o seu RH cadastrou na sua ficha. Se aparecer “CPF não encontrado”,
+        peça ao RH para cadastrar o seu acesso.
       </p>
     </AuthLayout>
   );

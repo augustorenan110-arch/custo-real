@@ -26,7 +26,9 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       await base44.auth.resetPassword({ resetToken, newPassword });
-      window.location.href = "/login";
+      // O app tem dois perfis (empresa e funcionário): a tela de escolha evita
+      // que o funcionário caia no login da empresa depois de redefinir a senha.
+      window.location.href = "/entrar";
     } catch (err) {
       setError(err.message || "Failed to reset password");
     } finally {
