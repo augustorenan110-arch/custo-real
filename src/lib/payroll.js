@@ -1,37 +1,26 @@
 import { custoDemissao } from '@/lib/campanha';
 import { monthsBetween } from '@/lib/rescisao';
 import { todayISO } from '@/lib/format';
+import { getFiscal } from '@/lib/fiscal';
 
-// Tabelas simplificadas (INSS progressivo e IRRF) — valores de referência 2025.
-const INSS_BANDS = [
-  [1518.0, 0.075],
-  [2793.88, 0.09],
-  [4190.83, 0.12],
-  [8157.41, 0.14],
-];
-const IRRF_BANDS = [
-  [2428.8, 0, 0],
-  [2826.65, 0.075, 182.16],
-  [3751.05, 0.15, 394.16],
-  [4664.68, 0.225, 675.49],
-  [Infinity, 0.275, 908.73],
-];
+// As alíquotas de INSS, IRRF, FGTS e INSS patronal vêm das tabelas oficiais
+// (entidade ConfigFiscal) — nenhum valor chapado no código.
 const IRRF_DEP = 189.59;
 
 export function calcInss(gross) {
-  let prev = 0;
+  let anterior = 0;
   let total = 0;
-  for (const [limit, rate] of INSS_BANDS) {
-    if (gross > prev) total += (Math.min(gross, limit) - prev) * rate;
-    prev = limit;
+  for (const { ate, aliquota } of getFiscal().inss) {
+    if (gross > anterior) total += (Math.min(gross, ate) - anterior) * (aliquota / 100);
+    anterior = ate;
   }
   return round(total);
 }
 
 export function calcIrrf(gross, inss, dependents = 0) {
   const base = gross - inss - dependents * IRRF_DEP;
-  for (const [limit, rate, ded] of IRRF_BANDS) {
-    if (base <= limit) return round(Math.max(0, base * rate - ded));
+  for (const { ate, aliquota, deducao } of getFiscal().irrf) {
+    if (base <= ate) return round(Math.max(0, base * (aliquota / 100) - deducao));
   }
   return 0;
 }
@@ -68,7 +57,7 @@ export function buildPayslip({
     base,
     totalDed,
     net: round(total - totalDed),
-    fgts: round(base * 0.08),
+    fgts: round(base * (getFiscal().fgts / 100)),
   };
 }
 
@@ -96,22 +85,21 @@ export function resumoFaltas(faltas = [], salario = 0) {
 }
 
 // ─── Custo real do empregador ────────────────────────────────────────────────
-// FGTS 8% + INSS patronal 20% + terceiros 5,8% + RAT 2% + provisões mensais de
-// 13º e férias + 1/3. Para um salário de R$ 2.000: 160 + 556 + 277,77.
+// FGTS e INSS patronal vêm das tabelas oficiais (ConfigFiscal); aqui ficam só as
+// provisões mensais de 13º e férias + 1/3.
 export const CUSTO_EMPRESA = {
-  fgts: 0.08,
-  patronal: 0.278,
   provisoes: 0.138885,
 };
 
 export function calcularCustoEmpresa(salario, extras = {}) {
+  const fiscal = getFiscal();
   const s = round(Number(salario) || 0);
   const vt = round(Number(extras.vt) || 0);
   const va = round(Number(extras.va) || 0);
   const vr = round(Number(extras.vr) || 0);
   const horaExtra = round(Number(extras.horaExtra) || 0);
-  const fgts = round(s * CUSTO_EMPRESA.fgts);
-  const patronal = round(s * CUSTO_EMPRESA.patronal);
+  const fgts = round(s * (fiscal.fgts / 100));
+  const patronal = round(s * (fiscal.patronal / 100));
   const provisoes = round(s * CUSTO_EMPRESA.provisoes);
   return {
     salario: s,
@@ -196,7 +184,7 @@ export function calcularHoraExtra({ salario = 0, horas50 = 0, horas100 = 0, hora
   const total50 = round(valor50 * horas50);
   const total100 = round(valor100 * horas100);
   const custoTotalExtra = round(total50 + total100);
-  const fgts = round(custoTotalExtra * 0.08);
+  const fgts = round(custoTotalExtra * (getFiscal().fgts / 100));
   const custoComFgts = round(custoTotalExtra + fgts);
   const reflexoDSR = round(custoTotalExtra * REFLEXO_DSR);
   return {

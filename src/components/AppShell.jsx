@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { LayoutDashboard, Home, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator, ScanFace, Trophy, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Home, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator, ScanFace, Trophy, Sparkles, Scale } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import { useCompany } from '@/hooks/useHr';
 import { TRIAL_PLAN, trialEndDate, freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
+import { carregarFiscal } from '@/lib/fiscal';
 import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
 import MoreMenu from '@/components/MoreMenu';
 import PaywallModal from '@/components/PaywallModal';
@@ -25,6 +26,7 @@ const TELAS_INTERNAS = [
   '/rescisao',
   '/ranking',
   '/planos',
+  '/tabelas-oficiais',
 ];
 
 const linkClass = ({ isActive }) =>
@@ -40,6 +42,11 @@ export default function AppShell() {
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
   const isAdmin = me?.role === 'admin';
+
+  // Tabelas oficiais (INSS, FGTS, IRRF, patronal) — carregadas uma vez por sessão.
+  useEffect(() => {
+    carregarFiscal().catch(() => {});
+  }, []);
 
   // Primeiro acesso (e-mail ou Google): abre 7 dias de teste grátis (3 funcionários).
   useEffect(() => {
@@ -91,6 +98,7 @@ export default function AppShell() {
         { to: '/auditoria', label: 'Auditoria', icon: ShieldCheck },
         { to: '/assistente', label: 'Assistente IA', icon: Bot },
         { to: '/calculadoras', label: 'Calculadoras', icon: Calculator },
+        { to: '/tabelas-oficiais', label: 'Tabelas Oficiais', icon: Scale },
         { to: '/empresa', label: 'Empresa', icon: Building2 },
       ]
     : [];

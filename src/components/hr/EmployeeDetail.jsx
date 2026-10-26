@@ -3,6 +3,7 @@ import {
   BarChart3,
   Calendar,
   FileCheck,
+  FileText,
   Lock,
   ShieldAlert,
 } from 'lucide-react';
@@ -23,6 +24,9 @@ import BeneficiosCalculadora from '@/components/hr/BeneficiosCalculadora';
 import EmployeePassivoAlert from '@/components/hr/EmployeePassivoAlert';
 import TrialCountdown from '@/components/plan/TrialCountdown';
 import PaywallModal from '@/components/PaywallModal';
+import FiscalDisclaimer from '@/components/FiscalDisclaimer';
+import { useFiscalVigente } from '@/hooks/useFiscal';
+import { holeritePdf } from '@/lib/holerite';
 
 const thisMonth = () => new Date().toISOString().slice(0, 7);
 const labelMes = (m) => {
@@ -47,6 +51,8 @@ export default function EmployeeDetail({ employee, onClose }) {
   const [month, setMonth] = useState(thisMonth());
   const [beneficios, setBeneficios] = useState(EXTRAS_ZERO);
   const [paywall, setPaywall] = useState(false);
+  const [gerando, setGerando] = useState(false);
+  const fiscal = useFiscalVigente();
   const { data: me } = useMe();
   const { data: company } = useCompany();
   const { data: employees = [] } = useEmployees();
@@ -77,6 +83,25 @@ export default function EmployeeDetail({ employee, onClose }) {
   });
   const custo = calcularCustoEmpresa(slip.base, beneficios);
   const inss = slip.deductions.find((d) => d.label === 'INSS')?.value || 0;
+
+  const pct = (v) => String(Number(v) || 0).replace('.', ',');
+  const aliquotasInss = fiscal.inss.map((f) => f.aliquota);
+  const labelInss = `${pct(Math.min(...aliquotasInss))}% a ${pct(Math.max(...aliquotasInss))}%`;
+
+  const gerarHolerite = async () => {
+    if (expirado) {
+      setPaywall(true);
+      return;
+    }
+    setGerando(true);
+    try {
+      await holeritePdf({ company, employee, month, slip });
+    } catch (e) {
+      console.error('Não foi possível gerar o holerite', e);
+    } finally {
+      setGerando(false);
+    }
+  };
 
   return (
     <Dialog open={!!employee} onOpenChange={(o) => !o && onClose()}>
@@ -154,7 +179,7 @@ export default function EmployeeDetail({ employee, onClose }) {
               </div>
             )}
             <div className="flex justify-between text-sm">
-              <span className="text-[#94A3B8]">(-) INSS 7,5% - 9%</span>
+              <span className="text-[#94A3B8]">(-) INSS {labelInss}</span>
               <span className="text-[#f87171]">{brl(inss)}</span>
             </div>
             <div className="-mx-1 flex justify-between rounded-lg bg-[#08080A] p-2 text-sm font-bold">
@@ -170,11 +195,11 @@ export default function EmployeeDetail({ employee, onClose }) {
               <span className="text-white">{brl(custo.salario)}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-[#94A3B8]">FGTS 8%</span>
+              <span className="text-[#94A3B8]">FGTS {pct(fiscal.fgts)}%</span>
               <span className="text-white">{brl(custo.fgts)}</span>
             </div>
             <div className="flex justify-between gap-3 text-xs">
-              <span className="text-[#94A3B8]">INSS Patronal 20% + Terceiros 5,8% + RAT 2%</span>
+              <span className="text-[#94A3B8]">INSS Patronal + Terceiros + RAT {pct(fiscal.patronal)}%</span>
               <span className="shrink-0 text-white">{brl(custo.patronal)}</span>
             </div>
             <div className="flex justify-between gap-3 text-xs">
@@ -218,6 +243,8 @@ export default function EmployeeDetail({ employee, onClose }) {
                 )} (6%).`
               : '*Sem vale-transporte. Ative na calculadora acima para entrar no Custo Real.'}
           </p>
+
+          <FiscalDisclaimer className="border-t border-dashed border-[#334155] pt-2 text-center" />
         </div>
 
         <div className="flex items-start gap-2 rounded-xl border border-[#f97316] bg-[#451a03] p-3 text-xs">
@@ -243,6 +270,7 @@ export default function EmployeeDetail({ employee, onClose }) {
         </div>
 
         <div className="mt-4 flex flex-col gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <button
             type="button"
             onClick={() => (expirado ? setPaywall(true) : payslipPdf({ company, employee, month, slip }))}
@@ -251,6 +279,17 @@ export default function EmployeeDetail({ employee, onClose }) {
             <AnimatedIcon icon={expirado ? Lock : FileCheck} size={18} color="#08080A" />
             Holerite PDF
           </button>
+
+          <button
+            type="button"
+            disabled={gerando}
+            onClick={gerarHolerite}
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#2563eb] font-bold text-white transition-all hover:bg-[#1d4ed8] disabled:opacity-60"
+          >
+            <AnimatedIcon icon={expirado ? Lock : FileText} size={18} color="#ffffff" />
+            {gerando ? 'Gerando holerite...' : 'Holerite com Logo CR'}
+          </button>
+          </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <button

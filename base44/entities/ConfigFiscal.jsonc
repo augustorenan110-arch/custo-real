@@ -1,0 +1,61 @@
+{
+  "name": "ConfigFiscal",
+  "type": "object",
+  "properties": {
+    "nome_tabela": {
+      "type": "string",
+      "title": "Tabela",
+      "description": "INSS_2026, FGTS, IRRF, SALARIO_MINIMO, INSS_PATRONAL"
+    },
+    "porcentagem": {
+      "type": "number",
+      "title": "Porcentagem (%)"
+    },
+    "faixa_de": {
+      "type": "number",
+      "title": "Faixa de (R$)"
+    },
+    "faixa_ate": {
+      "type": "number",
+      "title": "Faixa at\u00e9 (R$)"
+    },
+    "valor_fixo": {
+      "type": "number",
+      "title": "Valor fixo / dedu\u00e7\u00e3o (R$)"
+    },
+    "data_vigencia": {
+      "type": "string",
+      "format": "date",
+      "title": "Vig\u00eancia"
+    },
+    "fonte_oficial": {
+      "type": "string",
+      "title": "Fonte oficial"
+    },
+    "atualizado_em": {
+      "type": "string",
+      "title": "Atualizado em (ISO)"
+    }
+  },
+  "required": [
+    "nome_tabela"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

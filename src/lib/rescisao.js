@@ -1,6 +1,8 @@
 // Gasto com demissão (rescisão) — fórmula CLT usada no simulador /rescisao
 // e no modal "Demitir" da lista de colaboradores.
 
+import { getFiscal } from '@/lib/fiscal';
+
 export const TERMINATION_TYPES = [
   { value: 'sem_justa_causa', label: 'Sem Justa Causa' },
   { value: 'justa_causa', label: 'Justa Causa' },
@@ -87,7 +89,7 @@ export function calcRescisao({
   const feriasVencidas = round((salario + salario / 3) * periodosVencidos);
 
   // G) FGTS do mês da rescisão
-  const fgtsMes = round(0.08 * (saldo + decimo));
+  const fgtsMes = round((getFiscal().fgts / 100) * (saldo + decimo));
 
   // H) Multa de 40% do FGTS
   const multa = tipo_demissao === 'sem_justa_causa' ? round(fgts * 0.4) : 0;
@@ -128,4 +130,4 @@ export function calcRescisao({
 }
 
 export const suggestedFgts = (salario, meses) =>
-  round((Number(salario) || 0) * 0.08 * (Number(meses) || 0));
+  round((Number(salario) || 0) * (getFiscal().fgts / 100) * (Number(meses) || 0));

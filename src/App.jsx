@@ -35,6 +35,7 @@ import Ativar from './pages/Ativar';
 import AppHome from './pages/AppHome';
 import Ranking from './pages/Ranking';
 import RelatorioContador from './pages/RelatorioContador';
+import TabelasOficiais from './pages/TabelasOficiais';
 import Indicacao from './pages/Indicacao';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
@@ -96,6 +97,7 @@ const AuthenticatedApp = () => {
           <Route path="/rescisao" element={<Rescisao />} />
           <Route path="/ranking" element={<Ranking />} />
           <Route path="/relatorio-contador" element={<RelatorioContador />} />
+          <Route path="/tabelas-oficiais" element={<TabelasOficiais />} />
           <Route path="/planos" element={<Planos />} />
         </Route>
       </Route>
