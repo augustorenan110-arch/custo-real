@@ -25,11 +25,11 @@ export default function AjudaRelatorio({ open }) {
 
       <details style={{ background: '#08080A', borderRadius: '8px', padding: '10px' }}>
         <summary style={{ color: 'white', fontSize: '13px', cursor: 'pointer' }}>
-          Por que Custo Real é R$2.993 e não R$2.000?
+          Por que Custo Real é R$3.136 e não R$2.000?
         </summary>
         <p style={{ color: '#94A3B8', fontSize: '12px', marginTop: '6px' }}>
-          R$2.000 + FGTS 8% (R$160) + INSS 27,8% (R$556) + provisões de 13º e férias (R$277) = R$2.993. Você paga isso
-          todo mês mesmo sem ver.
+          R$2.000 + FGTS 8% (R$160) + INSS patronal + terceiros + RAT 27,8% (R$556) + provisões de 13º, férias e 1/3
+          (R$389) + FGTS sobre as provisões (R$31) = R$3.136. Você paga isso todo mês mesmo sem ver.
         </p>
       </details>
 

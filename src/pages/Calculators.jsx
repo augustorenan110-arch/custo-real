@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { brl } from '@/lib/format';
-import { calcInss, calcIrrf } from '@/lib/payroll';
+import CalculadoraCustoFuncionario from '@/components/CalculadoraCustoFuncionario';
 
 const num = (v) => Number(v) || 0;
 
@@ -22,28 +22,6 @@ function Field({ id, label, value, onChange, step }) {
     <div className="space-y-1.5">
       <Label htmlFor={id}>{label}</Label>
       <Input id={id} type="number" inputMode="decimal" step={step} value={value} onChange={(e) => onChange(e.target.value)} className="field" />
-    </div>
-  );
-}
-
-function CltPj() {
-  const [gross, setGross] = useState(5000);
-  const g = num(gross);
-  const benefits = g * 0.08 + g / 12 + g / 12 / 3 * 1 + g / 12; // FGTS + 13º + 1/3 férias + férias
-  const inss = calcInss(g);
-  const net = g - inss - calcIrrf(g, inss);
-  const totalCost = g * 1.7;
-  const pjEquivalent = g + benefits;
-  return (
-    <div className="space-y-3">
-      <Field id="g" label="Salário bruto CLT (R$)" value={gross} onChange={setGross} />
-      <div className="glass space-y-1.5 rounded-xl p-4">
-        <Row label="Líquido CLT (estimado)" value={brl(net)} />
-        <Row label="Benefícios mensais (FGTS, 13º, férias)" value={brl(benefits)} />
-        <Row label="PJ equivalente" value={brl(pjEquivalent)} strong />
-        <Row label="Custo da empresa no CLT (~70% de encargos)" value={brl(totalCost)} />
-        <Row label="Economia da empresa com PJ" value={brl(Math.max(0, totalCost - pjEquivalent))} strong />
-      </div>
     </div>
   );
 }
@@ -128,12 +106,12 @@ export default function Calculators() {
         <p className="text-sm text-muted-foreground">Estimativas de referência, sem valor de cálculo oficial.</p>
       </div>
       <Tabs defaultValue="clt">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="clt">CLT x PJ</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 text-xs sm:text-sm">
+          <TabsTrigger value="clt">Custo do Funcionário</TabsTrigger>
           <TabsTrigger value="resc">Rescisão</TabsTrigger>
           <TabsTrigger value="ferias">13º e férias</TabsTrigger>
         </TabsList>
-        <TabsContent value="clt"><CltPj /></TabsContent>
+        <TabsContent value="clt"><CalculadoraCustoFuncionario /></TabsContent>
         <TabsContent value="resc"><Termination /></TabsContent>
         <TabsContent value="ferias"><ThirteenthVacation /></TabsContent>
       </Tabs>

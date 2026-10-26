@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Building2, Loader2, Lock, Mail } from 'lucide-react';
+import { Building2, Loader2, Mail } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/components/AuthLayout';
+import PasswordInput from '@/components/PasswordInput';
 import GoogleIcon from '@/components/GoogleIcon';
 import { useAuth } from '@/lib/AuthContext';
 import { safeReturnTo } from '@/lib/authReturnTo';
@@ -82,19 +83,7 @@ export default function EntrarEmpresa() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Senha</Label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="h-12 pl-10"
-              required
-            />
-          </div>
+          <PasswordInput id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         <Button type="submit" className="h-12 w-full font-medium" disabled={loading}>
           {loading ? (

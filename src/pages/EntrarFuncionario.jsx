@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader2, Lock, ScanFace } from 'lucide-react';
+import { Loader2, ScanFace } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/components/AuthLayout';
+import PasswordInput from '@/components/PasswordInput';
 import { mascaraCpf, onlyDigits } from '@/lib/format';
 
 export default function EntrarFuncionario() {
@@ -66,19 +67,7 @@ export default function EntrarFuncionario() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Senha</Label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="h-12 pl-10"
-              required
-            />
-          </div>
+          <PasswordInput id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         <Button type="submit" className="h-12 w-full font-medium" disabled={loading}>
           {loading ? (

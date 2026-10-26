@@ -5,17 +5,17 @@ import { base44 } from '@/api/base44Client';
  *
  * Os cálculos NÃO usam valores chapados: eles leem a entidade ConfigFiscal.
  * Enquanto a base não carrega (ou se ela estiver vazia), os valores de
- * referência abaixo — Portaria Interministerial MPS/MF nº 6 de 10/01/2026 —
- * são usados, e são exatamente os que ficaram gravados em ConfigFiscal.
+ * referência abaixo — Portaria Interministerial MPS/MF nº 13/2026 — são usados,
+ * e são exatamente os que ficaram gravados em ConfigFiscal.
  */
 const TETO = 99999999;
 
 export const PADRAO = {
   inss: [
-    { de: 0, ate: 1518.0, aliquota: 7.5 },
-    { de: 1518.01, ate: 2793.88, aliquota: 9 },
-    { de: 2793.89, ate: 4190.83, aliquota: 12 },
-    { de: 4190.84, ate: 8157.41, aliquota: 14 },
+    { de: 0, ate: 1621.0, aliquota: 7.5 },
+    { de: 1621.01, ate: 2902.84, aliquota: 9 },
+    { de: 2902.85, ate: 4354.27, aliquota: 12 },
+    { de: 4354.28, ate: 8475.55, aliquota: 14 },
   ],
   irrf: [
     { de: 0, ate: 2259.2, aliquota: 0, deducao: 0 },
@@ -26,10 +26,10 @@ export const PADRAO = {
   ],
   fgts: 8,
   patronal: 27.8,
-  salarioMinimo: 1518,
+  salarioMinimo: 1621,
   vigencia: '2026-01-01',
   atualizadoEm: null,
-  fonte: 'Portaria Interministerial MPS/MF nº 6 de 10/01/2026',
+  fonte: 'Portaria Interministerial MPS/MF nº 13/2026',
   vazio: true,
 };
 

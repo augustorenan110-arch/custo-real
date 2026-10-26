@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { PlayCircle } from 'lucide-react';
 
 const VIDEO_URL =
-  'https://media.base44.com/videos/public/6ad9f17a4227cd1a92e98f25/bd01c8426_video1.mp4';
+  'https://media.base44.com/videos/public/6ad9f17a4227cd1a92e98f25/269fcbb6b_video2.mp4';
 
 export default function VideoShowcase() {
   return (

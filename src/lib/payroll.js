@@ -85,32 +85,45 @@ export function resumoFaltas(faltas = [], salario = 0) {
 }
 
 // ─── Custo real do empregador ────────────────────────────────────────────────
-// FGTS e INSS patronal vêm das tabelas oficiais (ConfigFiscal); aqui ficam só as
-// provisões mensais de 13º e férias + 1/3.
-export const CUSTO_EMPRESA = {
-  provisoes: 0.138885,
-};
-
-export function calcularCustoEmpresa(salario, extras = {}) {
+// FGTS e INSS patronal vêm das tabelas oficiais (ConfigFiscal). As provisões
+// mensais são de 1/12 de 13º, 1/12 de férias e 1/36 (1/3 das férias), mais o
+// FGTS que incide sobre elas.
+export function encargosMensais(salario) {
   const fiscal = getFiscal();
   const s = round(Number(salario) || 0);
+  const fgts = round(s * (fiscal.fgts / 100));
+  const patronal = round(s * (fiscal.patronal / 100));
+  const prov13 = round(s / 12);
+  const provFerias = round(s / 12);
+  const provTerco = round(s / 12 / 3);
+  const provisoes = round(s / 12 + s / 12 + s / 12 / 3);
+  const fgtsProvisoes = round((s / 12 + s / 12 + s / 12 / 3) * (fiscal.fgts / 100));
+  return { salario: s, fgts, patronal, prov13, provFerias, provTerco, provisoes, fgtsProvisoes };
+}
+
+export function calcularCustoEmpresa(salario, extras = {}) {
+  const encargos = encargosMensais(salario);
   const vt = round(Number(extras.vt) || 0);
   const va = round(Number(extras.va) || 0);
   const vr = round(Number(extras.vr) || 0);
   const horaExtra = round(Number(extras.horaExtra) || 0);
-  const fgts = round(s * (fiscal.fgts / 100));
-  const patronal = round(s * (fiscal.patronal / 100));
-  const provisoes = round(s * CUSTO_EMPRESA.provisoes);
   return {
-    salario: s,
-    fgts,
-    patronal,
-    provisoes,
+    ...encargos,
     vt,
     va,
     vr,
     horaExtra,
-    total: round(s + fgts + patronal + provisoes + vt + va + vr + horaExtra),
+    total: round(
+      encargos.salario +
+        encargos.fgts +
+        encargos.patronal +
+        encargos.provisoes +
+        encargos.fgtsProvisoes +
+        vt +
+        va +
+        vr +
+        horaExtra,
+    ),
   };
 }
 
@@ -146,7 +159,7 @@ export function calcularTotaisEmpresa(funcionarios = [], hoje = todayISO()) {
       acc.folha = round(acc.folha + folha);
       acc.fgts = round(acc.fgts + custo.fgts);
       acc.patronal = round(acc.patronal + custo.patronal);
-      acc.provisoes = round(acc.provisoes + custo.provisoes);
+      acc.provisoes = round(acc.provisoes + custo.provisoes + custo.fgtsProvisoes);
       acc.custoReal = round(acc.custoReal + custoReal);
       acc.passivo = round(acc.passivo + passivo);
       return acc;

@@ -15,7 +15,7 @@ export default function PromoSlide1() {
         <p className="vp-h1 font-display font-bold text-white">
           Você paga R$2.000
           <br />
-          mas custa <span className="text-[#38bdf8]">R$2.993</span>
+          mas custa <span className="text-[#38bdf8]">R$3.136</span>
         </p>
         <p className="vp-body max-w-[84%] text-white/60">
           FGTS, 13º, férias e multa de 40% já estão na conta.

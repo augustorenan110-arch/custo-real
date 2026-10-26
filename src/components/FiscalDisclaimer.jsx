@@ -10,7 +10,7 @@ export default function FiscalDisclaimer({ className = '' }) {
   return (
     <div className={`space-y-1 text-[10px] leading-relaxed text-[#64748b] ${className}`}>
       <p>
-        *Cálculos com base na Portaria Interministerial MPS/MF Nº 6 de 10/01/{ano} - INSS {ano}. FGTS{' '}
+        *Cálculos com base na Portaria Interministerial MPS/MF Nº 13/{ano} - INSS {ano}. FGTS{' '}
         {String(fiscal.fgts).replace('.', ',')}% - Lei 8.036/90. Valores atualizados automaticamente em{' '}
         {dateBR(String(data).slice(0, 10))}.
       </p>

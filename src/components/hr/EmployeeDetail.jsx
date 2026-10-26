@@ -202,9 +202,21 @@ export default function EmployeeDetail({ employee, onClose }) {
               <span className="text-[#94A3B8]">INSS Patronal + Terceiros + RAT {pct(fiscal.patronal)}%</span>
               <span className="shrink-0 text-white">{brl(custo.patronal)}</span>
             </div>
-            <div className="flex justify-between gap-3 text-xs">
-              <span className="text-[#94A3B8]">Provisão 13º + Férias + 1/3 (1/12 por mês)</span>
-              <span className="shrink-0 text-white">{brl(custo.provisoes)}</span>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#94A3B8]">Provisão 13º salário (1/12)</span>
+              <span className="text-white">{brl(custo.prov13)}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#94A3B8]">Provisão férias (1/12)</span>
+              <span className="text-white">{brl(custo.provFerias)}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#94A3B8]">Provisão 1/3 férias</span>
+              <span className="text-white">{brl(custo.provTerco)}</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-[#94A3B8]">FGTS sobre provisões {pct(fiscal.fgts)}%</span>
+              <span className="text-white">{brl(custo.fgtsProvisoes)}</span>
             </div>
             {custo.vt > 0 && (
               <div className="flex justify-between text-xs">

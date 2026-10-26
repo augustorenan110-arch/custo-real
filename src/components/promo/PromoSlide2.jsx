@@ -30,7 +30,7 @@ export default function PromoSlide2() {
             <div className="rounded-[calc(2.6*var(--u))] bg-white/5 py-[calc(2*var(--u))]">
               Custo real
               <br />
-              <span className="font-semibold text-white">R$2.993</span>
+              <span className="font-semibold text-white">R$3.136</span>
             </div>
             <div className="rounded-[calc(2.6*var(--u))] bg-[rgba(239,68,68,0.12)] py-[calc(2*var(--u))]">
               Passivo

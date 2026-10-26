@@ -94,7 +94,7 @@ export function buildRelatorioContador({
   linha(`Folha base: ${brl(totais.folha)}`);
   linha(`FGTS 8%: ${brl(totais.fgts)}`);
   linha(`INSS Patronal 20% + Terceiros 5,8% + RAT 2%: ${brl(totais.patronal)}`);
-  linha(`Provisões 13º + Férias + 1/3 (1/12 por mês): ${brl(totais.provisoes)}`);
+  linha(`Provisões 13º, férias, 1/3 e FGTS sobre provisões: ${brl(totais.provisoes)}`);
   linha(
     `Faltas: ${faltasMes.justificadas} Justificadas (R$0) / ${faltasMes.naoJustificadas} Não Justificadas (Desconto ${brl(faltasMes.desconto)})`,
   );

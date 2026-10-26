@@ -36,6 +36,10 @@
       "title": "Ativo",
       "default": true
     },
+    "custo_real_mensal": {
+      "type": "number",
+      "title": "Custo real mensal (R$)"
+    },
     "face_ref_uri": {
       "type": "string",
       "title": "Foto de refer\u00eancia (privada)"
