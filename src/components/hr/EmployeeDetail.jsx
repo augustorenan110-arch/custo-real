@@ -16,7 +16,7 @@ import { useTimeEntries, useCompany, useEmployees, useFaltas } from '@/hooks/use
 import { useMe } from '@/hooks/useMe';
 import { buildPayslip, calcularCustoEmpresa, resumoFaltas } from '@/lib/payroll';
 import { buildTimesheet, fmtMinutes } from '@/lib/timesheet';
-import { payslipPdf, timesheetPdf, expensesPdf } from '@/lib/pdf';
+import { timesheetPdf, expensesPdf } from '@/lib/pdf';
 import { freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
 import FaceEnroll from '@/components/hr/FaceEnroll';
 import FaltaSection from '@/components/hr/FaltaSection';
@@ -282,16 +282,6 @@ export default function EmployeeDetail({ employee, onClose }) {
         </div>
 
         <div className="mt-4 flex flex-col gap-3">
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => (expirado ? setPaywall(true) : payslipPdf({ company, employee, month, slip }))}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] font-bold text-white transition-all hover:bg-[#0064d2]"
-          >
-            <AnimatedIcon icon={expirado ? Lock : FileCheck} size={18} color="#08080A" />
-            Holerite PDF
-          </button>
-
           <button
             type="button"
             disabled={gerando}
@@ -299,9 +289,8 @@ export default function EmployeeDetail({ employee, onClose }) {
             className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#2563eb] font-bold text-white transition-all hover:bg-[#1d4ed8] disabled:opacity-60"
           >
             <AnimatedIcon icon={expirado ? Lock : FileText} size={18} color="#ffffff" />
-            {gerando ? 'Gerando holerite...' : 'Holerite com Logo CR'}
+            {gerando ? 'Gerando holerite...' : 'Holerite - PDF'}
           </button>
-          </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <button
