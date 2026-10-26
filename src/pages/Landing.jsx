@@ -41,7 +41,7 @@ export default function Landing() {
   }, []);
 
   const logged = !!email;
-  const startTo = logged ? '/painel' : '/register';
+  const startTo = logged ? '/painel' : '/entrar';
   const panelTo = logged ? '/rescisao' : '/login';
 
   return (

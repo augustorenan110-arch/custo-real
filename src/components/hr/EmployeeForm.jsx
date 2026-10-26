@@ -25,15 +25,24 @@ export default function EmployeeForm({ open, onOpenChange, units = [] }) {
     }
     setBusy(true);
     try {
+      const email = form.email.trim().toLowerCase();
       await base44.entities.Employee.create({
         ...form,
-        email: form.email.trim().toLowerCase(),
+        email,
         salary: Number(form.salary),
         admission_date: form.admission_date || undefined,
         active: true,
       });
+      // Convite de acesso: o funcionário cria a senha pelo e-mail e depois entra
+      // em /entrar/funcionario com CPF + senha.
+      if (email) {
+        await base44.users.inviteUser(email, 'user').catch(() => {});
+      }
       await queryClient.invalidateQueries({ queryKey: ['employees'] });
-      toast({ title: 'Colaborador cadastrado' });
+      toast({
+        title: 'Colaborador cadastrado',
+        description: email ? 'Convite de acesso enviado para o e-mail dele.' : undefined,
+      });
       setForm(empty);
       onOpenChange(false);
     } catch {

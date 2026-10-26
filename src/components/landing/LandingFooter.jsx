@@ -54,7 +54,7 @@ export default function LandingFooter({ startTo }) {
               <li><a href="#funcionalidades" className="transition hover:text-foreground">Funcionalidades</a></li>
               <li><a href="#como-funciona" className="transition hover:text-foreground">Como funciona</a></li>
               <li><Link to="/planos" className="transition hover:text-foreground">Planos e preços</Link></li>
-              <li><Link to="/login" className="transition hover:text-foreground">Entrar</Link></li>
+              <li><Link to="/entrar" className="transition hover:text-foreground">Entrar</Link></li>
             </ul>
           </div>
 

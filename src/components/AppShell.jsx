@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { LayoutDashboard, Home, Receipt, CheckSquare, ScrollText, LogOut, Clock, CalendarClock, Users, ShieldCheck, Building2, Bot, Calculator, ScanFace, Trophy, Sparkles, Scale } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import { useCompany } from '@/hooks/useHr';
+import { useMeuFuncionario } from '@/hooks/useMeuFuncionario';
 import { TRIAL_PLAN, trialEndDate, freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
 import { carregarFiscal } from '@/lib/fiscal';
 import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
@@ -38,6 +39,7 @@ const linkClass = ({ isActive }) =>
 
 export default function AppShell() {
   const { data: me } = useMe();
+  const { funcionario } = useMeuFuncionario();
   const { data: company } = useCompany();
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
@@ -94,7 +96,7 @@ export default function AppShell() {
   ];
   const adminNav = isAdmin
     ? [
-        { to: '/colaboradores', label: 'Colaboradores', icon: Users },
+        { to: '/colaboradores', label: 'Funcionários', icon: Users },
         { to: '/auditoria', label: 'Auditoria', icon: ShieldCheck },
         { to: '/assistente', label: 'Assistente IA', icon: Bot },
         { to: '/calculadoras', label: 'Calculadoras', icon: Calculator },
@@ -111,7 +113,7 @@ export default function AppShell() {
   const extrasNav = [
     { to: '/ranking', label: 'Ranking Custo Real', icon: Trophy },
     { to: '/rescisao', label: 'Simular Rescisão', icon: Calculator },
-    { to: '/relatorio-contador', label: 'Relatório Contador', icon: ScrollText },
+    { to: '/relatorio-contador', label: 'Relatório de Custo Real', icon: ScrollText },
     { to: '/planos', label: `Meu Plano (${planoLabel})`, icon: Sparkles },
   ];
   const mobileNav = [
@@ -122,15 +124,18 @@ export default function AppShell() {
   ];
   // Menu "Mais" do celular — pedido pelo cliente: sem Política.
   const moreItems = [
-    { to: '/colaboradores', label: 'Meus Funcionários', icon: Users },
+    { to: '/colaboradores', label: 'Funcionários', icon: Users },
     { to: '/ranking', label: 'Ranking Custo Real', icon: Trophy },
     { to: '/rescisao', label: 'Simular Rescisão', icon: Calculator },
-    { to: '/relatorio-contador', label: 'Relatório Contador', icon: ScrollText },
+    { to: '/relatorio-contador', label: 'Relatório de Custo Real', icon: ScrollText },
     { to: '/ponto', label: 'Ponto Facial', icon: ScanFace },
     { to: '/planos', label: `Meu Plano (${planoLabel})`, icon: Sparkles },
   ];
 
-  const signOut = () => base44.auth.logout('/login');
+  const signOut = () => base44.auth.logout('/entrar');
+
+  // Funcionário logado usa o ambiente dele (Início + Holerite), não o painel da empresa.
+  if (funcionario) return <Navigate to="/meu" replace />;
 
   return (
     <div className="min-h-screen lg:flex">

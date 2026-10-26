@@ -10,6 +10,10 @@
       "type": "string",
       "title": "Colaborador"
     },
+    "employee_email": {
+      "type": "string",
+      "title": "E-mail do colaborador (acesso ao pr\u00f3prio ponto)"
+    },
     "kind": {
       "type": "string",
       "enum": [
@@ -75,6 +79,9 @@
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "data.employee_email": "{{user.email}}"
         },
         {
           "created_by_id": "{{user.id}}"

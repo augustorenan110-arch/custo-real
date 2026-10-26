@@ -11,8 +11,12 @@ export function useMeuFuncionario() {
   const { data: me, isLoading: loadingMe } = useMe();
   const { data: employees = [], isLoading } = useEmployees();
   const email = (me?.email || '').toLowerCase();
-  const funcionario = employees.find((e) => (e.email || '').toLowerCase() === email) || null;
   const isEmpresa = me?.role === 'admin';
+  // Só quem NÃO é empresa pode ser tratado como funcionário — o RH pode ter
+  // uma ficha própria e continua vendo o painel completo.
+  const funcionario = isEmpresa
+    ? null
+    : employees.find((e) => (e.email || '').toLowerCase() === email) || null;
 
   return {
     me,

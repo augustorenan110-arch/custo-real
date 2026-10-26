@@ -37,7 +37,7 @@ export default function MoreMenu({ items }) {
             <button
               onClick={() => {
                 setOpen(false);
-                base44.auth.logout('/login');
+                base44.auth.logout('/entrar');
               }}
               className="mt-1 flex items-center gap-3 rounded-xl border-t border-white/10 px-3 pt-3 pb-1 text-sm text-muted-foreground hover:text-destructive"
             >

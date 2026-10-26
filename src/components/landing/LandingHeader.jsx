@@ -28,7 +28,7 @@ export default function LandingHeader({ startTo }) {
 
         <div className="flex items-center gap-2">
           <Link
-            to="/login"
+            to="/entrar"
             className="rounded-xl border border-white/15 px-4 py-2 text-sm text-foreground/85 transition hover:border-primary/50 hover:text-primary"
           >
             Entrar

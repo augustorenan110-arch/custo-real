@@ -22,6 +22,7 @@ export default function FaltaModalJustificada({ employee, month, mesLabel, onClo
       await base44.entities.Falta.create({
         employee_id: employee.id,
         employee_name: employee.full_name,
+        employee_email: (employee.email || '').toLowerCase(),
         data,
         tipo: 'justificada',
         motivo: motivo.trim() || 'Atestado médico',

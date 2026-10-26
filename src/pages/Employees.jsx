@@ -41,7 +41,7 @@ export default function Employees() {
         </div>
         {!bloqueado && (
           <Button onClick={() => setCreating(true)}>
-            <Plus className="h-4 w-4" /> Novo
+            <Plus className="h-4 w-4" /> Cadastrar
           </Button>
         )}
       </div>

@@ -10,6 +10,10 @@
       "type": "string",
       "title": "Colaborador"
     },
+    "employee_email": {
+      "type": "string",
+      "title": "E-mail do colaborador (acesso ao pr\u00f3prio holerite)"
+    },
     "data": {
       "type": "string",
       "format": "date",
@@ -63,6 +67,9 @@
           "user_condition": {
             "role": "admin"
           }
+        },
+        {
+          "data.employee_email": "{{user.email}}"
         }
       ]
     },

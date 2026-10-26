@@ -110,6 +110,7 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
     const entry = await sr.entities.TimeEntry.create({
       employee_id: emp.id,
       employee_name: emp.full_name,
+      employee_email: (emp.email || '').toLowerCase(),
       kind,
       punched_at: now.toISOString(),
       day,

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import AuthLayout from '@/components/AuthLayout';
-import { onlyDigits, cnpjBR } from '@/lib/format';
+import { onlyDigits } from '@/lib/format';
 
 // Máscara enquanto digita: 00.000.000/0000-00
 const mascaraCnpj = (v) =>
@@ -161,9 +161,6 @@ export default function EmpresaCadastro() {
               required
             />
           </div>
-          {cnpjBR(onlyDigits(cnpj)) !== '—' && (
-            <p className="text-[11px] text-muted-foreground">CNPJ {cnpjBR(onlyDigits(cnpj))}</p>
-          )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">E-mail do responsável</Label>
