@@ -36,9 +36,16 @@ import AppHome from './pages/AppHome';
 import Ranking from './pages/Ranking';
 import RelatorioContador from './pages/RelatorioContador';
 import TabelasOficiais from './pages/TabelasOficiais';
+import Entrar from './pages/Entrar';
+import EntrarEmpresa from './pages/EntrarEmpresa';
+import EmpresaCadastro from './pages/EmpresaCadastro';
+import EntrarFuncionario from './pages/EntrarFuncionario';
+import MeuInicio from './pages/MeuInicio';
+import MeuHolerite from './pages/MeuHolerite';
 import Indicacao from './pages/Indicacao';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
+import FuncionarioShell from './components/FuncionarioShell';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -79,7 +86,11 @@ const AuthenticatedApp = () => {
       <Route path="/ativar/:id" element={<Ativar />} />
       <Route path="/r/:code" element={<Indicacao />} />
       <Route path="/video-promo" element={<VideoPromo />} />
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+      <Route path="/entrar" element={<Entrar />} />
+      <Route path="/entrar/empresa" element={<EntrarEmpresa />} />
+      <Route path="/entrar/empresa/cadastro" element={<EmpresaCadastro />} />
+      <Route path="/entrar/funcionario" element={<EntrarFuncionario />} />
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/entrar" replace />} />}>
         <Route path="/painel-contador" element={<PainelContador />} />
         <Route element={<AppShell />}>
           <Route path="/p" element={<AppHome />} />
@@ -99,6 +110,11 @@ const AuthenticatedApp = () => {
           <Route path="/relatorio-contador" element={<RelatorioContador />} />
           <Route path="/tabelas-oficiais" element={<TabelasOficiais />} />
           <Route path="/planos" element={<Planos />} />
+        </Route>
+        {/* Ambiente do funcionário: só Início e Holerite. */}
+        <Route element={<FuncionarioShell />}>
+          <Route path="/meu" element={<MeuInicio />} />
+          <Route path="/meu-holerite" element={<MeuHolerite />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
