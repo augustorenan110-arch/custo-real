@@ -7,9 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const SUGGESTIONS = [
-  'Quem fez mais horas extras este mês?',
-  'Quais despesas fora da política estão pendentes?',
+  'Quanto custa um funcionário de R$ 2.000 na verdade?',
+  'Quem fez mais horas extras esse mês?',
+  'Quais despesas estão fora da política?',
   'Quem bateu ponto fora da unidade?',
+  'Qual funcionário está me dando mais prejuízo?',
+  'Quanto vou gastar pra demitir alguém hoje?',
+  'Quem está faltando muito e gerando risco trabalhista?',
+  'Qual o ranking dos mais caros pra empresa?',
+  'Quanto já gastei de extra e adicional esse mês?',
+  'Me mostra o relatório de auditoria para processo.',
 ];
 
 export default function Assistant() {
@@ -23,14 +30,14 @@ export default function Assistant() {
     return <div className="glass rounded-2xl p-6 text-sm text-muted-foreground">Apenas o RH usa o assistente.</div>;
   }
 
-  async function ask(q) {
+  async function ask(q, topico) {
     const text = (q ?? question).trim();
     if (!text || busy) return;
     setQuestion('');
     setMessages((m) => [...m, { role: 'user', text }]);
     setBusy(true);
     try {
-      const { data } = await base44.functions.invoke('hrAssistant', { question: text });
+      const { data } = await base44.functions.invoke('hrAssistant', { question: text, topico });
       setMessages((m) => [...m, { role: 'ai', text: data.answer }]);
     } catch {
       setMessages((m) => [...m, { role: 'ai', text: 'Não consegui responder agora. Tente de novo.' }]);
@@ -48,15 +55,19 @@ export default function Assistant() {
         <p className="text-sm text-muted-foreground">Pergunte sobre ponto, horas extras e gastos dos colaboradores.</p>
       </div>
 
-      {messages.length === 0 && (
-        <div className="flex flex-wrap gap-2">
-          {SUGGESTIONS.map((s) => (
-            <button key={s} onClick={() => ask(s)} className="glass rounded-full px-3 py-1.5 text-xs hover:border-primary/40">
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
+        {SUGGESTIONS.map((s, i) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => ask(s, i + 1)}
+            disabled={busy}
+            className="glass h-full rounded-xl p-2.5 text-left text-[11px] leading-snug transition-colors hover:border-primary/40 disabled:opacity-60"
+          >
+            {s}
+          </button>
+        ))}
+      </div>
 
       <div className="space-y-3">
         {messages.map((m, i) => (
