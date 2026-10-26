@@ -97,7 +97,7 @@ export default function FuncionarioStep({ empresaNome, onCreated }) {
         <button
           type="submit"
           disabled={salvando}
-          className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-success text-base font-semibold text-success-foreground transition hover:bg-success/90 disabled:opacity-60"
+          className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] text-base font-semibold text-white transition hover:bg-[#0064d2] disabled:opacity-60"
         >
           {salvando ? (
             <>

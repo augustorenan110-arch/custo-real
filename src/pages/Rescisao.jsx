@@ -210,7 +210,7 @@ export default function Rescisao() {
             type="button"
             disabled={gerando}
             onClick={gerarTermo}
-            className="flex h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] font-bold text-black transition-all hover:bg-[#16a34a] disabled:opacity-60"
+            className="flex h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] font-bold text-white transition-all hover:bg-[#0064d2] disabled:opacity-60"
           >
             {gerando ? <Loader2 size={18} className="animate-spin" /> : <FileText size={18} />}
             {gerando ? 'Gerando...' : 'Gerar termo de rescisão em PDF'}

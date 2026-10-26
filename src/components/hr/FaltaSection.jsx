@@ -31,7 +31,7 @@ export default function FaltaSection({ employee, month, mesLabel, onSaved }) {
       {ativa && (
         <>
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <button type="button" onClick={() => setJustificada(true)} className={`${BTN} bg-[#16a34a] hover:bg-[#15803d]`}>
+            <button type="button" onClick={() => setJustificada(true)} className={`${BTN} bg-[#007bff] hover:bg-[#0064d2]`}>
               <ShieldCheck size={22} />
               Falta Justificada com Atestado
               <span className="text-[10px] font-normal text-white/80">Sem desconto</span>

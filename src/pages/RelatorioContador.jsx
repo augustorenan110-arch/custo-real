@@ -166,7 +166,7 @@ export default function RelatorioContador() {
             href={`https://wa.me/?text=${encodeURIComponent(mensagem)}`}
             target="_blank"
             rel="noreferrer"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] font-bold text-black transition hover:bg-[#16a34a]"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] font-bold text-white transition hover:bg-[#0064d2]"
           >
             <MessageCircle size={18} /> Enviar no WhatsApp do Contador
           </a>

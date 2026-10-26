@@ -168,7 +168,7 @@ export default function Ativar() {
                 type="button"
                 onClick={pagar}
                 disabled={processando || loadingMe}
-                className="mt-5 h-12 w-full bg-success text-base font-semibold text-success-foreground hover:bg-success/90"
+                className="mt-5 h-12 w-full bg-[#007bff] text-base font-semibold text-white hover:bg-[#0064d2]"
               >
                 {processando ? (
                   <>

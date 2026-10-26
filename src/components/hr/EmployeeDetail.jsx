@@ -36,7 +36,7 @@ const labelMes = (m) => {
     : d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase().replace(' DE ', '/');
 };
 const ROSTO_CTA =
-  'h-12 w-full rounded-xl bg-[#22C55E] font-bold text-black hover:bg-[#16a34a]';
+  'h-12 w-full rounded-xl bg-[#007bff] font-bold text-white hover:bg-[#0064d2]';
 const EXTRAS_ZERO = {
   vt: 0,
   va: 0,
@@ -274,7 +274,7 @@ export default function EmployeeDetail({ employee, onClose }) {
           <button
             type="button"
             onClick={() => (expirado ? setPaywall(true) : payslipPdf({ company, employee, month, slip }))}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] font-bold text-black transition-all hover:bg-[#16a34a]"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] font-bold text-white transition-all hover:bg-[#0064d2]"
           >
             <AnimatedIcon icon={expirado ? Lock : FileCheck} size={18} color="#08080A" />
             Holerite PDF

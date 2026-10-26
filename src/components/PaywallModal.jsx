@@ -91,7 +91,7 @@ export default function PaywallModal({
           type="button"
           onClick={assinar}
           disabled={busy}
-          className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] text-[16px] font-bold text-black transition animate-pulse hover:bg-[#16a34a] disabled:opacity-70"
+          className="mt-4 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] text-[16px] font-bold text-white transition animate-pulse hover:bg-[#0064d2] disabled:opacity-70"
         >
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}
           DESBLOQUEAR MINHA PROTEÇÃO POR R$59,90/MÊS

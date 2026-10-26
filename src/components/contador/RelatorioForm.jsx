@@ -114,7 +114,7 @@ export default function RelatorioForm({ month, onMonth, incluir, onToggle, onGen
         type="button"
         disabled={gerando}
         onClick={onGenerate}
-        className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] font-black text-black transition-all hover:bg-[#16a34a] disabled:opacity-60"
+        className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] font-black text-white transition-all hover:bg-[#0064d2] disabled:opacity-60"
       >
         {gerando ? <Loader2 size={20} className="animate-spin" /> : <FileText size={20} />}
         {gerando ? 'GERANDO...' : 'GERAR PDF CONTÁBIL'}

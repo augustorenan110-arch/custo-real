@@ -87,7 +87,7 @@ export default function FaltaModalJustificada({ employee, month, mesLabel, onClo
           type="button"
           disabled={salvando}
           onClick={salvar}
-          className="mt-4 h-12 w-full rounded-xl bg-[#22C55E] font-bold text-black transition hover:bg-[#16a34a] disabled:opacity-60"
+          className="mt-4 h-12 w-full rounded-xl bg-[#007bff] font-bold text-white transition hover:bg-[#0064d2] disabled:opacity-60"
         >
           {salvando ? 'SALVANDO...' : 'Salvar Justificada'}
         </button>

@@ -162,7 +162,7 @@ export default function EscritorioTab() {
           <button
             type="submit"
             disabled={salvando}
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#22C55E] text-[16px] font-bold text-black transition animate-pulse hover:bg-[#16a34a] disabled:opacity-70"
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#007bff] text-[16px] font-bold text-white transition animate-pulse hover:bg-[#0064d2] disabled:opacity-70"
           >
             {salvando ? (
               <>

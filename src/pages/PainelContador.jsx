@@ -80,7 +80,7 @@ export default function PainelContador() {
         <Button
           type="button"
           onClick={() => setFormAberto(true)}
-          className="glow h-12 w-full bg-success text-base font-semibold text-success-foreground hover:bg-success/90"
+          className="glow h-12 w-full bg-[#007bff] text-base font-semibold text-white hover:bg-[#0064d2]"
         >
           <Plus className="mr-2 h-5 w-5" /> Cadastrar nova empresa cliente
         </Button>

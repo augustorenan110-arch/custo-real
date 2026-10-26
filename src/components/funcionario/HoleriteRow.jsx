@@ -24,7 +24,7 @@ export default function HoleriteRow({ mes, slip, extras, faltas, baixando, onBai
         type="button"
         disabled={baixando}
         onClick={onBaixar}
-        className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-[#22C55E] px-3 text-xs font-bold text-black transition hover:bg-[#16a34a] disabled:opacity-60"
+        className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-[#007bff] px-3 text-xs font-bold text-white transition hover:bg-[#0064d2] disabled:opacity-60"
       >
         {baixando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
         Baixar
