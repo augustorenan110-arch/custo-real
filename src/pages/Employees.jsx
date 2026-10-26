@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Plus, Users, ScanFace, Lock } from 'lucide-react';
+import { Plus, Users, Lock } from 'lucide-react';
 import { useMe } from '@/hooks/useMe';
 import { useEmployees, useCompany } from '@/hooks/useHr';
-import { brl } from '@/lib/format';
 import { limiteAtingido, trialDaysLeft } from '@/lib/plan';
 import { Button } from '@/components/ui/button';
-import { Initials } from '@/components/Brand';
 import EmployeeForm from '@/components/hr/EmployeeForm';
 import EmployeeDetail from '@/components/hr/EmployeeDetail';
+import EmployeeRow from '@/components/hr/EmployeeRow';
+import RemoveEmployeeDialog from '@/components/hr/RemoveEmployeeDialog';
 import TrialCountdown from '@/components/plan/TrialCountdown';
 import PaywallModal from '@/components/PaywallModal';
 
@@ -17,6 +17,7 @@ export default function Employees() {
   const { data: company } = useCompany();
   const [creating, setCreating] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [removendo, setRemovendo] = useState(null);
   const [paywall, setPaywall] = useState(false);
 
   if (loadingMe) return <p className="text-sm text-muted-foreground">Carregando…</p>;
@@ -65,26 +66,22 @@ export default function Employees() {
 
       <div className="grid gap-3">
         {employees.map((e) => (
-          <button key={e.id} onClick={() => setSelectedId(e.id)} className="glass flex items-center gap-3 rounded-2xl p-4 text-left transition hover:border-primary/40">
-            <Initials name={e.full_name} className="h-10 w-10 text-xs" />
-            <div className="min-w-0 flex-1">
-              <div className="truncate font-medium">{e.full_name}</div>
-              <div className="truncate text-xs text-muted-foreground">
-                {e.role_title || 'Colaborador'} · {e.unit || 'Sem unidade'}
-              </div>
-            </div>
-            <div className="text-right text-xs">
-              <div className="font-medium">{brl(e.salary)}</div>
-              <div className={`flex items-center justify-end gap-1 ${e.face_ref_uri ? 'text-success' : 'text-warning'}`}>
-                <ScanFace className="h-3 w-3" /> {e.face_ref_uri ? 'Rosto ok' : 'Sem rosto'}
-              </div>
-            </div>
-          </button>
+          <EmployeeRow key={e.id} employee={e} onOpen={setSelectedId} onRemove={setRemovendo} />
         ))}
       </div>
 
       <EmployeeForm open={creating && !bloqueado} onOpenChange={setCreating} units={company?.units || []} />
       <EmployeeDetail employee={selected} onClose={() => setSelectedId(null)} />
+
+      <RemoveEmployeeDialog
+        employee={removendo}
+        open={!!removendo}
+        onOpenChange={(open) => !open && setRemovendo(null)}
+        onRemoved={(id) => {
+          if (selectedId === id) setSelectedId(null);
+          setRemovendo(null);
+        }}
+      />
 
       <PaywallModal
         open={paywall}
