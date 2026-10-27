@@ -12,7 +12,7 @@ const TAGS = [
 
 export default function HeroSection({ startTo, panelTo }) {
   return (
-    <section className="relative mx-auto grid max-w-[1280px] items-center gap-12 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-2 lg:gap-20 lg:pb-24 lg:pt-16">
+    <section className="relative mx-auto grid max-w-[1280px] items-start gap-12 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-2 lg:gap-20 lg:pb-24 lg:pt-16">
       <motion.div
         className="flex max-w-[600px] flex-col items-start gap-6"
         initial={{ opacity: 0, y: 22 }}
@@ -50,7 +50,7 @@ export default function HeroSection({ startTo, panelTo }) {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <Link
               to={panelTo}
-              className="tech-card inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold transition hover:border-primary/60 sm:w-auto"
+              className="tech-card inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl px-6 text-sm font-semibold transition hover:border-primary/60 sm:w-auto"
             >
               <PlayCircle className="h-4 w-4 text-primary" /> Simular demissão em 1 clique
             </Link>
@@ -71,7 +71,7 @@ export default function HeroSection({ startTo, panelTo }) {
 
       <div className="flex w-full max-w-[560px] flex-col gap-8">
         <HeroCalculator panelTo={panelTo} />
-        <PhoneMockup />
+        <PhoneMockup className="mt-6" />
       </div>
     </section>
   );
