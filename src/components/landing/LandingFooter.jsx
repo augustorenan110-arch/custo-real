@@ -37,8 +37,8 @@ export default function LandingFooter({ startTo }) {
 
       <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <div className="flex items-center gap-2.5">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2.5">
               <Logo className="h-9" />
               <Wordmark size="sm" />
             </div>
@@ -48,7 +48,7 @@ export default function LandingFooter({ startTo }) {
             </p>
           </div>
 
-          <div>
+          <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80">Produto</p>
             <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
               <li><a href="#funcionalidades" className="transition hover:text-foreground">Funcionalidades</a></li>
@@ -58,7 +58,7 @@ export default function LandingFooter({ startTo }) {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80">Legal</p>
             <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
               <li><Link to="/privacidade" className="transition hover:text-foreground">Política de Privacidade</Link></li>
@@ -67,7 +67,7 @@ export default function LandingFooter({ startTo }) {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80">Contato</p>
             <a
               href="mailto:dpo@custo-real.com.br"
@@ -76,7 +76,7 @@ export default function LandingFooter({ startTo }) {
               <Mail className="h-3.5 w-3.5" /> dpo@custo-real.com.br
             </a>
             <p className="mt-3 text-xs text-muted-foreground">CNPJ 00.000.000/0001-00</p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-2.5 py-1 text-[10px] text-foreground/70">
                 <ShieldCheck className="h-3 w-3 text-save-tech" /> Conforme LGPD
               </span>

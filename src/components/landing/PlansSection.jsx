@@ -23,16 +23,16 @@ export default function PlansSection({ startTo }) {
     const price = plan[cycle];
     return (
       <motion.div
-        className={`tech-card relative rounded-2xl p-5 ${highlight ? 'border-primary glow' : ''}`}
+        className={`tech-card relative rounded-2xl p-5 text-center ${highlight ? 'border-primary glow' : ''}`}
         whileHover={{ y: -4 }}
         transition={{ duration: 0.25 }}
       >
         {highlight && (
-          <span className="absolute -top-3 left-5 rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+          <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
             Mais usado · economize R$ 3.200/mês em contador
           </span>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           {highlight ? <Crown className="h-5 w-5 text-primary" /> : <Zap className="h-5 w-5 text-muted-foreground" />}
           <h3 className="font-tech text-sm font-bold uppercase tracking-wider">{plan.name}</h3>
         </div>
@@ -43,7 +43,7 @@ export default function PlansSection({ startTo }) {
 
         <ul className="mt-5 space-y-2.5 text-sm text-foreground/75">
           {list.map((p) => (
-            <li key={p} className="flex gap-2">
+            <li key={p} className="flex items-start justify-center gap-2">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-save-tech" /> {p}
             </li>
           ))}

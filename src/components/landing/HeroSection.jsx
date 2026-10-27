@@ -13,7 +13,12 @@ const TAGS = [
 export default function HeroSection({ startTo, panelTo }) {
   return (
     <section className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:pb-24 lg:pt-16">
-      <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+      <motion.div
+        className="text-center"
+        initial={{ opacity: 0, y: 22 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <span className="inline-flex items-center gap-2 rounded-full border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-[11px] font-medium text-cost-tech sm:text-xs">
           <motion.span
             className="h-2 w-2 rounded-full bg-destructive"
@@ -27,13 +32,13 @@ export default function HeroSection({ startTo, panelTo }) {
           Gestão de Pessoas e Custos <span className="text-gradient">com Inteligência Artificial</span>
         </h1>
 
-        <p className="mt-5 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+        <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
           Mais controle, eficiência e decisões estratégicas — ponto facial com prova de vida e cálculo automático
           de FGTS, 13º, férias, multa de 40% e o custo REAL de demissão. O que a planilha esconde, o Custo Real
           mostra.
         </p>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <Link
               to={startTo}
@@ -52,7 +57,7 @@ export default function HeroSection({ startTo, panelTo }) {
           </motion.div>
         </div>
 
-        <div className="mt-7 flex flex-wrap gap-2">
+        <div className="mt-7 flex flex-wrap justify-center gap-2">
           {TAGS.map((t) => (
             <span
               key={t.label}

@@ -30,8 +30,10 @@ export default function FaqSection() {
             value={`item-${i}`}
             className="tech-card rounded-2xl border-b-0 px-5"
           >
-            <AccordionTrigger className="text-left text-sm font-medium hover:no-underline">{item.q}</AccordionTrigger>
-            <AccordionContent className="text-sm leading-relaxed text-foreground/65">{item.a}</AccordionContent>
+            <AccordionTrigger className="justify-center text-center text-sm font-medium hover:no-underline">
+              {item.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-center text-sm leading-relaxed text-foreground/65">{item.a}</AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>

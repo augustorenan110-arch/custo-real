@@ -27,21 +27,20 @@ export default function HowItWorks() {
         Do cadastro ao custo real na tela em menos de 5 minutos.
       </p>
 
-      <div className="relative mt-12 space-y-8 pl-14">
-        <div className="absolute bottom-4 left-[26px] top-4 w-px bg-gradient-to-b from-primary via-primary/40 to-transparent" />
+      <div className="mx-auto mt-12 max-w-2xl space-y-6">
         {STEPS.map((s, i) => (
           <motion.div
             key={s.title}
-            className="relative"
-            initial={{ opacity: 0, x: -14 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            className="flex flex-col items-center text-center"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.5, delay: i * 0.12 }}
           >
-            <span className="absolute -left-14 grid h-11 w-11 place-items-center rounded-2xl border border-primary/40 bg-[#0d0d10] text-primary">
+            <span className="grid h-11 w-11 place-items-center rounded-2xl border border-primary/40 bg-[#0d0d10] text-primary">
               <s.icon className="h-5 w-5" strokeWidth={1.8} />
             </span>
-            <div className="tech-card rounded-2xl p-5">
+            <div className="tech-card mt-3 w-full rounded-2xl p-5">
               <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
                 Passo {i + 1}
               </span>

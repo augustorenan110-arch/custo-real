@@ -18,7 +18,7 @@ export default function BeforeAfter() {
 
       <div className="mt-10 grid gap-4 lg:grid-cols-2">
         <motion.div
-          className="tech-card rounded-2xl border-destructive/30 p-5"
+          className="tech-card rounded-2xl border-destructive/30 p-5 text-center"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
@@ -27,7 +27,7 @@ export default function BeforeAfter() {
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-cost-tech">Antes</p>
           <ul className="mt-4 space-y-3 text-sm text-foreground/70">
             {BEFORE.map((t) => (
-              <li key={t} className="flex gap-2.5">
+              <li key={t} className="flex items-center justify-center gap-2.5">
                 <X className="mt-0.5 h-4 w-4 shrink-0 text-destructive" /> {t}
               </li>
             ))}
@@ -35,7 +35,7 @@ export default function BeforeAfter() {
         </motion.div>
 
         <motion.div
-          className="tech-card rounded-2xl border-success/40 p-5"
+          className="tech-card rounded-2xl border-success/40 p-5 text-center"
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
@@ -44,12 +44,12 @@ export default function BeforeAfter() {
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-save-tech">Depois</p>
           <ul className="mt-4 space-y-3 text-sm text-foreground/80">
             {AFTER.map((t) => (
-              <li key={t} className="flex gap-2.5">
+              <li key={t} className="flex items-center justify-center gap-2.5">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-save-tech" /> {t}
               </li>
             ))}
           </ul>
-          <p className="mt-5 flex items-center gap-2 rounded-xl bg-success/10 px-3 py-2 text-xs font-semibold text-save-tech">
+          <p className="mt-5 flex flex-wrap items-center justify-center gap-2 rounded-xl bg-success/10 px-3 py-2 text-center text-xs font-semibold text-save-tech">
             <TrendingDown className="h-4 w-4" /> Economia de até <CountUp value={32} decimals={0} suffix="%" /> em
             rotatividade
           </p>

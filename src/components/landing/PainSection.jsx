@@ -33,14 +33,14 @@ export default function PainSection() {
         {PAINS.map((p, i) => (
           <motion.div
             key={p.title}
-            className="tech-card relative overflow-hidden rounded-2xl p-5 transition hover:border-destructive/60"
+            className="tech-card relative overflow-hidden rounded-2xl p-5 text-center transition hover:border-destructive/60"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
           >
             <motion.span
-              className="grid h-11 w-11 place-items-center rounded-xl bg-destructive/15 text-lg text-cost-tech"
+              className="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-destructive/15 text-lg text-cost-tech"
               animate={{ opacity: [1, 0.55, 1], boxShadow: ['0 0 0 0 rgba(239,68,68,0.35)', '0 0 0 10px rgba(239,68,68,0)', '0 0 0 0 rgba(239,68,68,0)'] }}
               transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.3 }}
             >

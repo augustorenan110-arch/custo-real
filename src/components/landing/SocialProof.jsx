@@ -41,13 +41,13 @@ export default function SocialProof() {
           {TESTIMONIALS.map((t, i) => (
             <motion.figure
               key={t.author}
-              className="relative rounded-2xl border border-white/10 bg-white/5 p-5"
+              className="relative rounded-2xl border border-white/10 bg-white/5 p-5 text-center"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.45, delay: i * 0.1 }}
             >
-              <Quote className="h-5 w-5 text-primary/60" />
+              <Quote className="mx-auto h-5 w-5 text-primary/60" />
               <blockquote className="mt-3 text-sm leading-relaxed text-foreground/85">“{t.quote}”</blockquote>
               <figcaption className="mt-4 text-xs text-muted-foreground">
                 <span className="font-semibold text-foreground/85">{t.author}</span> · {t.role}

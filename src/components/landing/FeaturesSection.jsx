@@ -48,13 +48,13 @@ export default function FeaturesSection() {
         {FEATURES.map((f, i) => (
           <motion.div
             key={f.title}
-            className="tech-card group rounded-2xl p-5 transition duration-300 hover:-translate-y-0.5 hover:border-primary"
+            className="tech-card group rounded-2xl p-5 text-center transition duration-300 hover:-translate-y-0.5 hover:border-primary"
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.45, delay: (i % 3) * 0.08 }}
           >
-            <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/15 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
+            <span className="mx-auto grid h-11 w-11 place-items-center rounded-xl bg-primary/15 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
               <f.icon className="h-5 w-5" strokeWidth={1.8} />
             </span>
             <h3 className="mt-4 text-sm font-semibold">{f.title}</h3>

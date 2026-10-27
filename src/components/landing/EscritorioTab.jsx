@@ -64,27 +64,27 @@ export default function EscritorioTab() {
   return (
     <div className="mx-auto max-w-3xl px-5 pb-4 pt-10 sm:px-8">
       <motion.h1
-        className="font-tech text-2xl font-extrabold leading-tight sm:text-4xl"
+        className="font-tech text-center text-2xl font-extrabold leading-tight sm:text-4xl"
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
         Cada cliente seu pode te pagar <span className="text-[#22C55E]">R$17,97 por mês</span>. Para sempre.
       </motion.h1>
-      <p className="mt-4 text-sm leading-relaxed text-foreground/75 sm:text-base">
+      <p className="mt-4 text-center text-sm leading-relaxed text-foreground/75 sm:text-base">
         Sem pacote. Sem mensalidade pra você. Você indica por R$59,90/mês, seu cliente paga direto, você ganha 30%
         recorrente enquanto ele usar.
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         {CARDS.map((texto) => (
-          <div key={texto} className="rounded-xl border border-[#334155] bg-[#1E293B] p-6">
+          <div key={texto} className="rounded-xl border border-[#334155] bg-[#1E293B] p-6 text-center">
             <p className="font-tech text-sm font-bold text-white">{texto}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 rounded-xl border border-[#334155] bg-[#1E293B] p-6">
+      <div className="mt-6 rounded-xl border border-[#334155] bg-[#1E293B] p-6 text-center">
         <Label htmlFor="s-clientes" className="text-xs uppercase tracking-[0.18em] text-[#94A3B8]">
           Quantos clientes você tem?
         </Label>
@@ -104,8 +104,8 @@ export default function EscritorioTab() {
       </div>
 
       <form onSubmit={salvar} className="mt-6 rounded-xl border border-[#334155] bg-[#1E293B] p-6">
-        <h2 className="font-tech text-base font-bold">Cadastre seu escritório e comece a ganhar hoje</h2>
-        <p className="mt-1 text-xs text-[#94A3B8]">
+        <h2 className="font-tech text-center text-base font-bold">Cadastre seu escritório e comece a ganhar hoje</h2>
+        <p className="mt-1 text-center text-xs text-[#94A3B8]">
           {me ? 'Leva 30 segundos. Depois é só cadastrar os CNPJs dos seus clientes.' : 'Entre com o Google para salvar seu cadastro.'}
         </p>
 
