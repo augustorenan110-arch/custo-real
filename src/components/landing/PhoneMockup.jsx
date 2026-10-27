@@ -125,7 +125,7 @@ export default function PhoneMockup({ className = '' }) {
           <AnimatePresence mode="wait">
             <motion.div
               key={i}
-              className="h-full pt-6"
+              className="h-full pt-6 rounded-sm"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -14 }}
