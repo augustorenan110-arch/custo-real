@@ -10,22 +10,22 @@ const SALARIO = 2000;
 export default function HeroInsightChart() {
   const data = useMemo(
     () =>
-      Array.from({ length: 24 }, (_, i) => {
-        const meses = i * 2 + 1;
-        return { meses, custo: custoDemissao(SALARIO, meses).total };
-      }),
+    Array.from({ length: 24 }, (_, i) => {
+      const meses = i * 2 + 1;
+      return { meses, custo: custoDemissao(SALARIO, meses).total };
+    }),
     []
   );
   const passivo4Anos = data[data.length - 1].custo;
 
   return (
     <motion.div
-      className="tech-card w-full overflow-hidden rounded-3xl p-5"
+      className="tech-card w-full overflow-hidden rounded-3xl p-5 hidden"
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.55 }}
-    >
+      transition={{ duration: 0.55 }}>
+      
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -56,8 +56,8 @@ export default function HeroInsightChart() {
               tick={{ fill: 'rgba(255,255,255,0.45)', fontSize: 10 }}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(v) => `${v}m`}
-            />
+              tickFormatter={(v) => `${v}m`} />
+            
             <YAxis hide domain={['dataMin - 400', 'dataMax']} />
             <Tooltip
               cursor={{ stroke: 'rgba(255,255,255,0.18)' }}
@@ -65,11 +65,11 @@ export default function HeroInsightChart() {
                 background: '#0f0f12',
                 border: '1px solid #2a2a2e',
                 borderRadius: 12,
-                fontSize: 11,
+                fontSize: 11
               }}
               labelFormatter={(v) => `${v} meses de casa`}
-              formatter={(v) => [brl(v), 'Custo para demitir']}
-            />
+              formatter={(v) => [brl(v), 'Custo para demitir']} />
+            
             <Area
               type="monotone"
               dataKey="custo"
@@ -77,8 +77,8 @@ export default function HeroInsightChart() {
               strokeWidth={2.5}
               fill="url(#heroPassivo)"
               dot={false}
-              activeDot={{ r: 4, fill: '#007bff' }}
-            />
+              activeDot={{ r: 4, fill: '#007bff' }} />
+            
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -87,6 +87,6 @@ export default function HeroInsightChart() {
         Em 4 anos de casa o mesmo funcionário passa a custar{' '}
         <span className="font-semibold text-cost-tech">{brl(passivo4Anos)}</span> só para desligar.
       </p>
-    </motion.div>
-  );
+    </motion.div>);
+
 }
