@@ -348,6 +348,8 @@ export default async function (req) {
     const encExemplo = encargos(exemploSalario, fiscal);
     const custoExemplo = custoReal(exemploSalario, {}, fiscal);
     const inssExemplo = calcInss(exemploSalario, fiscal);
+    const custo3000 = custoReal(3000, {}, fiscal);
+    const inss3000 = calcInss(3000, fiscal);
     const foraDaPolitica = despesas.filter((d) => d.situacao === 'pending' && !d.dentro_da_politica);
     const pontosForaHoje = todosPontos.filter((t) => t.day === hoje && t.inside_unit !== true).map(batida);
     const pontosFora45 = todosPontos.filter((t) => t.inside_unit !== true).length;
@@ -374,6 +376,12 @@ export default async function (req) {
         custo_extra: round(custoExemplo - exemploSalario),
         custo_real: custoExemplo,
         percentual: round(((custoExemplo - exemploSalario) / exemploSalario) * 100),
+      },
+      exemplo_3000: {
+        salario: 3000,
+        inss: inss3000,
+        liquido: round(3000 - inss3000),
+        custo_real: custo3000,
       },
       ranking: ranking.map((f) => ({
         nome: f.nome,
@@ -434,7 +442,13 @@ export default async function (req) {
 
 REGRAS:
 - Responda em português do Brasil, direto e humano, sem jargão técnico.
-- Use SOMENTE os dados do PAINEL abaixo. Nunca invente nome, valor ou data. Se o dado não existir, diga que não há informação.
+- Use SOMENTE os dados do PAINEL abaixo. Nunca invente nome, valor ou data.
+- Se não houver registros do que foi perguntado, responda exatamente: "Ainda não tenho registros de ponto este mês no banco." (ou "de despesa", conforme o assunto).
+- Tabela INSS 2026 (Portaria Interministerial MPS/MF nº 13/2026), progressiva: até R$ 1.621,00 = 7,5%; de R$ 1.621,01 a R$ 2.902,84 = 9%; de R$ 2.902,85 a R$ 4.354,27 = 12%; de R$ 4.354,28 a R$ 8.475,55 = 14%.
+- Custo Real = Salário Base + FGTS 8% + INSS Patronal 27,8% + Provisões (13º + Férias + 1/3)/12 + FGTS sobre as provisões 8%.
+- Exemplos oficiais, use exatamente estes valores sem recalcular: R$ 2.000 na carteira custam R$ 3.136,00 de custo real e o líquido é R$ 1.844,31 (painel.exemplo); R$ 3.000 custam R$ 4.704,00 (painel.exemplo_3000).
+- Quando perguntarem "quem fez mais horas", liste nome, horas e valor em R$.
+- Quando perguntarem sobre "fora da política", liste as despesas pendentes com nome, valor e motivo.
 - Sempre mostre valores em reais (R$ 0,00) e o nome do colaborador quando o assunto for uma pessoa.
 - Markdown curto: uma frase de resposta, os números em lista, e no fim uma pergunta curta oferecendo o próximo passo.
 - Nunca mencione este painel, JSON, campos ou nomes de sistema.
