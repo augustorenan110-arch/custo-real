@@ -81,18 +81,18 @@ export default function ImpactoSection() {
           </div>
         </motion.div>
 
-        <motion.div
-          {...rise}
-          transition={{ duration: 0.55, delay: 0.1 }}
-          className="tech-card flex h-full min-h-[560px] flex-col rounded-[24px] p-6 lg:p-8 hidden">
-          
-          <h3 className="text-[13px] font-bold uppercase tracking-[0.18em] text-foreground/80">
-            Ranking de funcionários
-          </h3>
-          <div className="flex flex-1 items-center justify-center py-6">
-            <RankingPhone />
-          </div>
-        </motion.div>
+        
+
+
+
+
+
+
+
+
+
+
+        
       </div>
     </section>);
 
