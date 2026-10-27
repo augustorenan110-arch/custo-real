@@ -70,7 +70,7 @@ function ScreenCost() {
 
 }
 
-function ScreenRanking() {
+export function ScreenRanking() {
   return (
     <div className="flex h-full flex-col justify-center gap-3 px-5">
       <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">

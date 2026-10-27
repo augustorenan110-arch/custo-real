@@ -5,6 +5,7 @@ import ModeTabs from '@/components/landing/ModeTabs';
 import EscritorioTab from '@/components/landing/EscritorioTab';
 import LandingHeader from '@/components/landing/LandingHeader';
 import HeroSection from '@/components/landing/HeroSection';
+import ImpactoSection from '@/components/landing/ImpactoSection';
 import VideoShowcase from '@/components/landing/VideoShowcase';
 import PainSection from '@/components/landing/PainSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
@@ -70,6 +71,7 @@ export default function Landing() {
           <motion.div key="empresa" {...fade}>
             <LandingHeader startTo={startTo} />
             <HeroSection startTo={startTo} panelTo={panelTo} />
+            <ImpactoSection />
             <VideoShowcase />
             <PainSection />
             <FeaturesSection />
