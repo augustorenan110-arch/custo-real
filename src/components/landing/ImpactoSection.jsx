@@ -4,13 +4,13 @@ import { ArrowDownRight } from 'lucide-react';
 import RankingPhone from '@/components/landing/RankingPhone';
 
 const DATA = [
-  { mes: 'Jan', custo: 120 },
-  { mes: 'Fev', custo: 95 },
-  { mes: 'Mar', custo: 80 },
-  { mes: 'Abr', custo: 68 },
-  { mes: 'Mai', custo: 55 },
-  { mes: 'Jun', custo: 45 },
-];
+{ mes: 'Jan', custo: 120 },
+{ mes: 'Fev', custo: 95 },
+{ mes: 'Mar', custo: 80 },
+{ mes: 'Abr', custo: 68 },
+{ mes: 'Mai', custo: 55 },
+{ mes: 'Jun', custo: 45 }];
+
 
 const CARD = 'tech-card flex h-full flex-col rounded-[24px] p-6 lg:p-8';
 const TITLE = 'flex h-5 items-center text-[13px] font-bold uppercase tracking-[0.18em] text-foreground/80';
@@ -19,13 +19,13 @@ const rise = {
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: '-80px' },
-  transition: { duration: 0.55 },
+  transition: { duration: 0.55 }
 };
 
 export default function ImpactoSection() {
   return (
     <section className="relative mx-auto w-full max-w-[1100px] px-5 sm:px-8">
-      <div className="my-[3cm] grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
+      <div className="my-[3cm] grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 hidden">
         <motion.div {...rise} className={CARD}>
           <h3 className={TITLE}>Passivo acumulado · redução de custos</h3>
 
@@ -51,22 +51,22 @@ export default function ImpactoSection() {
                   tickLine={false}
                   axisLine={false}
                   width={52}
-                  tickFormatter={(v) => `R$ ${v}k`}
-                />
+                  tickFormatter={(v) => `R$ ${v}k`} />
+                
                 <Tooltip
                   cursor={{ stroke: 'rgba(255,255,255,0.18)' }}
                   contentStyle={{ background: '#0f0f12', border: '1px solid #2a2a2e', borderRadius: 12, fontSize: 12 }}
                   labelFormatter={(v) => `${v} / 2026`}
-                  formatter={(v) => [`R$ ${v}k`, 'Passivo']}
-                />
+                  formatter={(v) => [`R$ ${v}k`, 'Passivo']} />
+                
                 <Area
                   type="monotone"
                   dataKey="custo"
                   stroke="#007bff"
                   strokeWidth={3}
                   fill="url(#impactoFill)"
-                  activeDot={{ r: 5, fill: '#007bff' }}
-                />
+                  activeDot={{ r: 5, fill: '#007bff' }} />
+                
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -86,6 +86,6 @@ export default function ImpactoSection() {
           </div>
         </motion.div>
       </div>
-    </section>
-  );
+    </section>);
+
 }
