@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, PlayCircle, ScanFace, MapPin, TrendingUp } from 'lucide-react';
 import HeroCalculator from '@/components/landing/HeroCalculator';
+import HeroInsightChart from '@/components/landing/HeroInsightChart';
 import PhoneMockup from '@/components/landing/PhoneMockup';
 
 const TAGS = [
@@ -67,6 +68,8 @@ export default function HeroSection({ startTo, panelTo }) {
             </span>
           ))}
         </div>
+
+        <HeroInsightChart />
       </motion.div>
 
       <div className="flex w-full max-w-[560px] flex-col gap-8">
