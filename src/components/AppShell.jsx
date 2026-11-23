@@ -12,6 +12,7 @@ import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
 import MoreMenu from '@/components/MoreMenu';
 import PaywallModal from '@/components/PaywallModal';
 import InternalBackBar from '@/components/InternalBackBar';
+import { useSuperAdmin } from '@/hooks/useSuperAdmin';
 
 // Telas internas ganham o botão "voltar" (as abas principais não).
 const TELAS_INTERNAS = [
@@ -44,6 +45,7 @@ export default function AppShell() {
   const { pathname } = useLocation();
   const queryClient = useQueryClient();
   const isAdmin = me?.role === 'admin';
+  const { isSuperAdmin } = useSuperAdmin();
 
   // Tabelas oficiais (INSS, FGTS, IRRF, patronal) — carregadas uma vez por sessão.
   useEffect(() => {
@@ -82,7 +84,8 @@ export default function AppShell() {
   }, [me?.id, me?.tipo_conta, me?.data_cadastro, company]);
   const contador = !!me?.is_accountant || me?.tipo_conta === 'escritorio';
   // Teste grátis vencido: o dono só sai do paywall assinando o plano completo.
-  const bloqueioTotal = isAdmin && !contador && freeBloqueado(company);
+  // SUPER_ADMIN (criador): acesso permanente, nunca bloqueado por plano/assinatura.
+  const bloqueioTotal = isAdmin && !contador && freeBloqueado(company) && !isSuperAdmin;
   const name = me?.full_name || me?.email || '';
 
   const nav = [
@@ -135,12 +138,19 @@ export default function AppShell() {
   const signOut = () => base44.auth.logout('/entrar');
 
   // Funcionário logado usa o ambiente dele (Início + Holerite), não o painel da empresa.
-  if (funcionario) return <Navigate to="/meu" replace />;
+  // Funcionário logado usa o ambiente dele (Início + Holerite), não o painel da empresa.
+  // O SUPER_ADMIN (criador) sempre acessa o painel completo da empresa.
+  if (funcionario && !isSuperAdmin) return <Navigate to="/meu" replace />;
 
   return (
     <div className="min-h-screen lg:flex">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/10 bg-sidebar/80 p-5 backdrop-blur-xl lg:flex">
         <BrandInline />
+        {isSuperAdmin && (
+          <div className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary">
+            <ShieldCheck className="h-3.5 w-3.5" /> Modo Admin · Acesso Livre Criador
+          </div>
+        )}
         <nav className="mt-8 flex-1 space-y-1 overflow-y-auto pr-1">
           {[...nav, ...adminNav, ...extrasNav].map((n) => (
             <NavLink key={n.to} to={n.to} className={linkClass}>
@@ -172,7 +182,14 @@ export default function AppShell() {
       <div className="flex-1 lg:pl-64">
         <header className="sticky top-0 z-30 border-b border-white/10 bg-background/75 backdrop-blur-xl lg:hidden">
           <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
-            <BrandInline />
+            <div className="flex items-center gap-2">
+              <BrandInline />
+              {isSuperAdmin && (
+                <span className="flex items-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-primary">
+                  <ShieldCheck className="h-3 w-3" /> Admin
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-1">
               <Initials name={name} className="h-8 w-8 text-[11px]" />
               <button

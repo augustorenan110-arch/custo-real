@@ -8,7 +8,7 @@ import ConsentDialog from '@/components/hr/ConsentDialog';
  * Botão gigante de ponto facial do funcionário. Só libera a câmera depois do
  * consentimento de biometria (LGPD) — o mesmo usado na tela antiga de ponto.
  */
-export default function PontoFacial({ funcionario, me }) {
+export default function PontoFacial({ funcionario, me, defaultKind = 'entrada' }) {
   const [autorizado, setAutorizado] = useState(null);
   const [recusou, setRecusou] = useState(false);
   const consentimento = autorizado ?? me?.consentimento_biometria === true;
@@ -41,7 +41,7 @@ export default function PontoFacial({ funcionario, me }) {
   if (consentimento) {
     return (
       <div className="glass rounded-2xl p-5">
-        <PunchPanel key={funcionario.id} employee={funcionario} />
+        <PunchPanel key={funcionario.id} employee={funcionario} defaultKind={defaultKind} />
       </div>
     );
   }

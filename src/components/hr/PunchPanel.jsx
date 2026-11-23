@@ -4,6 +4,13 @@ import { CheckCircle2, XCircle, Loader2, MapPin } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import CameraCapture from '@/components/hr/CameraCapture';
 
+const KIND_LABEL = {
+  entrada: 'Entrada',
+  intervalo_inicio: 'Início do intervalo',
+  intervalo_fim: 'Fim do intervalo',
+  saida: 'Saída',
+};
+
 const getPosition = () =>
   new Promise((resolve) => {
     if (!navigator.geolocation) return resolve(null);
@@ -14,9 +21,10 @@ const getPosition = () =>
     );
   });
 
-export default function PunchPanel({ employee }) {
+export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
+  const [kind, setKind] = useState(defaultKind);
   const queryClient = useQueryClient();
 
   async function punch(file) {
@@ -32,6 +40,7 @@ export default function PunchPanel({ employee }) {
         selfie_uri: file_uri,
         lat: pos?.lat,
         lng: pos?.lng,
+        kind,
       });
       setResult({ ...data, hasLocation: !!pos });
       queryClient.invalidateQueries({ queryKey: ['timeEntries'] });
@@ -58,7 +67,7 @@ export default function PunchPanel({ employee }) {
         {ok ? <CheckCircle2 className="mx-auto h-14 w-14 text-success" /> : <XCircle className="mx-auto h-14 w-14 text-destructive" />}
         <div>
           <p className="font-display text-xl font-semibold">
-            {ok ? `${result.kind === 'entrada' ? 'Entrada' : 'Saída'} registrada` : 'Ponto não registrado'}
+            {ok ? `${KIND_LABEL[result.kind] || result.kind} registrada` : 'Ponto não registrado'}
           </p>
           {ok && (
             <p className="text-sm text-muted-foreground">
@@ -84,5 +93,25 @@ export default function PunchPanel({ employee }) {
     );
   }
 
-  return <CameraCapture onCapture={punch} label="Tirar selfie e bater ponto" />;
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-2">
+        {['entrada', 'intervalo_inicio', 'intervalo_fim', 'saida'].map((k) => (
+          <button
+            key={k}
+            type="button"
+            onClick={() => setKind(k)}
+            className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition ${
+              kind === k
+                ? 'border-primary bg-primary/15 text-primary'
+                : 'border-white/10 bg-white/5 text-foreground/70 hover:text-foreground'
+            }`}
+          >
+            {KIND_LABEL[k]}
+          </button>
+        ))}
+      </div>
+      <CameraCapture onCapture={punch} label={`Tirar selfie e registrar ${KIND_LABEL[kind].toLowerCase()}`} />
+    </div>
+  );
 }

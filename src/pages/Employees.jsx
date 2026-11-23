@@ -3,6 +3,7 @@ import { Plus, Users, Lock } from 'lucide-react';
 import { useMe } from '@/hooks/useMe';
 import { useEmployees, useCompany } from '@/hooks/useHr';
 import { limiteAtingido, trialDaysLeft } from '@/lib/plan';
+import { useSuperAdmin } from '@/hooks/useSuperAdmin';
 import { Button } from '@/components/ui/button';
 import EmployeeForm from '@/components/hr/EmployeeForm';
 import EmployeeDetail from '@/components/hr/EmployeeDetail';
@@ -15,6 +16,7 @@ export default function Employees() {
   const { data: me, isLoading: loadingMe } = useMe();
   const { data: employees = [], isLoading } = useEmployees();
   const { data: company } = useCompany();
+  const { isSuperAdmin } = useSuperAdmin();
   const [creating, setCreating] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [removendo, setRemovendo] = useState(null);
@@ -27,7 +29,7 @@ export default function Employees() {
 
   const selected = employees.find((e) => e.id === selectedId) || null;
   const ativos = employees.filter((e) => e.active !== false);
-  const bloqueado = !!company && limiteAtingido(company, ativos.length);
+  const bloqueado = !!company && limiteAtingido(company, ativos.length) && !isSuperAdmin;
 
   return (
     <div className="space-y-4">

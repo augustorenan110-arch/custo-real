@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useMe } from '@/hooks/useMe';
 import { useCompany, useEmployees, useTimeEntries } from '@/hooks/useHr';
 import { isFree, trialDaysLeft } from '@/lib/plan';
+import { useSuperAdmin } from '@/hooks/useSuperAdmin';
 import PaywallModal from '@/components/PaywallModal';
 import { localISO } from '@/lib/format';
 import { buildEspelho, espelhoPdf, monthLabel } from '@/lib/espelho';
@@ -27,7 +28,9 @@ export default function Espelho() {
   const isAdmin = me?.role === 'admin';
   const contador = !!me?.is_accountant || me?.tipo_conta === 'escritorio';
   // Espelho em PDF é recurso do plano completo: no teste grátis fica bloqueado.
-  const gratis = !!company && isFree(company) && !contador;
+  // SUPER_ADMIN (criador) nunca é bloqueado.
+  const { isSuperAdmin } = useSuperAdmin();
+  const gratis = !!company && isFree(company) && !contador && !isSuperAdmin;
   const active = employees.filter((e) => e.active !== false);
   const employee = isAdmin
     ? active.find((e) => e.id === pickedId)

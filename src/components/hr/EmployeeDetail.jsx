@@ -18,6 +18,7 @@ import { buildPayslip, calcularCustoEmpresa, resumoFaltas } from '@/lib/payroll'
 import { buildTimesheet, fmtMinutes } from '@/lib/timesheet';
 import { timesheetPdf, expensesPdf } from '@/lib/pdf';
 import { freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
+import { useSuperAdmin } from '@/hooks/useSuperAdmin';
 import FaceEnroll from '@/components/hr/FaceEnroll';
 import FaltaSection from '@/components/hr/FaltaSection';
 import BeneficiosCalculadora from '@/components/hr/BeneficiosCalculadora';
@@ -59,14 +60,16 @@ export default function EmployeeDetail({ employee, onClose }) {
   const { data: entries = [] } = useTimeEntries(employee?.id, month);
   const { data: faltas = [], refetch: refetchFaltas } = useFaltas(employee?.id, month);
   const { data: allExpenses = [] } = useExpenses();
+  const { isSuperAdmin } = useSuperAdmin();
 
   if (!employee) return null;
 
   const contador = !!me?.is_accountant || me?.tipo_conta === 'escritorio';
   // Teste grátis: espelho e gastos em PDF são do plano completo.
-  const gratis = !!company && isFree(company) && !contador;
+  // SUPER_ADMIN (criador) nunca é bloqueado.
+  const gratis = !!company && isFree(company) && !contador && !isSuperAdmin;
   // Teste grátis vencido: holerite também fica bloqueado.
-  const expirado = !!company && freeBloqueado(company) && !contador;
+  const expirado = !!company && freeBloqueado(company) && !contador && !isSuperAdmin;
   const usados = employees.filter((e) => e.active !== false).length;
 
   const mine = allExpenses.filter(

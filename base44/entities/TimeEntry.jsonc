@@ -18,7 +18,15 @@
       "type": "string",
       "enum": [
         "entrada",
+        "intervalo_inicio",
+        "intervalo_fim",
         "saida"
+      ],
+      "enumColors": [
+        "green",
+        "yellow",
+        "blue",
+        "red"
       ],
       "title": "Tipo"
     },

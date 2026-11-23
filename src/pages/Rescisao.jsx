@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useMe } from '@/hooks/useMe';
 import { useCompany } from '@/hooks/useHr';
 import { hasPremium } from '@/lib/plan';
+import { useSuperAdmin } from '@/hooks/useSuperAdmin';
 import { brl, todayISO } from '@/lib/format';
 import { calcRescisao, TERMINATION_TYPES, suggestedFgts, monthsBetween } from '@/lib/rescisao';
 import { buildTermoRescisao } from '@/lib/termoRescisao';
@@ -16,6 +17,7 @@ import { useToast } from '@/components/ui/use-toast';
 export default function Rescisao() {
   const { data: me } = useMe();
   const { data: company } = useCompany();
+  const { isSuperAdmin } = useSuperAdmin();
   const [form, setForm] = useState({
     salario: 2000,
     admissao: mesesAtras(9),
@@ -86,7 +88,7 @@ export default function Rescisao() {
     }
   };
 
-  if (company && !hasPremium(company)) {
+  if (company && !hasPremium(company) && !isSuperAdmin) {
     return (
       <div className="glass rounded-2xl p-6">
         <Lock className="h-6 w-6 text-primary" />

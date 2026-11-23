@@ -75,7 +75,6 @@ export default function LandingFooter({ startTo }) {
             >
               <Mail className="h-3.5 w-3.5" /> dpo@custo-real.com.br
             </a>
-            <p className="mt-3 text-xs text-muted-foreground">CNPJ 00.000.000/0001-00</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-2.5 py-1 text-[10px] text-foreground/70">
                 <ShieldCheck className="h-3 w-3 text-save-tech" /> Conforme LGPD

@@ -3,6 +3,13 @@ import { nearestUnit } from '../../shared/geo.ts';
 
 const asList = (p) => (Array.isArray(p) ? p : p?.items ?? []);
 
+const KIND_LABEL = {
+  entrada: 'Entrada',
+  intervalo_inicio: 'Início de intervalo',
+  intervalo_fim: 'Fim de intervalo',
+  saida: 'Saída',
+};
+
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -14,6 +21,10 @@ export default async function (req) {
     const selfieUri = typeof body?.selfie_uri === 'string' && body.selfie_uri.length < 600 ? body.selfie_uri : '';
     const lat = typeof body?.lat === 'number' ? body.lat : null;
     const lng = typeof body?.lng === 'number' ? body.lng : null;
+    // Tipo de batida explícito (entrada / intervalo_inicio / intervalo_fim / saida).
+    // Se não vier, mantém o comportamento legado (alterna entrada/saida pela paridade).
+    const KINDS = ['entrada', 'intervalo_inicio', 'intervalo_fim', 'saida'];
+    const requestedKind = typeof body?.kind === 'string' && KINDS.includes(body.kind) ? body.kind : null;
     if (!employeeId || !selfieUri) {
       return Response.json({ error: 'Informe o colaborador e a selfie' }, { status: 400 });
     }
@@ -94,8 +105,8 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
 
     const now = new Date();
     const day = now.toISOString().slice(0, 10);
-    const todays = asList(await sr.entities.TimeEntry.filter({ employee_id: emp.id, day }, { limit: 100 }));
-    const kind = todays.length % 2 === 0 ? 'entrada' : 'saida';
+    const todays = asList(await sr.entities.TimeEntry.filter({ employee_id: emp.id, day }, { sort: 'punched_at', limit: 100 }));
+    const kind = requestedKind || (todays.length % 2 === 0 ? 'entrada' : 'saida');
 
     let unit = emp.unit || '';
     let inside = null;
@@ -129,7 +140,7 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
       employee_name: emp.full_name,
       actor_email: user.email,
       confidence,
-      details: `${kind === 'entrada' ? 'Entrada' : 'Saída'} registrada${unit ? ' · ' + unit : ''}${
+      details: `${KIND_LABEL[kind] || kind} registrada${unit ? ' · ' + unit : ''}${
         inside === false ? ' · FORA do raio da unidade' : ''
       }. ${reason}`.trim(),
       lat: lat ?? undefined,
