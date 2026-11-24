@@ -93,7 +93,7 @@ export default function Espelho() {
             {monthLabel(month)}
           </p>
           <EspelhoSummary totals={sheet.totals} />
-          <EspelhoTable rows={sheet.rows} />
+          <EspelhoTable rows={sheet.rows} workdayHours={company?.workday_hours || 8} />
           <div className="grid gap-2 sm:grid-cols-2">
             <Button
               className="w-full"
