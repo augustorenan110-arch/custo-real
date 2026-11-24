@@ -73,7 +73,6 @@ export default function CalculadoraCustoFuncionario({ inicial = '2000' }) {
           <Linha label="(+) Provisão 13º salário" value={brl(custo.prov13)} />
           <Linha label="(+) Provisão férias" value={brl(custo.provFerias)} />
           <Linha label="(+) Provisão 1/3 férias" value={brl(custo.provTerco)} />
-          <Linha label={`(+) FGTS sobre provisões (${pct(fiscal.fgts)}%)`} value={brl(custo.fgtsProvisoes)} />
         </div>
       </div>
 

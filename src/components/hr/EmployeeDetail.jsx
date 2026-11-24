@@ -217,10 +217,6 @@ export default function EmployeeDetail({ employee, onClose }) {
               <span className="text-[#94A3B8]">Provisão 1/3 férias</span>
               <span className="text-white">{brl(custo.provTerco)}</span>
             </div>
-            <div className="flex justify-between text-xs">
-              <span className="min-w-0 break-words text-[#94A3B8]">FGTS sobre provisões {pct(fiscal.fgts)}%</span>
-              <span className="text-white">{brl(custo.fgtsProvisoes)}</span>
-            </div>
             {custo.vt > 0 && (
               <div className="flex justify-between text-xs">
                 <span className="text-[#94A3B8]">Vale-transporte (empresa)</span>

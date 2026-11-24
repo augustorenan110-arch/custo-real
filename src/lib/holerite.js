@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import logoCr from '@/assets/logo-cr.png';
 import { dateBR, cnpjBR, cpfBR } from '@/lib/format';
-import { encargosMensais } from '@/lib/payroll';
+import { calculateCustoReal } from '@/lib/payroll';
 
 /* Holerite em bobina: 140 x 100 mm (paisagem), no modelo do recibo de salário. */
 const LARGURA = 140;
@@ -229,20 +229,13 @@ export async function holeritePdf({ company, employee, month, slip }) {
   ];
   valores.forEach(([valor, x]) => doc.text(valor, x, rodape + 10));
 
-  // ── Assinatura lateral ────────────────────────────────────────────────────
-  doc.setFontSize(5);
-  doc.text('Declaro ter recebido a importância líquida discriminada neste recibo.', 113, 90, { angle: 90 });
-  doc.line(120, 44, 120, 62);
-  doc.text(nome, 123, 60, { angle: 90 });
-  doc.text(`${dataFolha}  Data`, 130, 60, { angle: 90 });
-
   // ── Página 2: Custo Real + Rodapé profissional ─────────────────────────────
-  doc.addPage();
-  const encargos = encargosMensais(salario);
-  const inssPatronal = encargos.patronal;
-  const provisao = encargos.provisoes;
-  const custoTotal = round(slip.net + inssPatronal + slip.fgts + provisao);
-  const alemSalario = round(custoTotal - slip.net);
+  // Fórmula oficial única (calculateCustoReal): Salário Base + INSS Patronal +
+  // FGTS + Provisão Férias/1/3 + Provisão 13º. Mesmo valor do Painel e Relatório.
+  doc.addPage([140, 118], 'landscape');
+  const custoReal = calculateCustoReal(salario);
+  const custoTotal = custoReal.total;
+  const alemSalarioBase = round(custoTotal - salario);
 
   // Título em azul
   doc.setFillColor(59, 130, 246);
@@ -252,57 +245,64 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.setFont('helvetica', 'bold');
   doc.text('CUSTO REAL PARA A EMPRESA - DIFERENCIAL GR', 8, 11);
 
-  // Quadro de custos
-  doc.setFillColor(238, 244, 255);
-  doc.roundedRect(X, 16, 130, 44, 1.5, 1.5, 'F');
-  doc.setDrawColor(59, 130, 246);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(X, 16, 130, 44, 1.5, 1.5, 'S');
-  doc.setTextColor(0, 0, 0);
+  // Linha informativa do líquido (fora da soma do custo real)
+  doc.setTextColor(90);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
+  doc.text(`Salário Líquido pago ao funcionário: ${real(slip.net)}`, 8, 20);
+
+  // Quadro de custos (soma = Custo Total Real)
+  doc.setFillColor(238, 244, 255);
+  doc.roundedRect(X, 23, 130, 36, 1.5, 1.5, 'F');
+  doc.setDrawColor(59, 130, 246);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(X, 23, 130, 36, 1.5, 1.5, 'S');
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
 
   const linhasCusto = [
-    ['Salário Líquido pago ao funcionário:', real(slip.net)],
-    ['+ INSS Patronal (28%):', real(inssPatronal)],
-    ['+ FGTS (8%):', real(slip.fgts)],
-    ['+ Provisão Férias + 1/3 + 13º:', real(provisao)],
+    ['Salário Base:', real(custoReal.salarioBase)],
+    ['+ INSS Patronal:', real(custoReal.inssPatronal)],
+    ['+ FGTS:', real(custoReal.fgts)],
+    ['+ Provisão Férias + 1/3 + 13º:', real(custoReal.provisoes)],
   ];
-  let yc = 22;
+  let yc = 29;
   for (const [rotulo, valor] of linhasCusto) {
     doc.text(rotulo, 8, yc);
     doc.text(valor, 132, yc, { align: 'right' });
-    yc += 6;
+    yc += 5.5;
   }
   doc.setDrawColor(59, 130, 246);
-  doc.line(8, yc - 2, 132, yc - 2);
+  doc.line(8, yc - 1.5, 132, yc - 1.5);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.text('= CUSTO TOTAL REAL:', 8, yc + 2);
-  doc.text(real(custoTotal), 132, yc + 2, { align: 'right' });
+  doc.setFontSize(9);
+  doc.text('= CUSTO TOTAL REAL:', 8, yc + 3);
+  doc.text(real(custoTotal), 132, yc + 3, { align: 'right' });
 
-  // Destaque "além do salário"
+  // Destaque "além do salário base"
   doc.setFillColor(59, 130, 246);
-  doc.roundedRect(X, yc + 6, 130, 8, 1.5, 1.5, 'F');
+  doc.roundedRect(X, yc + 7, 130, 9, 1.5, 1.5, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
-  doc.text(`Você paga ${real(alemSalario)} além do salário`, 8, yc + 11);
+  doc.text(`Você paga ${real(alemSalarioBase)} além do salário base de ${real(salario)}`, 8, yc + 12.5);
 
-  // ── Rodapé profissional (assinaturas) ──────────────────────────────────────
+  // ── Declaração horizontal (fonte 10) ────────────────────────────────────────
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.text('Declaro ter recebido a importância líquida discriminada neste recibo.', 8, yc + 24);
+
+  // ── Rodapé profissional (assinaturas) ──────────────────────────────────────
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  const yAss = yc + 24;
+  const yAss = yc + 34;
   // Funcionário
   doc.setDrawColor(120);
   doc.line(8, yAss, 66, yAss);
   doc.text('Assinatura do funcionário', 8, yAss + 4);
-  doc.text(
-    `${nome} - CPF: ${cpfBR(employee.cpf)} - Data: _____/_____/______`,
-    8,
-    yAss + 8,
-  );
+  doc.text(`${nome} - CPF: ${cpfBR(employee.cpf)} - Data: _____/_____/______`, 8, yAss + 8);
   // Empregador
   doc.line(74, yAss, 132, yAss);
   doc.text('Assinatura do empregador', 74, yAss + 4);
@@ -315,7 +315,7 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.setFontSize(5);
   doc.setTextColor(110);
   doc.text(
-    'Documento gerado pelo Custo Real RH IA. Base de cálculo conforme tabelas oficiais (INSS, IRRF, FGTS).',
+    'Documento gerado pelo Custo Real RH IA. Cálculo conforme tabelas oficiais (INSS, IRRF, FGTS, INSS patronal).',
     8,
     yAss + 14,
   );
