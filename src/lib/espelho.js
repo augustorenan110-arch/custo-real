@@ -101,6 +101,7 @@ export function buildEspelho(entries, month, { workdayHours = 8, startTime = '08
     else totals.extra50 += extraMin;
 
     const ref = e || list[0] || {};
+    const locRef = list.find((x) => x.endereco || x.cidade_uf) || ref;
     rows.push({
       day,
       weekday: WEEKDAYS[weekday],
@@ -114,10 +115,10 @@ export function buildEspelho(entries, month, { workdayHours = 8, startTime = '08
       extraMin,
       status,
       lunchMissing,
-      endereco: ref.endereco || '',
-      lat: ref.lat ?? null,
-      lng: ref.lng ?? null,
-      hasSelfie: !!ref.selfie_uri,
+      endereco: locRef.endereco || locRef.cidade_uf || '',
+      lat: (locRef.lat ?? ref.lat) ?? null,
+      lng: (locRef.lng ?? ref.lng) ?? null,
+      hasSelfie: list.some((x) => x.selfie_uri),
       unit: ref.unit || '',
       outside: list.some((x) => x.inside_unit === false),
     });
@@ -203,12 +204,12 @@ export function espelhoPdf({ company, employee, month, sheet }) {
   head(doc, company, employee, month, workdayHours);
 
   let y = 64;
-  const rowH = 6.6;
+  const rowH = 6;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
 
   for (const r of sheet.rows) {
-    if (y > 252) {
+    if (y > 244) {
       doc.addPage();
       head(doc, company, employee, month, workdayHours);
       y = 64;
@@ -278,7 +279,7 @@ export function espelhoPdf({ company, employee, month, sheet }) {
   }
 
   // ── Rodapé com resumo ──────────────────────────────────────────────────────
-  y = Math.max(y + 4, 256);
+  y = y + 3;
   doc.setFillColor(238, 244, 255);
   doc.roundedRect(12, y, 186, 14, 1.5, 1.5, 'F');
   doc.setDrawColor(59, 130, 246);
@@ -318,7 +319,9 @@ export function espelhoPdf({ company, employee, month, sheet }) {
   doc.text(`CNPJ: ${cnpjBR(company?.cnpj)}`, 152.5, yAss + 9, { align: 'center' });
   doc.text('Assinatura do funcionário', 57.5, yAss + 13, { align: 'center' });
   doc.text('Assinatura do empregador', 152.5, yAss + 13, { align: 'center' });
-  doc.text(`Data: _____/_____/______`, 103.5, yAss + 5, { align: 'center' });
+  const [ayy, amm] = month.split('-').map(Number);
+  const dataAss = `${String(new Date(ayy, amm, 0).getDate()).padStart(2, '0')}/${String(amm).padStart(2, '0')}/${ayy}`;
+  doc.text(`Data: ${dataAss}`, 103.5, yAss + 5, { align: 'center' });
 
   doc.setFontSize(6);
   doc.setTextColor(140);
