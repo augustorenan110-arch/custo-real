@@ -12,9 +12,9 @@ export default function MoreMenu({ items }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] text-muted-foreground"
+        className="flex min-h-[70px] flex-1 flex-col items-center justify-center gap-1 rounded-xl py-2 text-[11px] leading-tight text-muted-foreground"
       >
-        <Menu className="h-[22px] w-[22px]" strokeWidth={1.7} />
+        <Menu className="h-[22px] w-[22px] shrink-0" strokeWidth={1.7} />
         Mais
       </button>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -22,7 +22,7 @@ export default function MoreMenu({ items }) {
           <SheetHeader>
             <SheetTitle>Mais</SheetTitle>
           </SheetHeader>
-          <div className="mt-4 grid gap-1">
+          <div className="mt-4 grid gap-1 pb-[100px]">
             {items.map((n) => (
               <NavLink
                 key={n.to}

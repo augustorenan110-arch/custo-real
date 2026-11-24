@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
-import { BrandInline, Initials } from '@/components/Brand';
+import { BrandInline, Initials, Logo } from '@/components/Brand';
 import AdminOverview from '@/components/admin/AdminOverview';
 import AdminEmpresas from '@/components/admin/AdminEmpresas';
 import AdminPlanos from '@/components/admin/AdminPlanos';
@@ -113,18 +113,18 @@ export default function AdminPanel() {
 
       <div className="flex-1 lg:pl-64">
         <header className="sticky top-0 z-30 border-b border-white/10 bg-background/80 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-            <div className="flex items-center gap-3">
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-3 sm:px-6">
+            <div className="flex min-w-0 items-center gap-2">
               <button onClick={() => setMenuOpen(true)} className="rounded-lg p-2 text-foreground lg:hidden">
                 <Menu className="h-5 w-5" />
               </button>
-              <h1 className="text-lg font-semibold">{activeLabel}</h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="hidden items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary sm:flex">
+              <Logo className="h-8" />
+              <span className="flex shrink-0 items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
                 <ShieldCheck className="h-3 w-3" /> Admin
               </span>
-              <Initials name={name} className="h-8 w-8 text-[11px]" />
+              <h1 className="hidden truncate text-lg font-semibold sm:block">{activeLabel}</h1>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
               <button onClick={signOut} aria-label="Sair" className="rounded-lg p-2 text-muted-foreground transition hover:text-destructive">
                 <LogOut className="h-4 w-4" />
               </button>

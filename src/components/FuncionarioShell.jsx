@@ -51,18 +51,18 @@ export default function FuncionarioShell() {
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 rounded-t-3xl border-t border-primary/20 bg-sidebar/95 backdrop-blur-xl">
-        <div className="safe-bottom mx-auto flex max-w-2xl items-stretch justify-around px-2 pt-1.5">
+        <div className="safe-bottom mx-auto flex min-h-[70px] max-w-2xl items-stretch justify-around gap-1 px-2 pt-2 pb-1">
           {ABAS.map((a) => (
             <NavLink
               key={a.to}
               to={a.to}
               className={({ isActive }) =>
-                `flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] transition ${
+                `flex min-h-[70px] flex-1 flex-col items-center justify-center gap-1 rounded-xl py-2 text-[11px] leading-tight transition ${
                   isActive ? 'bg-primary/10 font-semibold text-primary' : 'text-muted-foreground'
                 }`
               }
             >
-              <a.icon className="h-[22px] w-[22px]" strokeWidth={1.7} />
+              <a.icon className="h-[22px] w-[22px] shrink-0" strokeWidth={1.7} />
               {a.label}
             </NavLink>
           ))}

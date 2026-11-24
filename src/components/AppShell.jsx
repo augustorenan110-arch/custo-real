@@ -8,7 +8,7 @@ import { useCompany } from '@/hooks/useHr';
 import { useMeuFuncionario } from '@/hooks/useMeuFuncionario';
 import { TRIAL_PLAN, trialEndDate, freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
 import { carregarFiscal } from '@/lib/fiscal';
-import { BrandInline, BrandFooter, Initials } from '@/components/Brand';
+import { BrandInline, BrandFooter, Initials, Logo } from '@/components/Brand';
 import MoreMenu from '@/components/MoreMenu';
 import PaywallModal from '@/components/PaywallModal';
 import InternalBackBar from '@/components/InternalBackBar';
@@ -182,10 +182,10 @@ export default function AppShell() {
       <div className="flex-1 lg:pl-64">
         <header className="sticky top-0 z-30 border-b border-white/10 bg-background/75 backdrop-blur-xl lg:hidden">
           <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-2">
-              <BrandInline />
+            <div className="flex min-w-0 items-center gap-2">
+              <Logo className="h-8" />
               {isSuperAdmin && (
-                <span className="flex items-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-primary">
+                <span className="flex shrink-0 items-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-primary">
                   <ShieldCheck className="h-3 w-3" /> Admin
                 </span>
               )}
@@ -214,18 +214,18 @@ export default function AppShell() {
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 rounded-t-3xl border-t border-primary/20 bg-sidebar/95 shadow-[0_-12px_40px_-12px_hsl(217_91%_60%/0.35)] backdrop-blur-xl lg:hidden">
-        <div className="safe-bottom mx-auto flex max-w-2xl items-stretch justify-around px-2 pt-1.5">
+        <div className="safe-bottom mx-auto flex min-h-[70px] max-w-2xl items-stretch justify-around gap-1 px-2 pt-2 pb-1">
           {mobileNav.map((n) => (
             <NavLink
               key={n.to}
               to={n.to}
               className={({ isActive }) =>
-                `flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] transition ${
+                `flex min-h-[70px] flex-1 flex-col items-center justify-center gap-1 rounded-xl py-2 text-[11px] leading-tight transition ${
                   isActive ? 'bg-primary/10 font-semibold text-primary' : 'text-muted-foreground'
                 }`
               }
             >
-              <n.icon className="h-[22px] w-[22px]" strokeWidth={1.7} />
+              <n.icon className="h-[22px] w-[22px] shrink-0" strokeWidth={1.7} />
               {n.label}
             </NavLink>
           ))}

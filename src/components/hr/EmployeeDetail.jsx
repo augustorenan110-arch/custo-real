@@ -37,7 +37,7 @@ const labelMes = (m) => {
     : d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).toUpperCase().replace(' DE ', '/');
 };
 const ROSTO_CTA =
-  'h-12 w-full rounded-xl bg-[#007bff] font-bold text-white hover:bg-[#0064d2]';
+  'min-h-12 w-full rounded-xl bg-[#007bff] px-3 py-3 text-center text-[12px] leading-tight font-bold text-white hover:bg-[#0064d2] whitespace-normal';
 const EXTRAS_ZERO = {
   vt: 0,
   va: 0,
@@ -202,7 +202,7 @@ export default function EmployeeDetail({ employee, onClose }) {
               <span className="text-white">{brl(custo.fgts)}</span>
             </div>
             <div className="flex justify-between gap-3 text-xs">
-              <span className="text-[#94A3B8]">INSS Patronal + Terceiros + RAT {pct(fiscal.patronal)}%</span>
+              <span className="min-w-0 break-words text-[#94A3B8]">INSS Patronal + Terceiros + RAT {pct(fiscal.patronal)}%</span>
               <span className="shrink-0 text-white">{brl(custo.patronal)}</span>
             </div>
             <div className="flex justify-between text-xs">
@@ -218,7 +218,7 @@ export default function EmployeeDetail({ employee, onClose }) {
               <span className="text-white">{brl(custo.provTerco)}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-[#94A3B8]">FGTS sobre provisões {pct(fiscal.fgts)}%</span>
+              <span className="min-w-0 break-words text-[#94A3B8]">FGTS sobre provisões {pct(fiscal.fgts)}%</span>
               <span className="text-white">{brl(custo.fgtsProvisoes)}</span>
             </div>
             {custo.vt > 0 && (

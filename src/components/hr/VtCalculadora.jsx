@@ -29,9 +29,9 @@ export default function VtCalculadora({
   return (
     <div className="w-full rounded-2xl border border-[#334155] bg-[#1E293B] p-4">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <Bus size={20} className="shrink-0 text-[#22C55E]" />
-          <h3 className="text-sm font-bold text-white">Vale-transporte — Calculadora</h3>
+          <h3 className="break-words text-sm font-bold leading-snug text-white">Vale-transporte — Calculadora</h3>
         </div>
         <span className="shrink-0 rounded-full bg-[#22C55E] px-3 py-1 text-[10px] font-bold text-black">
           CALCULADO

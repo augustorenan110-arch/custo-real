@@ -30,9 +30,9 @@ export default function HoraExtraCalculadora({ horas50, setHoras50, horas100, se
   return (
     <div className="w-full">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           <Clock size={20} className="shrink-0 text-[#f97316]" />
-          <h3 className="text-sm font-bold text-white">HORA EXTRA - CALCULADORA</h3>
+          <h3 className="break-words text-sm font-bold leading-snug text-white">HORA EXTRA - CALCULADORA</h3>
         </div>
         <span className="shrink-0 rounded-full bg-[#22C55E] px-2 py-1 text-[10px] font-bold text-black">
           CALCULADORA

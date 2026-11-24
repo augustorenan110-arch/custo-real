@@ -7,7 +7,7 @@ import { useCompany } from '@/hooks/useHr';
 import TrialBanner from '@/components/plan/TrialBanner';
 import { useExpenses } from '@/hooks/useExpenses';
 import { brl, dateBR, statusLabel } from '@/lib/format';
-import { Initials } from '@/components/Brand';
+import PainelGreeting from '@/components/p/PainelGreeting';
 
 const COLORS = [
   'hsl(var(--chart-1))',
@@ -73,17 +73,9 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-5">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Olá, {firstName || 'colaborador'}!</h1>
-          <p className="text-sm text-muted-foreground">
-            {isAdmin ? 'Resumo dos custos da sua empresa.' : 'Resumo do custo real da sua empresa.'}
-          </p>
-        </div>
-        <Initials name={name} />
-      </header>
-
       <TrialBanner company={company} />
+
+      <PainelGreeting />
 
       <div className="glass glow rounded-2xl border-primary/25 p-5">
         <p className="text-sm text-foreground/75">
