@@ -43,6 +43,7 @@ import EntrarFuncionario from './pages/EntrarFuncionario';
 import FuncionarioCriarConta from './pages/FuncionarioCriarConta';
 import FuncionarioRecuperarSenha from './pages/FuncionarioRecuperarSenha';
 import MeuInicio from './pages/MeuInicio';
+import MeuRouter from './pages/MeuRouter';
 import MeuHolerite from './pages/MeuHolerite';
 import Indicacao from './pages/Indicacao';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -115,9 +116,11 @@ const AuthenticatedApp = () => {
           <Route path="/tabelas-oficiais" element={<TabelasOficiais />} />
           <Route path="/planos" element={<Planos />} />
         </Route>
+        {/* Admin: /meu decide pelo papel do usuário logado. */}
+        <Route path="/meu" element={<MeuRouter />} />
         {/* Ambiente do funcionário: só Início e Holerite. */}
         <Route element={<FuncionarioShell />}>
-          <Route path="/meu" element={<MeuInicio />} />
+          <Route path="/meu/colaborador" element={<MeuInicio />} />
           <Route path="/meu-holerite" element={<MeuHolerite />} />
         </Route>
       </Route>

@@ -6,7 +6,7 @@ import { useMeuFuncionario } from '@/hooks/useMeuFuncionario';
 
 // Barra inferior do funcionário: só Início e Holerite.
 const ABAS = [
-  { to: '/meu', label: 'Início', icon: Home },
+  { to: '/meu/colaborador', label: 'Início', icon: Home },
   { to: '/meu-holerite', label: 'Holerite', icon: FileText },
 ];
 

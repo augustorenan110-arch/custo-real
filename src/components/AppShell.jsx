@@ -140,7 +140,7 @@ export default function AppShell() {
   // Funcionário logado usa o ambiente dele (Início + Holerite), não o painel da empresa.
   // Funcionário logado usa o ambiente dele (Início + Holerite), não o painel da empresa.
   // O SUPER_ADMIN (criador) sempre acessa o painel completo da empresa.
-  if (funcionario && !isSuperAdmin) return <Navigate to="/meu" replace />;
+  if (funcionario && !isSuperAdmin) return <Navigate to="/meu/colaborador" replace />;
 
   return (
     <div className="min-h-screen lg:flex">
