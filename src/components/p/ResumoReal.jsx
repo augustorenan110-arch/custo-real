@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AlertTriangle, ArrowRight, Calculator, FileText, ScanFace, Trophy, Users } from 'lucide-react';
 import { brl } from '@/lib/format';
 import { calcularTotaisEmpresa, custoRealFuncionario } from '@/lib/payroll';
-import StoreButtons from '@/components/StoreButtons';
+import FacialPontoCard from '@/components/p/FacialPontoCard';
 
 const ATALHOS = [
   { to: '/ponto', label: 'Ponto facial', icon: ScanFace },
@@ -105,7 +105,7 @@ export default function ResumoReal({ empresa, funcionarios = [] }) {
         · {qtd} {qtd === 1 ? 'funcionário' : 'funcionários'} · Atualizado hoje {hora}
       </p>
 
-      <StoreButtons />
+      <FacialPontoCard />
     </div>
   );
 }

@@ -119,12 +119,15 @@ export default function AdminPanel() {
                 <Menu className="h-5 w-5" />
               </button>
               <Logo className="h-8" />
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
               <span className="flex shrink-0 items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
                 <ShieldCheck className="h-3 w-3" /> Admin
               </span>
-              <h1 className="hidden truncate text-lg font-semibold sm:block">{activeLabel}</h1>
+              <h1 className="hidden truncate text-base font-semibold lg:block">{activeLabel}</h1>
             </div>
             <div className="flex shrink-0 items-center gap-2">
+              <Initials name={name} className="h-9 w-9 text-[11px]" />
               <button onClick={signOut} aria-label="Sair" className="rounded-lg p-2 text-muted-foreground transition hover:text-destructive">
                 <LogOut className="h-4 w-4" />
               </button>
