@@ -78,6 +78,7 @@ export function buildEspelho(entries, month, { workdayHours = 8, startTime = '08
     else totals.extra50 += extraMin;
 
     const units = [...new Set(list.map((x) => x.unit).filter(Boolean))];
+    const primeiro = list[0] || {};
     rows.push({
       day,
       weekday: WEEKDAYS[weekday],
@@ -90,6 +91,9 @@ export function buildEspelho(entries, month, { workdayHours = 8, startTime = '08
       extraMin,
       unit: units.join(', '),
       outside: list.some((x) => x.inside_unit === false),
+      endereco: primeiro.endereco || '',
+      lat: primeiro.lat ?? null,
+      lng: primeiro.lng ?? null,
     });
   }
 

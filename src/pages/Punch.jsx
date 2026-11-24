@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Clock, ShieldAlert } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Clock, ShieldAlert, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useMe } from '@/hooks/useMe';
 import { useEmployees } from '@/hooks/useHr';
 import PunchPanel from '@/components/hr/PunchPanel';
 import ConsentDialog from '@/components/hr/ConsentDialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { requestGeoPermission } from '@/lib/geo';
 
 export default function Punch() {
   const { data: me } = useMe();
@@ -13,6 +14,16 @@ export default function Punch() {
   const [pickedId, setPickedId] = useState('');
   const [granted, setGranted] = useState(null);
   const [refused, setRefused] = useState(false);
+  const [geo, setGeo] = useState(null);
+
+  // Ao abrir a tela de ponto, pede permissão de localização do navegador/celular.
+  useEffect(() => {
+    let active = true;
+    requestGeoPermission().then((s) => active && setGeo(s));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const isAdmin = me?.role === 'admin';
   const active = employees.filter((e) => e.active !== false);
@@ -31,6 +42,16 @@ export default function Punch() {
           Tire uma selfie. A IA compara com a sua foto de referência e registra entrada ou saída.
         </p>
       </div>
+
+      {geo === 'denied' && (
+        <div className="glass flex items-start gap-3 rounded-2xl border border-warning/40 p-4">
+          <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+          <p className="text-sm text-foreground/80">
+            Ative a localização para registrar o ponto com prova. No celular, autorize o acesso à localização nas
+            permissões do navegador.
+          </p>
+        </div>
+      )}
 
       {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
 

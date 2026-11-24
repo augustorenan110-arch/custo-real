@@ -53,6 +53,26 @@
     "lng": {
       "type": "number"
     },
+    "accuracy": {
+      "type": "number",
+      "title": "Precis\u00e3o do GPS (m)"
+    },
+    "endereco": {
+      "type": "string",
+      "title": "Endere\u00e7o completo"
+    },
+    "rua": {
+      "type": "string",
+      "title": "Rua / n\u00famero"
+    },
+    "bairro": {
+      "type": "string",
+      "title": "Bairro"
+    },
+    "cidade_uf": {
+      "type": "string",
+      "title": "Cidade/UF"
+    },
     "unit": {
       "type": "string",
       "title": "Unidade reconhecida"

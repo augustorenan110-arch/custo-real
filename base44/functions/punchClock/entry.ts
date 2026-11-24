@@ -21,6 +21,11 @@ export default async function (req) {
     const selfieUri = typeof body?.selfie_uri === 'string' && body.selfie_uri.length < 600 ? body.selfie_uri : '';
     const lat = typeof body?.lat === 'number' ? body.lat : null;
     const lng = typeof body?.lng === 'number' ? body.lng : null;
+    const accuracy = typeof body?.accuracy === 'number' ? body.accuracy : null;
+    const endereco = typeof body?.endereco === 'string' ? body.endereco.slice(0, 200) : '';
+    const rua = typeof body?.rua === 'string' ? body.rua.slice(0, 120) : '';
+    const bairro = typeof body?.bairro === 'string' ? body.bairro.slice(0, 120) : '';
+    const cidadeUf = typeof body?.cidade_uf === 'string' ? body.cidade_uf.slice(0, 120) : '';
     // Tipo de batida explícito (entrada / intervalo_inicio / intervalo_fim / saida).
     // Se não vier, mantém o comportamento legado (alterna entrada/saida pela paridade).
     const KINDS = ['entrada', 'intervalo_inicio', 'intervalo_fim', 'saida'];
@@ -129,6 +134,11 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
       selfie_uri: selfieUri,
       lat: lat ?? undefined,
       lng: lng ?? undefined,
+      accuracy: accuracy ?? undefined,
+      endereco: endereco || undefined,
+      rua: rua || undefined,
+      bairro: bairro || undefined,
+      cidade_uf: cidadeUf || undefined,
       unit,
       inside_unit: inside ?? undefined,
     });
@@ -156,6 +166,13 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
       punched_at: entry.punched_at,
       unit,
       inside_unit: inside,
+      lat,
+      lng,
+      accuracy,
+      endereco,
+      rua,
+      bairro,
+      cidade_uf: cidadeUf,
     });
   } catch (error) {
     return Response.json({ error: error.message || 'Falha ao registrar o ponto' }, { status: 500 });

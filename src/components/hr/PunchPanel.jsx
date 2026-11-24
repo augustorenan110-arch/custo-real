@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { CheckCircle2, XCircle, Loader2, MapPin } from 'lucide-react';
+import { CheckCircle2, XCircle, Loader2, MapPin, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import CameraCapture from '@/components/hr/CameraCapture';
+import { getPosition, reverseGeocode, mapsUrl } from '@/lib/geo';
 
 const KIND_LABEL = {
   entrada: 'Entrada',
@@ -10,16 +11,6 @@ const KIND_LABEL = {
   intervalo_fim: 'Fim do intervalo',
   saida: 'Saída',
 };
-
-const getPosition = () =>
-  new Promise((resolve) => {
-    if (!navigator.geolocation) return resolve(null);
-    navigator.geolocation.getCurrentPosition(
-      (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
-      () => resolve(null),
-      { enableHighAccuracy: true, timeout: 8000 },
-    );
-  });
 
 export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
   const [busy, setBusy] = useState(false);
@@ -35,14 +26,39 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
         base44.integrations.Core.UploadPrivateFile({ file }),
         getPosition(),
       ]);
+      let addr = null;
+      let lat = null;
+      let lng = null;
+      let accuracy = null;
+      if (pos) {
+        lat = pos.lat;
+        lng = pos.lng;
+        accuracy = pos.accuracy;
+        addr = await reverseGeocode(pos.lat, pos.lng);
+      }
       const { data } = await base44.functions.invoke('punchClock', {
         employee_id: employee.id,
         selfie_uri: file_uri,
-        lat: pos?.lat,
-        lng: pos?.lng,
+        lat,
+        lng,
         kind,
+        accuracy,
+        endereco: addr?.endereco || '',
+        rua: addr?.rua || '',
+        bairro: addr?.bairro || '',
+        cidade_uf: addr?.cidade_uf || '',
       });
-      setResult({ ...data, hasLocation: !!pos });
+      setResult({
+        ...data,
+        hasLocation: !!pos,
+        lat,
+        lng,
+        accuracy,
+        rua: addr?.rua || data?.rua || '—',
+        bairro: addr?.bairro || data?.bairro || '—',
+        cidade_uf: addr?.cidade_uf || data?.cidade_uf || '—',
+        endereco: addr?.endereco || data?.endereco || '',
+      });
       queryClient.invalidateQueries({ queryKey: ['timeEntries'] });
     } catch (e) {
       setResult({ accepted: false, reason: e?.response?.data?.error || 'Não foi possível registrar o ponto.' });
@@ -75,17 +91,42 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
             </p>
           )}
           {result.reason && <p className="mt-1 text-xs text-muted-foreground">{result.reason}</p>}
-          {ok && result.unit && (
-            <p className="mt-1 flex items-center justify-center gap-1 text-xs">
-              <MapPin className="h-3 w-3" />
-              {result.unit}
-              {result.inside_unit === false && <span className="text-warning"> · fora do raio da unidade</span>}
-            </p>
-          )}
-          {ok && !result.hasLocation && (
-            <p className="mt-1 text-xs text-warning">Localização não autorizada — ponto sem local.</p>
-          )}
         </div>
+
+        {ok && result.hasLocation && result.lat != null && (
+          <div className="rounded-2xl border border-success/30 bg-success/10 p-4 text-left">
+            <p className="flex items-center gap-2 text-sm font-bold text-success">
+              <MapPin className="h-4 w-4" /> Localização registrada
+            </p>
+            <dl className="mt-2 space-y-1 break-words text-xs text-foreground/80">
+              <div>
+                <span className="text-muted-foreground">Rua: </span>
+                {result.rua || '—'}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Bairro - Cidade/UF: </span>
+                {[result.bairro, result.cidade_uf].filter(Boolean).join(' - ') || '—'}
+              </div>
+              <div>
+                <span className="text-muted-foreground">Precisão: </span>
+                {result.accuracy != null ? `${result.accuracy} metros` : '—'}
+              </div>
+            </dl>
+            <a
+              href={mapsUrl(result.lat, result.lng)}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+            >
+              <ExternalLink className="h-4 w-4" /> Ver no Mapa
+            </a>
+          </div>
+        )}
+
+        {ok && !result.hasLocation && (
+          <p className="text-xs text-warning">Localização não autorizada — ponto sem local.</p>
+        )}
+
         <button onClick={() => setResult(null)} className="text-sm text-primary hover:underline">
           {ok ? 'Concluir' : 'Tentar de novo'}
         </button>
