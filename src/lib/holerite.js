@@ -3,14 +3,15 @@ import logoCr from '@/assets/logo-cr.png';
 import { dateBR, cnpjBR, cpfBR } from '@/lib/format';
 import { calculateCustoReal } from '@/lib/payroll';
 
-/* Holerite em bobina: 140 x 100 mm (paisagem), no modelo do recibo de salário. */
-const LARGURA = 140;
-const ALTURA = 100;
+/* Holerite em UMA página A4 retrato (210 x 297 mm).
+   Container único: margens 15 mm → largura útil 180 mm.
+   Todos os blocos (Recibo, Tabela, Totais, Bases, Custo Real, Assinaturas)
+   usam exatamente essa mesma largura, alinhados borda a borda. */
 const HORAS_MES = 220;
-const X = 5;
-const LARGURA_TABELA = 102;
-const VENC = 96;
-const DESC = 106;
+const X = 15;            // margem esquerda do container
+const W = 180;           // largura útil do container (210 - 15 - 15)
+const R = X + W;         // borda direita = 195
+const PG_H = 297;        // altura A4
 
 let logoBase64 = null;
 
@@ -113,7 +114,9 @@ function lancamentos(slip, valorHora) {
 }
 
 export async function holeritePdf({ company, employee, month, slip }) {
-  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [LARGURA, ALTURA] });
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  doc.setProperties({ title: `Holerite ${employee.full_name} ${month}`, subject: 'Recibo de pagamento e custo real', creator: 'Custo Real RH IA' });
+
   const nome = String(employee.full_name || 'Colaborador').toUpperCase();
   const salario = Number(employee.salary) || 0;
   const valorHora = salario / HORAS_MES;
@@ -121,145 +124,148 @@ export async function holeritePdf({ company, employee, month, slip }) {
   const local = company?.cidade_uf || 'Matriz';
   const dataFolha = ultimoDia(month);
 
-  // ── Cabeçalho ──────────────────────────────────────────────────────────────
+  // ── Cabeçalho (largura W) ──────────────────────────────────────────────────
   doc.setFontSize(6);
   doc.setFont('helvetica', 'normal');
   doc.text(`Empresa: ${company?.cnpj || '—'}`, X, 8);
 
   doc.setDrawColor(150);
-  doc.rect(X, 10, 20, 20);
-  if (logo) doc.addImage(logo, 'PNG', 6, 11, 18, 18);
-
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text(String(company?.name || 'Empresa').toUpperCase(), 27, 13);
-  doc.setFontSize(6);
-  doc.setFont('helvetica', 'normal');
-  doc.text(String(company?.activity || '').slice(0, 58), 27, 16);
-  doc.text(`CNPJ: ${company?.cnpj || '—'}`, 27, 19);
+  doc.rect(X, 10, 18, 18);
+  if (logo) doc.addImage(logo, 'PNG', X + 1, 11, 16, 16);
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('Recibo de Pagto. de Salário', X + LARGURA_TABELA, 13, { align: 'right' });
+  doc.text(String(company?.name || 'Empresa').toUpperCase(), X + 22, 14);
   doc.setFontSize(6);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Folha Mensal ${dataFolha}`, X + LARGURA_TABELA, 19, { align: 'right' });
+  doc.text(String(company?.activity || '').slice(0, 80), X + 22, 18);
+  doc.text(`CNPJ: ${cnpjBR(company?.cnpj)}`, X + 22, 22);
 
-  // ── Dados do funcionário ──────────────────────────────────────────────────
-  doc.rect(27, 21, 80, 12);
-  doc.text(`0002 ${nome}`, 28, 24);
-  doc.text(`CPF: ${employee.cpf || '—'}    Admissão: ${employee.admission_date ? dateBR(employee.admission_date) : '—'}`, 28, 27);
-  doc.text(`Local: ${local}   Cargo: ${employee.role_title || '—'}`, 28, 30);
-
-  // ── Tabela de vencimentos e descontos ────────────────────────────────────
-  const topo = 35;
-  doc.setFillColor(180, 180, 180);
-  doc.rect(X, topo, LARGURA_TABELA, 6, 'F');
-  doc.setFontSize(5);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('Data', 6, topo + 4);
-  doc.text('Código', 13, topo + 4);
-  doc.text('Descrição', 21, topo + 4);
-  doc.text('Quant/%', 55, topo + 4);
-  doc.text('Ref.', 64, topo + 4);
-  doc.text('Base', 73, topo + 4);
-  doc.text('Vencim.', VENC, topo + 4, { align: 'right' });
-  doc.text('Desc.', DESC, topo + 4, { align: 'right' });
+  doc.text('Recibo de Pagto. de Salário', R, 14, { align: 'right' });
+  doc.setFontSize(6);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Folha Mensal ${dataFolha}`, R, 18, { align: 'right' });
+
+  // ── Dados do funcionário (largura W) ───────────────────────────────────────
+  doc.rect(X, 24, W, 11);
+  doc.setFontSize(7);
+  doc.text(`0002 ${nome}`, X + 2, 28);
+  doc.text(`CPF: ${cpfBR(employee.cpf)}    Admissão: ${employee.admission_date ? dateBR(employee.admission_date) : '—'}`, X + 2, 32);
+  doc.text(`Local: ${local}   Cargo: ${employee.role_title || '—'}`, X + 2, 34.5);
+
+  // ── Tabela de vencimentos e descontos (largura W) ──────────────────────────
+  const topo = 38;
+  doc.setFillColor(180, 180, 180);
+  doc.rect(X, topo, W, 5, 'F');
+  doc.setFontSize(5.5);
+  doc.setFont('helvetica', 'bold');
+  // Colunas distribuídas na largura W
+  const cData = X + 2;
+  const cCod = X + 14;
+  const cDesc = X + 24;
+  const cQuant = X + 100;
+  const cRef = X + 118;
+  const cBase = X + 135;
+  const cVenc = X + 160;
+  const cDescVal = R - 2;
+  doc.text('Data', cData, topo + 3.5);
+  doc.text('Código', cCod, topo + 3.5);
+  doc.text('Descrição', cDesc, topo + 3.5);
+  doc.text('Quant/%', cQuant + 14, topo + 3.5, { align: 'right' });
+  doc.text('Ref.', cRef + 6, topo + 3.5, { align: 'right' });
+  doc.text('Base', cBase + 14, topo + 3.5, { align: 'right' });
+  doc.text('Vencim.', cVenc + 14, topo + 3.5, { align: 'right' });
+  doc.text('Desc.', cDescVal, topo + 3.5, { align: 'right' });
 
   doc.setFont('helvetica', 'normal');
   const linhas = lancamentos(slip, valorHora);
-  const altura = Math.min(3.6, 21 / Math.max(linhas.length, 1));
-  let y = topo + 8;
+  const altura = Math.min(4.2, 30 / Math.max(linhas.length, 1));
+  let y = topo + 6;
   let totalVenc = 0;
   let totalDesc = 0;
 
   linhas.forEach((l) => {
-    if (l.desconto) {
-      totalDesc += l.valor;
-    } else {
-      totalVenc += l.valor;
-    }
-    doc.text('30', 6, y);
-    doc.text(l.cod, 13, y);
-    doc.text(l.desc, 21, y);
-    doc.text(l.quant, 62, y, { align: 'right' });
-    doc.text(l.ref, 69, y, { align: 'right' });
-    doc.text(l.base ? real(l.base) : '', 86, y, { align: 'right' });
-    doc.text(l.desconto ? '' : real(l.valor), VENC, y, { align: 'right' });
-    doc.text(l.desconto ? real(l.valor) : '', DESC, y, { align: 'right' });
+    if (l.desconto) totalDesc += l.valor;
+    else totalVenc += l.valor;
+    doc.text('30', cData, y);
+    doc.text(l.cod, cCod, y);
+    doc.text(l.desc, cDesc, y);
+    doc.text(l.quant, cQuant + 14, y, { align: 'right' });
+    doc.text(l.ref, cRef + 6, y, { align: 'right' });
+    doc.text(l.base ? real(l.base) : '', cBase + 14, y, { align: 'right' });
+    doc.text(l.desconto ? '' : real(l.valor), cVenc + 14, y, { align: 'right' });
+    doc.text(l.desconto ? real(l.valor) : '', cDescVal, y, { align: 'right' });
     y += altura;
   });
 
-  // ── Totais ────────────────────────────────────────────────────────────────
-  const tot = 65;
-  doc.rect(X, tot, LARGURA_TABELA, 10);
-  doc.text('Total de Vencimentos', 8, tot + 4);
-  doc.text(real(totalVenc), 62, tot + 4, { align: 'right' });
-  doc.text('Total de Descontos', 66, tot + 4);
-  doc.text(real(totalDesc), DESC, tot + 4, { align: 'right' });
+  // ── Totais (largura W) ─────────────────────────────────────────────────────
+  const tot = y + 1;
+  doc.rect(X, tot, W, 9);
+  doc.setFontSize(6.5);
+  doc.text('Total de Vencimentos', X + 3, tot + 3.5);
+  doc.text(real(totalVenc), cVenc + 14, tot + 3.5, { align: 'right' });
+  doc.text('Total de Descontos', X + 90, tot + 3.5);
+  doc.text(real(totalDesc), cDescVal, tot + 3.5, { align: 'right' });
   doc.setFont('helvetica', 'bold');
-  doc.text('Valor Líquido =>', 8, tot + 8);
-  doc.text(real(totalVenc - totalDesc), DESC, tot + 8, { align: 'right' });
+  doc.setFontSize(8);
+  doc.text('Valor Líquido =>', X + 3, tot + 7.5);
+  doc.text(real(totalVenc - totalDesc), cDescVal, tot + 7.5, { align: 'right' });
 
-  // ── Bases de cálculo ──────────────────────────────────────────────────────
+  // ── Bases de cálculo (largura W) ───────────────────────────────────────────
   const inss = slip.deductions.find((d) => d.label === 'INSS')?.value || 0;
-  const rodape = 78;
+  const rodape = tot + 11;
   doc.setFillColor(180, 180, 180);
-  doc.rect(X, rodape, LARGURA_TABELA, 6, 'F');
-  doc.setFontSize(4.5);
+  doc.rect(X, rodape, W, 5, 'F');
+  doc.setFontSize(5);
   doc.setFont('helvetica', 'bold');
-  const rotulos = [
-    ['Salário Base', 7],
-    ['Sal. Contr. INSS', 26],
-    ['Base FGTS', 46],
-    ['FGTS do Mês', 60],
-    ['Base IRRF', 76],
-    ['Via do Empregado', 88],
-  ];
-  rotulos.forEach(([rotulo, x]) => doc.text(rotulo, x, rodape + 4));
-  doc.rect(X, rodape + 6, LARGURA_TABELA, 6);
+  const colW = W / 6;
+  const rotulos = ['Salário Base', 'Sal. Contr. INSS', 'Base FGTS', 'FGTS do Mês', 'Base IRRF', 'Via do Empregado'];
+  rotulos.forEach((rotulo, i) => doc.text(rotulo, X + i * colW + 2, rodape + 3.5));
+  doc.rect(X, rodape + 5, W, 5);
   doc.setFont('helvetica', 'normal');
   const valores = [
-    [real(salario), 7],
-    [real(slip.base), 26],
-    [real(slip.base), 46],
-    [real(slip.fgts), 60],
-    [real(Math.max(0, slip.base - inss)), 76],
-    [real(slip.net), 88],
+    real(salario),
+    real(slip.base),
+    real(slip.base),
+    real(slip.fgts),
+    real(Math.max(0, slip.base - inss)),
+    real(slip.net),
   ];
-  valores.forEach(([valor, x]) => doc.text(valor, x, rodape + 10));
+  valores.forEach((valor, i) => doc.text(valor, X + i * colW + 2, rodape + 8.5));
 
-  // ── Página 2: Custo Real + Rodapé profissional ─────────────────────────────
-  // Fórmula oficial única (calculateCustoReal): Salário Base + INSS Patronal +
-  // FGTS + Provisão Férias/1/3 + Provisão 13º. Mesmo valor do Painel e Relatório.
-  doc.addPage([140, 118], 'landscape');
+  // ── Custo Real (largura W — alinhado borda a borda com a tabela) ────────────
   const custoReal = calculateCustoReal(salario);
   const custoTotal = custoReal.total;
   const alemSalarioBase = round(custoTotal - salario);
+  const yCusto = rodape + 13;
 
-  // Título em azul
+  // Barra de título azul (mesma largura W)
   doc.setFillColor(59, 130, 246);
-  doc.roundedRect(X, 6, 130, 8, 1.5, 1.5, 'F');
+  doc.rect(X, yCusto, W, 7, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.text('CUSTO REAL PARA A EMPRESA - DIFERENCIAL GR', 8, 11);
+  doc.text('CUSTO REAL PARA A EMPRESA - DIFERENCIAL GR', X + 3, yCusto + 5);
 
-  // Linha informativa do líquido (fora da soma do custo real)
+  // Linha informativa do líquido
   doc.setTextColor(90);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
-  doc.text(`Salário Líquido pago ao funcionário: ${real(slip.net)}`, 8, 20);
+  doc.setFontSize(6.5);
+  doc.text(`Salário Líquido pago ao funcionário: ${real(slip.net)}`, X + 3, yCusto + 11);
 
-  // Quadro de custos (soma = Custo Total Real)
+  // Quadro de custos (mesma largura W, alinhado)
+  const qTop = yCusto + 13;
+  const qH = 22;
   doc.setFillColor(238, 244, 255);
-  doc.roundedRect(X, 23, 130, 36, 1.5, 1.5, 'F');
+  doc.rect(X, qTop, W, qH, 'F');
   doc.setDrawColor(59, 130, 246);
   doc.setLineWidth(0.3);
-  doc.roundedRect(X, 23, 130, 36, 1.5, 1.5, 'S');
+  doc.rect(X, qTop, W, qH, 'S');
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(7);
 
   const linhasCusto = [
     ['Salário Base:', real(custoReal.salarioBase)],
@@ -267,56 +273,57 @@ export async function holeritePdf({ company, employee, month, slip }) {
     ['+ FGTS:', real(custoReal.fgts)],
     ['+ Provisão Férias + 1/3 + 13º:', real(custoReal.provisoes)],
   ];
-  let yc = 29;
+  let yc = qTop + 5;
   for (const [rotulo, valor] of linhasCusto) {
-    doc.text(rotulo, 8, yc);
-    doc.text(valor, 132, yc, { align: 'right' });
-    yc += 5.5;
+    doc.text(rotulo, X + 4, yc);
+    doc.text(valor, R - 4, yc, { align: 'right' });
+    yc += 4;
   }
   doc.setDrawColor(59, 130, 246);
-  doc.line(8, yc - 1.5, 132, yc - 1.5);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9);
-  doc.text('= CUSTO TOTAL REAL:', 8, yc + 3);
-  doc.text(real(custoTotal), 132, yc + 3, { align: 'right' });
-
-  // Destaque "além do salário base"
-  doc.setFillColor(59, 130, 246);
-  doc.roundedRect(X, yc + 7, 130, 9, 1.5, 1.5, 'F');
-  doc.setTextColor(255, 255, 255);
+  doc.line(X + 4, yc - 1, R - 4, yc - 1);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
-  doc.text(`Você paga ${real(alemSalarioBase)} além do salário base de ${real(salario)}`, 8, yc + 12.5);
+  doc.text('= CUSTO TOTAL REAL:', X + 4, yc + 2.5);
+  doc.text(real(custoTotal), R - 4, yc + 2.5, { align: 'right' });
 
-  // ── Declaração horizontal (fonte 10) ────────────────────────────────────────
+  // Destaque "além do salário base" (mesma largura W)
+  const yDest = qTop + qH + 2;
+  doc.setFillColor(59, 130, 246);
+  doc.rect(X, yDest, W, 7, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7.5);
+  doc.text(`Você paga ${real(alemSalarioBase)} além do salário base de ${real(salario)}`, X + 3, yDest + 5);
+
+  // ── Declaração ─────────────────────────────────────────────────────────────
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.text('Declaro ter recebido a importância líquida discriminada neste recibo.', 8, yc + 24);
+  doc.setFontSize(8);
+  const yDecl = yDest + 12;
+  doc.text('Declaro ter recebido a importância líquida discriminada neste recibo.', X, yDecl);
 
-  // ── Rodapé profissional (assinaturas) ──────────────────────────────────────
+  // ── Assinaturas (largura W) ────────────────────────────────────────────────
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
-  const yAss = yc + 34;
+  const yAss = yDecl + 10;
+  const halfW = W / 2;
   // Funcionário
   doc.setDrawColor(120);
-  doc.line(8, yAss, 66, yAss);
-  doc.text('Assinatura do funcionário', 8, yAss + 4);
-  doc.text(`${nome} - CPF: ${cpfBR(employee.cpf)} - Data: _____/_____/______`, 8, yAss + 8);
+  doc.line(X, yAss, X + halfW - 8, yAss);
+  doc.text('Assinatura do funcionário', X, yAss + 4);
+  doc.text(`${nome} - CPF: ${cpfBR(employee.cpf)}`, X, yAss + 8);
   // Empregador
-  doc.line(74, yAss, 132, yAss);
-  doc.text('Assinatura do empregador', 74, yAss + 4);
-  doc.text(
-    `${String(company?.name || 'Empresa').toUpperCase()} - CNPJ: ${cnpjBR(company?.cnpj)}`,
-    74,
-    yAss + 8,
-  );
+  const xEmp = X + halfW + 8;
+  doc.line(xEmp, yAss, R, yAss);
+  doc.text('Assinatura do empregador', xEmp, yAss + 4);
+  doc.text(`${String(company?.name || 'Empresa').toUpperCase()} - CNPJ: ${cnpjBR(company?.cnpj)}`, xEmp, yAss + 8);
 
+  // ── Rodapé ─────────────────────────────────────────────────────────────────
   doc.setFontSize(5);
   doc.setTextColor(110);
   doc.text(
     'Documento gerado pelo Custo Real RH IA. Cálculo conforme tabelas oficiais (INSS, IRRF, FGTS, INSS patronal).',
-    8,
+    X,
     yAss + 14,
   );
 
