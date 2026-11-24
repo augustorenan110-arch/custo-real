@@ -4,7 +4,7 @@ export const showcaseItems = [
     copy: 'Registro de jornada com reconhecimento facial, prova de vida e localização.',
     alt: 'Ilustração de um celular com reconhecimento facial para registro de ponto',
     image: 'https://media.base44.com/images/public/6ad9f17a4227cd1a92e98f25/02ebfb6b578baf27619e375bed62bfaa_generated_image.png',
-    scene: 'https://media.base44.com/images/public/6ad9f17a4227cd1a92e98f25/80860d49c8e84004a8ed4c1199b83672_generated_image.png',
+    scene: 'https://base44.app/api/apps/6ad9f17a4227cd1a92e98f25/files/mp/public/6ad9f17a4227cd1a92e98f25/21f23e798c714b5e89eb6f2d7632ae65_ponto-facial-scene.jpeg',
   },
   {
     name: 'Dashboard de Custo', kind: 'dashboard', tag: 'colaboradores', tagTo: '/colaboradores', to: '/painel',
