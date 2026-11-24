@@ -79,6 +79,17 @@
   }
 }
 
+@layer base {
+  :root,
+  .dark {
+    --landing-background: 220.8 67.5676% 7.2549%;
+    --landing-depth: 220 70.5882% 13.3333%;
+    --landing-blue: 218.2653 100% 61.5686%;
+    --landing-violet: 262.1229 83.2558% 57.8431%;
+    --landing-link: 213 100% 77%;
+  }
+}
+
 @layer components {
   .glass {
     background-color: hsl(var(--card) / 0.92);

@@ -11,6 +11,13 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+            landing: {
+                background: 'hsl(var(--landing-background) / <alpha-value>)',
+                depth: 'hsl(var(--landing-depth) / <alpha-value>)',
+                blue: 'hsl(var(--landing-blue) / <alpha-value>)',
+                violet: 'hsl(var(--landing-violet) / <alpha-value>)',
+                link: 'hsl(var(--landing-link) / <alpha-value>)'
+            },
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

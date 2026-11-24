@@ -7,15 +7,15 @@ const TABS = [
 
 export default function ModeTabs({ tab, onChange }) {
   return (
-    <div className="sticky top-0 z-50 bg-[#08080A]/90 px-4 py-2 backdrop-blur">
-      <div className="mx-auto flex max-w-[600px] gap-1 rounded-xl bg-[#1E293B] p-1">
+    <div className="sticky top-0 z-50 bg-landing-background/90 px-4 py-2 backdrop-blur">
+      <div className="mx-auto flex max-w-[600px] gap-1 rounded-xl bg-card p-1">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => onChange(t.id)}
             className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 text-[10px] font-semibold leading-tight transition sm:px-3 sm:text-[13px] ${
-              tab === t.id ? 'bg-[#007bff] font-bold text-white' : 'text-[#94A3B8] hover:text-white'
+              tab === t.id ? 'landing-primary font-bold text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <t.icon size={18} strokeWidth={2.2} />

@@ -11,8 +11,8 @@ const LINKS = [
 
 export default function LandingHeader({ startTo }) {
   return (
-    <header className="relative z-40 border-b border-white/10 bg-[#08080a]/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
+    <header className="relative z-40 border-b border-primary/15 bg-landing-background/85 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-8">
         <Link to="/" className="flex items-center gap-2.5">
           <Logo className="h-9" />
           <Wordmark size="sm" />
@@ -29,14 +29,14 @@ export default function LandingHeader({ startTo }) {
         <div className="flex items-center gap-2">
           <Link
             to="/entrar"
-            className="rounded-xl border border-white/15 px-4 py-2 text-sm text-foreground/85 transition hover:border-primary/50 hover:text-primary"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-primary/30 px-3 py-2 text-xs text-foreground/85 transition hover:border-primary/50 hover:text-landing-link sm:text-sm"
           >
             Entrar
           </Link>
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
             <Link
               to={startTo}
-              className="cta-green inline-block rounded-xl px-4 py-2 text-sm font-bold"
+              className="landing-primary inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-xl px-3 py-2 text-xs font-bold text-primary-foreground sm:text-sm"
             >
               Começar grátis
             </Link>

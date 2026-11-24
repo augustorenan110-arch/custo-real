@@ -54,12 +54,12 @@ export default function HeroCalculator({ panelTo = '/register' }) {
             max="60"
             value={months}
             onChange={(e) => setMonths(Number(e.target.value))}
-            className="mt-2 h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-[color:#2563eb]"
+            className="mt-2 h-2 w-full cursor-pointer appearance-none rounded-full bg-foreground/10 accent-primary"
           />
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-1.5 rounded-2xl border border-white/10 bg-black/25 p-3 sm:grid-cols-2">
+      <div className="mt-5 grid grid-cols-1 gap-x-6 gap-y-1.5 rounded-2xl border border-primary/15 bg-landing-background/50 p-3 sm:grid-cols-2">
         {rows.map(([label, value]) => (
           <div key={label} className="flex items-center justify-between gap-3 text-xs">
             <span className="text-foreground/70">{label}</span>
@@ -90,10 +90,10 @@ export default function HeroCalculator({ panelTo = '/register' }) {
         <ShieldAlert className="h-3.5 w-3.5" /> Acima do esperado · avaliar demissão
       </span>
 
-      <motion.div whileHover={{ scale: 1.02 }} className="mt-4">
+      <motion.div whileHover={{ scale: 1.02 }} className="mt-6">
         <Link
           to={panelTo}
-          className="cta-green glow flex h-14 w-full animate-pulse items-center justify-center gap-2 rounded-xl px-5 text-center text-[16px] font-bold uppercase"
+          className="landing-primary flex min-h-14 w-full items-center justify-center gap-2 rounded-xl px-3 py-4 text-center text-sm font-bold uppercase leading-relaxed sm:text-base"
         >
           Ver meu passivo grátis <ArrowRight size={18} strokeWidth={2.6} />
         </Link>
