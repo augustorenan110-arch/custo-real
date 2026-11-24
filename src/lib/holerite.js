@@ -1,6 +1,7 @@
 import { jsPDF } from 'jspdf';
 import logoCr from '@/assets/logo-cr.png';
-import { dateBR } from '@/lib/format';
+import { dateBR, cnpjBR, cpfBR } from '@/lib/format';
+import { encargosMensais } from '@/lib/payroll';
 
 /* Holerite em bobina: 140 x 100 mm (paisagem), no modelo do recibo de salário. */
 const LARGURA = 140;
@@ -26,7 +27,9 @@ async function carregarLogo() {
   return logoBase64;
 }
 
+const round = (n) => Math.round((Number(n) || 0) * 100) / 100;
 const dinheiro = (n) => (Number(n) || 0).toFixed(2).replace('.', ',');
+const real = (n) => `R$ ${dinheiro(n)}`;
 const proporcao = (valor, base) => (base > 0 ? dinheiro((valor / base) * 100) : '0,00');
 
 const ultimoDia = (mes) => {
@@ -60,15 +63,51 @@ function lancamentos(slip, valorHora) {
         },
   );
 
+  // Linhas zeradas obrigatórias (sempre presentes, mesmo que 0,00).
+  const temExtra = slip.earnings.some((e) => String(e.label).startsWith('Horas extras'));
+  if (!temExtra) {
+    vencimentos.push({
+      cod: '0002',
+      desc: 'Hora Extra 50%',
+      quant: '0,00',
+      ref: 'HORAS',
+      base: valorHora * 1.5,
+      valor: 0,
+      desconto: false,
+    });
+  }
+  vencimentos.push({
+    cod: '0003',
+    desc: 'Adicional Noturno',
+    quant: '0,00',
+    ref: 'HORAS',
+    base: valorHora,
+    valor: 0,
+    desconto: false,
+  });
+
   const descontos = slip.deductions.map((d) => {
     if (d.label === 'INSS')
-      return { cod: '0998', desc: 'I.n.s.s.', quant: proporcao(d.value, slip.base), ref: 'VALOR', base: slip.base, valor: d.value, desconto: true };
+      return { cod: '0998', desc: 'INSS', quant: proporcao(d.value, slip.base), ref: 'VALOR', base: slip.base, valor: d.value, desconto: true };
     if (d.label === 'IRRF')
-      return { cod: '0561', desc: 'I.r.r.f.', quant: proporcao(d.value, slip.base), ref: 'VALOR', base: slip.base, valor: d.value, desconto: true };
+      return { cod: '0561', desc: 'IRRF', quant: proporcao(d.value, slip.base), ref: 'VALOR', base: slip.base, valor: d.value, desconto: true };
     if (String(d.label).startsWith('Vale-transporte'))
       return { cod: '0930', desc: 'Vale Transporte', quant: '6,00', ref: 'VALOR', base: slip.base, valor: d.value, desconto: true };
     return { cod: '0100', desc: 'Faltas N/ Justif.', quant: '', ref: 'DIAS', base: 0, valor: d.value, desconto: true };
   });
+
+  const temVt = slip.deductions.some((d) => String(d.label).startsWith('Vale-transporte'));
+  if (!temVt) {
+    descontos.push({
+      cod: '0930',
+      desc: 'Vale Transporte',
+      quant: '0,00',
+      ref: 'VALOR',
+      base: slip.base,
+      valor: 0,
+      desconto: true,
+    });
+  }
 
   return [...vencimentos, ...descontos];
 }
@@ -79,6 +118,8 @@ export async function holeritePdf({ company, employee, month, slip }) {
   const salario = Number(employee.salary) || 0;
   const valorHora = salario / HORAS_MES;
   const logo = await carregarLogo().catch(() => null);
+  const local = company?.cidade_uf || 'Matriz';
+  const dataFolha = ultimoDia(month);
 
   // ── Cabeçalho ──────────────────────────────────────────────────────────────
   doc.setFontSize(6);
@@ -102,13 +143,13 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.text('Recibo de Pagto. de Salário', X + LARGURA_TABELA, 13, { align: 'right' });
   doc.setFontSize(6);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Folha Mensal ${ultimoDia(month)}`, X + LARGURA_TABELA, 19, { align: 'right' });
+  doc.text(`Folha Mensal ${dataFolha}`, X + LARGURA_TABELA, 19, { align: 'right' });
 
   // ── Dados do funcionário ──────────────────────────────────────────────────
   doc.rect(27, 21, 80, 12);
   doc.text(`0002 ${nome}`, 28, 24);
   doc.text(`CPF: ${employee.cpf || '—'}    Admissão: ${employee.admission_date ? dateBR(employee.admission_date) : '—'}`, 28, 27);
-  doc.text(`Local: ${employee.unit || '0001 GERAL'}   Cargo: ${employee.role_title || '—'}`, 28, 30);
+  doc.text(`Local: ${local}   Cargo: ${employee.role_title || '—'}`, 28, 30);
 
   // ── Tabela de vencimentos e descontos ────────────────────────────────────
   const topo = 35;
@@ -143,9 +184,9 @@ export async function holeritePdf({ company, employee, month, slip }) {
     doc.text(l.desc, 21, y);
     doc.text(l.quant, 62, y, { align: 'right' });
     doc.text(l.ref, 69, y, { align: 'right' });
-    doc.text(l.base ? dinheiro(l.base) : '', 86, y, { align: 'right' });
-    doc.text(l.desconto ? '' : dinheiro(l.valor), VENC, y, { align: 'right' });
-    doc.text(l.desconto ? dinheiro(l.valor) : '', DESC, y, { align: 'right' });
+    doc.text(l.base ? real(l.base) : '', 86, y, { align: 'right' });
+    doc.text(l.desconto ? '' : real(l.valor), VENC, y, { align: 'right' });
+    doc.text(l.desconto ? real(l.valor) : '', DESC, y, { align: 'right' });
     y += altura;
   });
 
@@ -153,12 +194,12 @@ export async function holeritePdf({ company, employee, month, slip }) {
   const tot = 65;
   doc.rect(X, tot, LARGURA_TABELA, 10);
   doc.text('Total de Vencimentos', 8, tot + 4);
-  doc.text(dinheiro(totalVenc), 62, tot + 4, { align: 'right' });
+  doc.text(real(totalVenc), 62, tot + 4, { align: 'right' });
   doc.text('Total de Descontos', 66, tot + 4);
-  doc.text(dinheiro(totalDesc), DESC, tot + 4, { align: 'right' });
+  doc.text(real(totalDesc), DESC, tot + 4, { align: 'right' });
   doc.setFont('helvetica', 'bold');
   doc.text('Valor Líquido =>', 8, tot + 8);
-  doc.text(dinheiro(totalVenc - totalDesc), DESC, tot + 8, { align: 'right' });
+  doc.text(real(totalVenc - totalDesc), DESC, tot + 8, { align: 'right' });
 
   // ── Bases de cálculo ──────────────────────────────────────────────────────
   const inss = slip.deductions.find((d) => d.label === 'INSS')?.value || 0;
@@ -179,12 +220,12 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.rect(X, rodape + 6, LARGURA_TABELA, 6);
   doc.setFont('helvetica', 'normal');
   const valores = [
-    [dinheiro(salario), 7],
-    [dinheiro(slip.base), 26],
-    [dinheiro(slip.base), 46],
-    [dinheiro(slip.fgts), 60],
-    [dinheiro(Math.max(0, slip.base - inss)), 76],
-    [dinheiro(slip.net), 88],
+    [real(salario), 7],
+    [real(slip.base), 26],
+    [real(slip.base), 46],
+    [real(slip.fgts), 60],
+    [real(Math.max(0, slip.base - inss)), 76],
+    [real(slip.net), 88],
   ];
   valores.forEach(([valor, x]) => doc.text(valor, x, rodape + 10));
 
@@ -193,7 +234,91 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.text('Declaro ter recebido a importância líquida discriminada neste recibo.', 113, 90, { angle: 90 });
   doc.line(120, 44, 120, 62);
   doc.text(nome, 123, 60, { angle: 90 });
-  doc.text(`${new Date().toLocaleDateString('pt-BR')}  Data`, 130, 60, { angle: 90 });
+  doc.text(`${dataFolha}  Data`, 130, 60, { angle: 90 });
+
+  // ── Página 2: Custo Real + Rodapé profissional ─────────────────────────────
+  doc.addPage();
+  const encargos = encargosMensais(salario);
+  const inssPatronal = encargos.patronal;
+  const provisao = encargos.provisoes;
+  const custoTotal = round(slip.net + inssPatronal + slip.fgts + provisao);
+  const alemSalario = round(custoTotal - slip.net);
+
+  // Título em azul
+  doc.setFillColor(59, 130, 246);
+  doc.roundedRect(X, 6, 130, 8, 1.5, 1.5, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.text('CUSTO REAL PARA A EMPRESA - DIFERENCIAL GR', 8, 11);
+
+  // Quadro de custos
+  doc.setFillColor(238, 244, 255);
+  doc.roundedRect(X, 16, 130, 44, 1.5, 1.5, 'F');
+  doc.setDrawColor(59, 130, 246);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(X, 16, 130, 44, 1.5, 1.5, 'S');
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+
+  const linhasCusto = [
+    ['Salário Líquido pago ao funcionário:', real(slip.net)],
+    ['+ INSS Patronal (28%):', real(inssPatronal)],
+    ['+ FGTS (8%):', real(slip.fgts)],
+    ['+ Provisão Férias + 1/3 + 13º:', real(provisao)],
+  ];
+  let yc = 22;
+  for (const [rotulo, valor] of linhasCusto) {
+    doc.text(rotulo, 8, yc);
+    doc.text(valor, 132, yc, { align: 'right' });
+    yc += 6;
+  }
+  doc.setDrawColor(59, 130, 246);
+  doc.line(8, yc - 2, 132, yc - 2);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text('= CUSTO TOTAL REAL:', 8, yc + 2);
+  doc.text(real(custoTotal), 132, yc + 2, { align: 'right' });
+
+  // Destaque "além do salário"
+  doc.setFillColor(59, 130, 246);
+  doc.roundedRect(X, yc + 6, 130, 8, 1.5, 1.5, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text(`Você paga ${real(alemSalario)} além do salário`, 8, yc + 11);
+
+  // ── Rodapé profissional (assinaturas) ──────────────────────────────────────
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6);
+  const yAss = yc + 24;
+  // Funcionário
+  doc.setDrawColor(120);
+  doc.line(8, yAss, 66, yAss);
+  doc.text('Assinatura do funcionário', 8, yAss + 4);
+  doc.text(
+    `${nome} - CPF: ${cpfBR(employee.cpf)} - Data: _____/_____/______`,
+    8,
+    yAss + 8,
+  );
+  // Empregador
+  doc.line(74, yAss, 132, yAss);
+  doc.text('Assinatura do empregador', 74, yAss + 4);
+  doc.text(
+    `${String(company?.name || 'Empresa').toUpperCase()} - CNPJ: ${cnpjBR(company?.cnpj)}`,
+    74,
+    yAss + 8,
+  );
+
+  doc.setFontSize(5);
+  doc.setTextColor(110);
+  doc.text(
+    'Documento gerado pelo Custo Real RH IA. Base de cálculo conforme tabelas oficiais (INSS, IRRF, FGTS).',
+    8,
+    yAss + 14,
+  );
 
   doc.save(`holerite-${String(employee.full_name || 'colaborador').replace(/\s+/g, '_')}-${month}.pdf`);
 }

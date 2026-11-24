@@ -26,7 +26,7 @@ export default function CompanySettings() {
   const { data: company, isLoading } = useCompany();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [form, setForm] = useState({ name: '', cnpj: '', activity: '', min_confidence: 80, workday_hours: 8, units: [] });
+  const [form, setForm] = useState({ name: '', cnpj: '', activity: '', cidade_uf: '', min_confidence: 80, workday_hours: 8, units: [] });
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -54,6 +54,7 @@ export default function CompanySettings() {
         name: form.name.trim(),
         cnpj: form.cnpj,
         activity: form.activity,
+        cidade_uf: form.cidade_uf?.trim() || '',
         min_confidence: Number(form.min_confidence) || 80,
         workday_hours: Number(form.workday_hours) || 8,
         units: form.units.filter((u) => u.name.trim()).map((u) => ({
@@ -104,6 +105,11 @@ export default function CompanySettings() {
                   </button>
                 ))}
               </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="cidade">Cidade/UF (local da folha)</Label>
+              <Input id="cidade" value={form.cidade_uf || ''} onChange={(e) => set('cidade_uf', e.target.value)} placeholder="Adamantina - SP" className="field" />
+              <p className="text-xs text-muted-foreground">Aparece no campo "Local" do holerite. Se vazio, mostra "Matriz".</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">

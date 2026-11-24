@@ -14,6 +14,10 @@
       "type": "string",
       "title": "Atividade"
     },
+    "cidade_uf": {
+      "type": "string",
+      "title": "Cidade/UF (local da folha)"
+    },
     "owner_whatsapp": {
       "type": "string",
       "title": "WhatsApp do dono"
