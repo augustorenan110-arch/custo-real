@@ -155,29 +155,28 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.text(`CPF: ${cpfBR(employee.cpf)}    Admissão: ${employee.admission_date ? dateBR(employee.admission_date) : '—'}`, X + 2, 32);
   doc.text(`Local: ${local}   Cargo: ${employee.role_title || '—'}`, X + 2, 34.5);
 
-  // ── Tabela de vencimentos e descontos (largura W) ──────────────────────────
+  // ── Tabela de vencimentos e descontos (grid fixo 6 colunas, largura W) ─────
+  // Grid: Data 10% | Código 12% | Descrição 38% | Quant/Ref 12% | Base 14% | Valor 14%
+  const G = {
+    data: X + 2,
+    cod: X + W * 0.10,
+    desc: X + W * 0.22,
+    quantRef: X + W * 0.60,
+    baseRight: X + W * 0.86,
+    valorRight: R - 2,
+  };
   const topo = 38;
   doc.setFillColor(180, 180, 180);
   doc.rect(X, topo, W, 5, 'F');
   doc.setFontSize(5.5);
   doc.setFont('helvetica', 'bold');
-  // Colunas distribuídas na largura W
-  const cData = X + 2;
-  const cCod = X + 14;
-  const cDesc = X + 24;
-  const cQuant = X + 100;
-  const cRef = X + 118;
-  const cBase = X + 135;
-  const cVenc = X + 160;
-  const cDescVal = R - 2;
-  doc.text('Data', cData, topo + 3.5);
-  doc.text('Código', cCod, topo + 3.5);
-  doc.text('Descrição', cDesc, topo + 3.5);
-  doc.text('Quant/%', cQuant + 14, topo + 3.5, { align: 'right' });
-  doc.text('Ref.', cRef + 6, topo + 3.5, { align: 'right' });
-  doc.text('Base', cBase + 14, topo + 3.5, { align: 'right' });
-  doc.text('Vencim.', cVenc + 14, topo + 3.5, { align: 'right' });
-  doc.text('Desc.', cDescVal, topo + 3.5, { align: 'right' });
+  doc.text('Data', G.data, topo + 3.5);
+  doc.text('Código', G.cod, topo + 3.5);
+  doc.text('Descrição', G.desc, topo + 3.5);
+  doc.text('Quant/Ref', G.quantRef, topo + 3.5);
+  doc.text('Base', G.baseRight, topo + 3.5, { align: 'right' });
+  doc.text('Vencim.', G.valorRight - W * 0.07, topo + 3.5, { align: 'right' });
+  doc.text('Desc.', G.valorRight, topo + 3.5, { align: 'right' });
 
   doc.setFont('helvetica', 'normal');
   const linhas = lancamentos(slip, valorHora);
@@ -189,31 +188,39 @@ export async function holeritePdf({ company, employee, month, slip }) {
   linhas.forEach((l) => {
     if (l.desconto) totalDesc += l.valor;
     else totalVenc += l.valor;
-    doc.text('30', cData, y);
-    doc.text(l.cod, cCod, y);
-    doc.text(l.desc, cDesc, y);
-    doc.text(l.quant, cQuant + 14, y, { align: 'right' });
-    doc.text(l.ref, cRef + 6, y, { align: 'right' });
-    doc.text(l.base ? real(l.base) : '', cBase + 14, y, { align: 'right' });
-    doc.text(l.desconto ? '' : real(l.valor), cVenc + 14, y, { align: 'right' });
-    doc.text(l.desconto ? real(l.valor) : '', cDescVal, y, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(5.5);
+    doc.text('30', G.data, y);
+    doc.text(l.cod, G.cod, y);
+    doc.text(l.desc, G.desc, y);
+    doc.text(`${l.quant} ${l.ref}`, G.quantRef, y);
+    // Valores R$ em monospace (courier), alinhados à direita
+    doc.setFont('courier', 'normal');
+    if (l.base) doc.text(real(l.base), G.baseRight, y, { align: 'right' });
+    doc.text(l.desconto ? '' : real(l.valor), G.valorRight - W * 0.07, y, { align: 'right' });
+    doc.text(l.desconto ? real(l.valor) : '', G.valorRight, y, { align: 'right' });
     y += altura;
   });
 
-  // ── Totais (largura W) ─────────────────────────────────────────────────────
+  // ── Totais (mesma grade) ───────────────────────────────────────────────────
   const tot = y + 1;
   doc.rect(X, tot, W, 9);
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.5);
-  doc.text('Total de Vencimentos', X + 3, tot + 3.5);
-  doc.text(real(totalVenc), cVenc + 14, tot + 3.5, { align: 'right' });
-  doc.text('Total de Descontos', X + 90, tot + 3.5);
-  doc.text(real(totalDesc), cDescVal, tot + 3.5, { align: 'right' });
+  doc.text('Total de Vencimentos', G.data, tot + 3.5);
+  doc.setFont('courier', 'bold');
+  doc.text(real(totalVenc), G.valorRight - W * 0.07, tot + 3.5, { align: 'right' });
+  doc.setFont('helvetica', 'normal');
+  doc.text('Total de Descontos', G.quantRef, tot + 3.5);
+  doc.setFont('courier', 'bold');
+  doc.text(real(totalDesc), G.valorRight, tot + 3.5, { align: 'right' });
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
-  doc.text('Valor Líquido =>', X + 3, tot + 7.5);
-  doc.text(real(totalVenc - totalDesc), cDescVal, tot + 7.5, { align: 'right' });
+  doc.text('Valor Líquido =>', G.data, tot + 7.5);
+  doc.setFont('courier', 'bold');
+  doc.text(real(totalVenc - totalDesc), G.valorRight, tot + 7.5, { align: 'right' });
 
-  // ── Bases de cálculo (largura W) ───────────────────────────────────────────
+  // ── Bases de cálculo (6 colunas iguais, valores centralizados) ─────────────
   const inss = slip.deductions.find((d) => d.label === 'INSS')?.value || 0;
   const rodape = tot + 11;
   doc.setFillColor(180, 180, 180);
@@ -222,9 +229,9 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.setFont('helvetica', 'bold');
   const colW = W / 6;
   const rotulos = ['Salário Base', 'Sal. Contr. INSS', 'Base FGTS', 'FGTS do Mês', 'Base IRRF', 'Via do Empregado'];
-  rotulos.forEach((rotulo, i) => doc.text(rotulo, X + i * colW + 2, rodape + 3.5));
+  rotulos.forEach((rotulo, i) => doc.text(rotulo, X + i * colW + colW / 2, rodape + 3.5, { align: 'center' }));
   doc.rect(X, rodape + 5, W, 5);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont('courier', 'normal');
   const valores = [
     real(salario),
     real(slip.base),
@@ -233,7 +240,7 @@ export async function holeritePdf({ company, employee, month, slip }) {
     real(Math.max(0, slip.base - inss)),
     real(slip.net),
   ];
-  valores.forEach((valor, i) => doc.text(valor, X + i * colW + 2, rodape + 8.5));
+  valores.forEach((valor, i) => doc.text(valor, X + i * colW + colW / 2, rodape + 8.5, { align: 'center' }));
 
   // ── Custo Real (largura W — alinhado borda a borda com a tabela) ────────────
   const custoReal = calculateCustoReal(salario);
@@ -267,6 +274,8 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
 
+  // 2 colunas: Descrição 70% (esquerda) | Valor 30% (direita, monospace)
+  const valRight = R - 4;
   const linhasCusto = [
     ['Salário Base:', real(custoReal.salarioBase)],
     ['+ INSS Patronal:', real(custoReal.inssPatronal)],
@@ -275,8 +284,10 @@ export async function holeritePdf({ company, employee, month, slip }) {
   ];
   let yc = qTop + 5;
   for (const [rotulo, valor] of linhasCusto) {
+    doc.setFont('helvetica', 'normal');
     doc.text(rotulo, X + 4, yc);
-    doc.text(valor, R - 4, yc, { align: 'right' });
+    doc.setFont('courier', 'normal');
+    doc.text(valor, valRight, yc, { align: 'right' });
     yc += 4;
   }
   doc.setDrawColor(59, 130, 246);
@@ -284,7 +295,8 @@ export async function holeritePdf({ company, employee, month, slip }) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8);
   doc.text('= CUSTO TOTAL REAL:', X + 4, yc + 2.5);
-  doc.text(real(custoTotal), R - 4, yc + 2.5, { align: 'right' });
+  doc.setFont('courier', 'bold');
+  doc.text(real(custoTotal), valRight, yc + 2.5, { align: 'right' });
 
   // Destaque "além do salário base" (mesma largura W)
   const yDest = qTop + qH + 2;
