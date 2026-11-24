@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
-import { isCriador } from '@/lib/superAdmin';
 
 /**
  * Acesso SUPER_ADMIN (criador). Verificação autoritativa no backend
- * (checkSuperAdmin) — não é só uma condição visual no frontend.
- * Enquanto o servidor responde, usa isCriador() para não piscar o paywall.
+ * (checkSuperAdmin) — a lista de e-mails vive em Segredos, nunca no frontend.
+ * Enquanto o servidor responde, considera não-admin para não piscar o paywall.
  */
 export function useSuperAdmin() {
   const { data: me } = useMe();
@@ -23,6 +22,6 @@ export function useSuperAdmin() {
     },
     staleTime: 5 * 60 * 1000,
   });
-  const isSuperAdmin = q.isLoading ? isCriador(me) : Boolean(q.data);
+  const isSuperAdmin = q.isLoading ? false : Boolean(q.data);
   return { isSuperAdmin, isLoading: q.isLoading };
 }
