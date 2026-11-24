@@ -15,6 +15,26 @@ export default function VideoShowcase() {
           Ponto facial, visão dos custos e simulação de demissão em um só lugar.
         </p>
       </div>
+      <div className="mx-auto mt-10 max-w-3xl">
+        <div
+          className="overflow-hidden rounded-2xl border border-primary/40 shadow-[0_20px_55px_-30px_hsl(var(--primary)/0.45)]"
+          style={{ aspectRatio: '16 / 9' }}
+        >
+          <video
+            src="https://base44.app/api/apps/6ad9f17a4227cd1a92e98f25/files/mp/public/6ad9f17a4227cd1a92e98f25/07a6937e32ca6e7e6b3374a8a10da3fc_app-promo.mp4"
+            controls
+            playsInline
+            muted
+            loop
+            autoPlay
+            preload="metadata"
+            className="h-full w-full object-cover"
+          >
+            Seu navegador não suporta a reprodução de vídeos.
+          </video>
+        </div>
+        <p className="mt-3 text-center text-xs text-muted-foreground">Vídeo de apresentação do aplicativo Custo Real.</p>
+      </div>
       <div className="pg2-section mt-10">
         <ul className="pg2-grid">
           {showcaseItems.map((item, index) => <ShowcaseCard key={item.kind} item={item} index={index} />)}
