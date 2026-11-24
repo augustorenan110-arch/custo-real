@@ -16,7 +16,7 @@ export function useSuperAdmin() {
     queryFn: async () => {
       try {
         const r = await base44.functions.invoke('checkSuperAdmin');
-        return Boolean(r?.is_super_admin);
+        return r.data?.is_super_admin === true;
       } catch {
         return false;
       }

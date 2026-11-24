@@ -4,6 +4,7 @@
 export const ADMIN_EMAILS: string[] = [
   'rhcustoreal@gmail.com',
   'augusto.renan110@gmail.com',
+  'renan_augustoo@hotmail.com',
 ];
 
 // Compatibilidade: o primeiro e-mail continua referenciado como CRIADOR_EMAIL.
