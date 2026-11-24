@@ -16,7 +16,8 @@ import { useTimeEntries, useCompany, useEmployees, useFaltas } from '@/hooks/use
 import { useMe } from '@/hooks/useMe';
 import { buildPayslip, calcularCustoEmpresa, resumoFaltas } from '@/lib/payroll';
 import { buildTimesheet, fmtMinutes } from '@/lib/timesheet';
-import { timesheetPdf, expensesPdf } from '@/lib/pdf';
+import { expensesPdf } from '@/lib/pdf';
+import { espelhoPdf } from '@/lib/espelho';
 import { freeBloqueado, isFree, trialDaysLeft } from '@/lib/plan';
 import { useSuperAdmin } from '@/hooks/useSuperAdmin';
 import FaceEnroll from '@/components/hr/FaceEnroll';
@@ -55,9 +56,9 @@ export default function EmployeeDetail({ employee, onClose }) {
   const [gerando, setGerando] = useState(false);
   const fiscal = useFiscalVigente();
   const { data: me } = useMe();
-  const { data: company } = useCompany();
+  const { data: company, isLoading: companyLoading } = useCompany();
   const { data: employees = [] } = useEmployees();
-  const { data: entries = [] } = useTimeEntries(employee?.id, month);
+  const { data: entries = [], isLoading: entriesLoading, isError: entriesError } = useTimeEntries(employee?.id, month);
   const { data: faltas = [], refetch: refetchFaltas } = useFaltas(employee?.id, month);
   const { data: allExpenses = [] } = useExpenses();
   const { isSuperAdmin } = useSuperAdmin();
@@ -294,13 +295,14 @@ export default function EmployeeDetail({ employee, onClose }) {
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <button
               type="button"
-              onClick={() => (gratis ? setPaywall(true) : timesheetPdf({ company, employee, month, sheet }))}
+              disabled={entriesLoading || companyLoading || entriesError || !month}
+              onClick={() => (gratis ? setPaywall(true) : espelhoPdf({ company, employee, month, entries }))}
               className={`flex h-11 w-full items-center justify-center gap-2 rounded-xl border bg-[#1E293B] font-medium transition-colors ${
                 gratis ? 'border-[#334155] text-[#94A3B8] hover:border-[#eab308]' : 'border-[#334155] text-white hover:border-[#22C55E]'
               }`}
             >
               <AnimatedIcon icon={gratis ? Lock : FileCheck} size={18} color={gratis ? '#94A3B8' : '#22C55E'} />
-              <span className="text-sm">Espelho PDF</span>
+              <span className="text-sm">{entriesLoading || companyLoading ? 'Carregando espelho...' : entriesError ? 'Erro ao carregar pontos' : 'Espelho PDF'}</span>
               {gratis && <span className="rounded-full bg-[#334155] px-2 py-0.5 text-[10px]">bloqueado</span>}
             </button>
 

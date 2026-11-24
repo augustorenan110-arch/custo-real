@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { brl, dateBR } from '@/lib/format';
-import { fmtMinutes } from '@/lib/timesheet';
+export { espelhoPdf as timesheetPdf } from '@/lib/espelho';
 
 function header(doc, title, company, subtitle) {
   doc.setFontSize(16);
@@ -56,34 +56,6 @@ export function payslipPdf({ company, employee, month, slip }) {
   doc.save(`holerite-${employee.full_name.replace(/\s+/g, '_')}-${month}.pdf`);
 }
 
-export function timesheetPdf({ company, employee, month, sheet }) {
-  const doc = new jsPDF();
-  header(doc, `Espelho de ponto — ${month}`, company, `${employee.full_name}  ·  ${employee.role_title || 'Colaborador'}`);
-  let y = 52;
-  doc.setFont('helvetica', 'bold');
-  doc.text('Dia', 14, y);
-  doc.text('Entrada', 60, y);
-  doc.text('Saída', 90, y);
-  doc.text('Trabalhado', 125, y);
-  doc.text('Atraso', 160, y);
-  doc.text('Extra', 190, y, { align: 'right' });
-  doc.setFont('helvetica', 'normal');
-  y = table(
-    doc,
-    y + 7,
-    sheet.rows.map((r) => ({
-      d: dateBR(r.day), e: r.entrada, s: r.saida, w: fmtMinutes(r.minutes), l: fmtMinutes(r.lateMin), x: fmtMinutes(r.extraMin),
-    })),
-    [['d', 14], ['e', 60], ['s', 90], ['w', 125], ['l', 160], ['x', 190, 'right']],
-  );
-  y += 6;
-  doc.setFont('helvetica', 'bold');
-  doc.text(`Total trabalhado: ${fmtMinutes(sheet.worked)}   Atrasos: ${fmtMinutes(sheet.late)}   Horas extras: ${fmtMinutes(sheet.extra)}`, 14, y);
-  doc.setFont('helvetica', 'normal');
-  doc.text('_______________________________            _______________________________', 14, y + 24);
-  doc.text('Assinatura do colaborador                              Assinatura da empresa', 14, y + 30);
-  doc.save(`espelho-${employee.full_name.replace(/\s+/g, '_')}-${month}.pdf`);
-}
 
 export function expensesPdf({ company, employee, expenses }) {
   const doc = new jsPDF();

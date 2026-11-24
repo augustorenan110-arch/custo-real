@@ -1,23 +1,23 @@
-import { fmtMinutes } from '@/lib/timesheet';
+import { cnpjBR, cpfBR } from '@/lib/format';
+import { MONTHLY_HOURS, espelhoPeriod, formatEspelhoMinutes } from '@/lib/espelhoMonthly';
 
-export default function EspelhoSummary({ totals }) {
-  const cards = [
-    ['Dias trabalhados', String(totals.days)],
-    ['Horas totais', fmtMinutes(totals.worked)],
-    ['Atrasos totais', totals.late > 0 ? fmtMinutes(totals.late) : '—'],
-    ['Extras 50%', totals.extra50 > 0 ? fmtMinutes(totals.extra50) : '—'],
-    ['Extras 100%', totals.extra100 > 0 ? fmtMinutes(totals.extra100) : '—'],
-    ['Faltas', String(totals.absences)],
-  ];
-
+export default function EspelhoSummary({ totals, employee, company, month, inferred }) {
+  const cards = [['Total Trabalhado', formatEspelhoMinutes(totals.worked)], ['Horas Esperadas', `${MONTHLY_HOURS}h`], ['Faltas', String(totals.absences)], ['Atrasos', formatEspelhoMinutes(totals.late)], ['Horas Extras', formatEspelhoMinutes(totals.extra)]];
+  const signatures = [[String(employee.full_name).toUpperCase(), `CPF: ${cpfBR(employee.cpf)}`, 'Assinatura do funcionário'], [company?.name || 'Empresa', `CNPJ: ${cnpjBR(company?.cnpj)}`, 'Assinatura do empregador']];
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-      {cards.map(([label, value]) => (
-        <div key={label} className="glass rounded-2xl p-3">
-          <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</div>
-          <div className="mt-1 font-display text-lg font-semibold">{value}</div>
-        </div>
-      ))}
-    </div>
+    <footer className="glass space-y-4 rounded-2xl p-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+        {cards.map(([label, value]) => <div key={label}><div className="text-xs text-muted-foreground">{label}</div><div className="mt-1 text-lg font-semibold">{value}</div></div>)}
+      </div>
+      {company?.cidade_uf && <p className="text-xs text-muted-foreground">Local: cidade/UF de referência da empresa. O GPS e o endereço originais permanecem disponíveis em cada marcação.</p>}
+      {inferred && <p className="text-xs text-warning">Em dias com entradas repetidas, a saída foi inferida pela última batida, sem descontar almoço não registrado e sem alterar os registros originais.</p>}
+      <div className="grid gap-8 pt-10 sm:grid-cols-2">
+        {signatures.map(([name, document, label]) => (
+          <div key={label} className="space-y-1 border-t border-border pt-2 text-center text-xs">
+            <p>{label}</p><p className="break-words font-semibold">{name}</p><p className="text-muted-foreground">{document}</p><p>Data: {espelhoPeriod(month).last}</p>
+          </div>
+        ))}
+      </div>
+    </footer>
   );
 }

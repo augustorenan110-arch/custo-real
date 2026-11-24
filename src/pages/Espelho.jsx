@@ -11,14 +11,15 @@ import { isFree, trialDaysLeft } from '@/lib/plan';
 import { useSuperAdmin } from '@/hooks/useSuperAdmin';
 import PaywallModal from '@/components/PaywallModal';
 import { localISO } from '@/lib/format';
-import { buildEspelho, espelhoPdf, monthLabel } from '@/lib/espelho';
+import { buildEspelho, espelhoPdf } from '@/lib/espelho';
+import EspelhoHeader from '@/components/hr/EspelhoHeader';
 import EspelhoTable from '@/components/hr/EspelhoTable';
 import EspelhoSummary from '@/components/hr/EspelhoSummary';
 import JustifyPunchDialog from '@/components/hr/JustifyPunchDialog';
 
 export default function Espelho() {
   const { data: me } = useMe();
-  const { data: company } = useCompany();
+  const { data: company, isLoading: companyLoading } = useCompany();
   const { data: employees = [], isLoading } = useEmployees();
   const [pickedId, setPickedId] = useState('');
   const [month, setMonth] = useState(() => localISO().slice(0, 7));
@@ -36,9 +37,9 @@ export default function Espelho() {
     ? active.find((e) => e.id === pickedId)
     : active.find((e) => (e.email || '').toLowerCase() === (me?.email || '').toLowerCase());
 
-  const { data: entries = [] } = useTimeEntries(employee?.id, month);
-  const sheet = employee
-    ? buildEspelho(entries, month, { workdayHours: company?.workday_hours || 8 })
+  const { data: entries = [], isLoading: entriesLoading, isError: entriesError } = useTimeEntries(employee?.id, month);
+  const sheet = employee && month && !entriesLoading && !entriesError && !companyLoading
+    ? buildEspelho(entries, month, { workdayHours: company?.workday_hours || 8, city: company?.cidade_uf || '' })
     : null;
 
   return (
@@ -72,11 +73,12 @@ export default function Espelho() {
         )}
         <div className="space-y-1.5">
           <Label htmlFor="mes">Mês</Label>
-          <Input id="mes" type="month" value={month} onChange={(e) => setMonth(e.target.value)} className="field" />
+          <Input id="mes" type="month" value={month} onChange={(e) => e.target.value && setMonth(e.target.value)} className="field" />
         </div>
       </div>
 
-      {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
+      {(isLoading || (employee && (entriesLoading || companyLoading))) && <p className="text-sm text-muted-foreground">Carregando espelho mensal...</p>}
+      {employee && entriesError && <p role="alert" className="text-sm text-destructive">Não foi possível carregar os pontos deste mês.</p>}
 
       {!isLoading && !employee && (
         <div className="glass rounded-2xl p-5 text-sm text-muted-foreground">
@@ -88,18 +90,14 @@ export default function Espelho() {
 
       {employee && sheet && (
         <>
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{employee.full_name}</span> · {employee.role_title || 'Colaborador'} ·{' '}
-            {monthLabel(month)}
-          </p>
-          <EspelhoSummary totals={sheet.totals} />
-          <EspelhoTable rows={sheet.rows} workdayHours={company?.workday_hours || 8} />
+          <EspelhoHeader company={company} employee={employee} month={month} />
+          <EspelhoTable rows={sheet.rows} />
+          <EspelhoSummary totals={sheet.totals} company={company} employee={employee} month={month} inferred={sheet.inferred} />
           <div className="grid gap-2 sm:grid-cols-2">
             <Button
               className="w-full"
-              disabled={!sheet.rows.some((r) => r.entrada !== '—')}
               onClick={() =>
-                gratis ? setPaywall(true) : espelhoPdf({ company, employee, month, sheet })
+                gratis ? setPaywall(true) : espelhoPdf({ company, employee, month, entries })
               }
             >
               <AnimatedIcon icon={gratis ? Lock : FileDown} size={16} color={gratis ? '#facc15' : '#ffffff'} />
