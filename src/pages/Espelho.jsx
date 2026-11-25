@@ -39,7 +39,14 @@ export default function Espelho() {
 
   const { data: entries = [], isLoading: entriesLoading, isError: entriesError } = useTimeEntries(employee?.id, month);
   const sheet = employee && month && !entriesLoading && !entriesError && !companyLoading
-    ? buildEspelho(entries, month, { workdayHours: company?.workday_hours || 8, city: company?.cidade_uf || '' })
+    ? buildEspelho(entries, month, {
+        workdayHours: company?.workday_hours || 8,
+        monthlyHours: company?.monthly_hours || 220,
+        entryTime: company?.entry_time || '08:00',
+        workDays: company?.work_days || 'seg_sex',
+        salary: employee?.salary || 0,
+        city: company?.cidade_uf || '',
+      })
     : null;
 
   return (

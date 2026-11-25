@@ -26,7 +26,7 @@ export default function CompanySettings() {
   const { data: company, isLoading } = useCompany();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [form, setForm] = useState({ name: '', cnpj: '', activity: '', cidade_uf: '', min_confidence: 80, workday_hours: 8, units: [] });
+  const [form, setForm] = useState({ name: '', cnpj: '', activity: '', cidade_uf: '', min_confidence: 80, workday_hours: 8, monthly_hours: 220, entry_time: '08:00', exit_time: '17:00', lunch_start: '12:00', lunch_end: '13:00', work_days: 'seg_sex', units: [] });
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -57,6 +57,12 @@ export default function CompanySettings() {
         cidade_uf: form.cidade_uf?.trim() || '',
         min_confidence: Number(form.min_confidence) || 80,
         workday_hours: Number(form.workday_hours) || 8,
+        monthly_hours: Number(form.monthly_hours) || 220,
+        entry_time: form.entry_time || '08:00',
+        exit_time: form.exit_time || '17:00',
+        lunch_start: form.lunch_start || '12:00',
+        lunch_end: form.lunch_end || '13:00',
+        work_days: form.work_days || 'seg_sex',
         units: form.units.filter((u) => u.name.trim()).map((u) => ({
           name: u.name.trim(), lat: Number(u.lat), lng: Number(u.lng), radius_m: Number(u.radius_m) || 150,
         })),
@@ -111,14 +117,47 @@ export default function CompanySettings() {
               <Input id="cidade" value={form.cidade_uf || ''} onChange={(e) => set('cidade_uf', e.target.value)} placeholder="Adamantina - SP" className="field" />
               <p className="text-xs text-muted-foreground">Aparece no campo "Local" do holerite. Se vazio, mostra "Matriz".</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="mc">Confiança mínima do rosto (%)</Label>
+              <Input id="mc" type="number" min="50" max="100" value={form.min_confidence} onChange={(e) => set('min_confidence', e.target.value)} className="field" />
+            </div>
+          </div>
+
+          <div className="glass space-y-3 rounded-2xl p-5">
+            <h2 className="font-medium">Jornada de trabalho</h2>
+            <p className="text-xs text-muted-foreground">Define o horário previsto e o desconto por atraso no espelho de ponto. Tolerância fixa de 5 minutos: até 5 min de atraso não desconta.</p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="space-y-1.5">
-                <Label htmlFor="mc">Confiança mínima do rosto (%)</Label>
-                <Input id="mc" type="number" min="50" max="100" value={form.min_confidence} onChange={(e) => set('min_confidence', e.target.value)} className="field" />
+                <Label htmlFor="mh">Carga horária mensal (h)</Label>
+                <Input id="mh" type="number" min="1" value={form.monthly_hours} onChange={(e) => set('monthly_hours', e.target.value)} className="field" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="wh">Jornada diária (h)</Label>
-                <Input id="wh" type="number" min="1" max="12" value={form.workday_hours} onChange={(e) => set('workday_hours', e.target.value)} className="field" />
+                <Label htmlFor="dh">Jornada diária (h)</Label>
+                <Input id="dh" type="number" min="1" max="12" value={form.workday_hours} onChange={(e) => set('workday_hours', e.target.value)} className="field" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="wd">Dias de trabalho</Label>
+                <div className="flex gap-1.5">
+                  {[['seg_sex', 'Seg a Sex'], ['seg_sab', 'Seg a Sáb']].map(([v, l]) => (
+                    <button type="button" key={v} onClick={() => set('work_days', v)} className={`rounded-full border px-2.5 py-1 text-xs ${form.work_days === v ? 'border-primary bg-primary/15 text-primary' : 'border-white/15'}`}>{l}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="et">Horário de entrada</Label>
+                <Input id="et" type="time" value={form.entry_time} onChange={(e) => set('entry_time', e.target.value)} className="field" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="xt">Horário de saída</Label>
+                <Input id="xt" type="time" value={form.exit_time} onChange={(e) => set('exit_time', e.target.value)} className="field" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="ls">Início do intervalo</Label>
+                <Input id="ls" type="time" value={form.lunch_start} onChange={(e) => set('lunch_start', e.target.value)} className="field" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="le">Fim do intervalo</Label>
+                <Input id="le" type="time" value={form.lunch_end} onChange={(e) => set('lunch_end', e.target.value)} className="field" />
               </div>
             </div>
           </div>

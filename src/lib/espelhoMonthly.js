@@ -1,5 +1,6 @@
 export const MONTHLY_HOURS = 220;
-export const ESPELHO_COLUMNS = ['Dia', 'Dia Semana', 'Entrada', 'Saída Almoço', 'Retorno Almoço', 'Saída', 'Trabalhado', 'Atraso', 'Extra', 'Local'];
+export const ESPELHO_COLUMNS = ['Dia', 'Dia Semana', 'Previsto', 'Entrada', 'Saída Almoço', 'Retorno Almoço', 'Saída', 'Trabalhado', 'Atraso', 'Tolerância', 'Desconto', 'Extra', 'Local'];
+export const ATRASO_TOLERANCIA_MIN = 5;
 const WEEKDAYS = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 const clock = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 const pad = (n) => String(n).padStart(2, '0');
@@ -40,17 +41,20 @@ function daySlots(list) {
   return { entry, lunchOut: first('intervalo_inicio'), lunchBack: last('intervalo_fim'), exit: exit || (repeatedEntries ? list[list.length - 1] : null), inferred: repeatedEntries };
 }
 
-export function buildEspelho(entries, month, { workdayHours = 8, startTime = '08:00', city = '' } = {}) {
+export function buildEspelho(entries, month, { workdayHours = 8, monthlyHours = MONTHLY_HOURS, entryTime = '08:00', workDays = 'seg_sex', salary = 0, city = '' } = {}) {
   const calendar = monthDays(month);
   const byDay = new Map(calendar.map((day) => [day, []]));
   for (const entry of entries || []) {
     if (byDay.has(entry.day) && Number.isFinite(Date.parse(entry.punched_at))) byDay.get(entry.day).push(entry);
   }
+  const hourlyRate = (Number(salary) || 0) / (Number(monthlyHours) || MONTHLY_HOURS);
+  const minuteRate = hourlyRate / 60;
+  const previstoMin = clockMinutes(entryTime);
   // O calendário, nunca as marcações, define quantas linhas o documento terá.
   const rows = calendar.map((day) => {
     const list = byDay.get(day).slice().sort((a, b) => Date.parse(a.punched_at) - Date.parse(b.punched_at));
     const weekdayIndex = new Date(`${day}T12:00:00Z`).getUTCDay();
-    const weekend = weekdayIndex === 0 || weekdayIndex === 6;
+    const weekend = workDays === 'seg_sab' ? weekdayIndex === 0 : (weekdayIndex === 0 || weekdayIndex === 6);
     const { entry, lunchOut, lunchBack, exit, inferred } = daySlots(list);
     const hasLunch = !!(lunchOut || lunchBack);
     const ordered = entry && exit && Date.parse(exit.punched_at) >= Date.parse(entry.punched_at);
@@ -58,14 +62,16 @@ export function buildEspelho(entries, month, { workdayHours = 8, startTime = '08
     const incomplete = !!list.length && (!ordered || (hasLunch && !lunchComplete));
     const minutes = !hasLunch ? elapsed(entry, exit) : lunchComplete ? elapsed(entry, lunchOut) + elapsed(lunchBack, exit) : 0;
     const entrada = displayClock(entry);
-    const lateMin = entry ? Math.max(0, clockMinutes(entrada) - clockMinutes(startTime)) : 0;
+    const atrasoMin = entry ? Math.max(0, clockMinutes(entrada) - previstoMin) : 0;
+    const descontoMin = Math.max(0, atrasoMin - ATRASO_TOLERANCIA_MIN);
+    const descontoValor = descontoMin * minuteRate;
     const extraMin = Math.max(0, minutes - Number(workdayHours) * 60);
     const location = list.find((item) => item.cidade_uf || item.endereco) || list[0] || {};
     const gps = list.find((item) => item.lat != null && item.lng != null) || {};
     return {
       day, weekday: WEEKDAYS[weekdayIndex], weekend, hasEntries: !!list.length,
-      entrada, saidaAlmoco: displayClock(lunchOut), voltaAlmoco: displayClock(lunchBack), saida: displayClock(exit),
-      minutes, lateMin, extraMin, inferred: !!inferred,
+      previsto: entryTime, entrada, saidaAlmoco: displayClock(lunchOut), voltaAlmoco: displayClock(lunchBack), saida: displayClock(exit),
+      minutes, lateMin: atrasoMin, tolerancia: entry ? ATRASO_TOLERANCIA_MIN : 0, descontoMin, descontoValor, extraMin, inferred: !!inferred,
       status: !list.length ? (weekend ? 'Folga' : 'Falta') : incomplete ? 'Incompleto' : '',
       local: list.length ? city || location.cidade_uf || location.endereco || location.unit || '--' : '--',
       endereco: location.endereco || location.cidade_uf || '', lat: gps.lat ?? null, lng: gps.lng ?? null,
@@ -76,8 +82,8 @@ export function buildEspelho(entries, month, { workdayHours = 8, startTime = '08
     ...total, days: total.days + Number(row.hasEntries), worked: total.worked + row.minutes,
     late: total.late + row.lateMin, extra: total.extra + row.extraMin,
     extra50: total.extra50 + (row.weekend ? 0 : row.extraMin), extra100: total.extra100 + (row.weekend ? row.extraMin : 0),
-    absences: total.absences + Number(row.status === 'Falta'),
-  }), { days: 0, worked: 0, late: 0, extra: 0, extra50: 0, extra100: 0, absences: 0, expected: MONTHLY_HOURS * 60 });
+    absences: total.absences + Number(row.status === 'Falta'), desconto: total.desconto + row.descontoValor,
+  }), { days: 0, worked: 0, late: 0, extra: 0, extra50: 0, extra100: 0, absences: 0, desconto: 0, expected: (Number(monthlyHours) || MONTHLY_HOURS) * 60 });
   totals.bank = totals.worked - totals.expected;
   return { month, rows, totals, inferred: rows.some((row) => row.inferred) };
 }

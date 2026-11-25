@@ -1,5 +1,6 @@
 import { Camera, MapPin } from 'lucide-react';
 import { espelhoDate, formatEspelhoMinutes } from '@/lib/espelhoMonthly';
+import { brl } from '@/lib/format';
 import { mapsUrl } from '@/lib/geo';
 
 export default function EspelhoDayRow({ row }) {
@@ -9,6 +10,7 @@ export default function EspelhoDayRow({ row }) {
     <tr className={`border-t border-border ${absent ? 'bg-destructive/5' : row.weekend ? 'bg-muted/40' : ''}`}>
       <td className={cell}>{espelhoDate(row.day)}</td>
       <td className={cell}>{row.weekday}</td>
+      <td className={`${cell} text-muted-foreground`}>{row.weekend ? '—' : row.previsto}</td>
       <td className={cell}>
         {row.hasEntries ? row.entrada : <span className={absent ? 'font-semibold text-destructive' : 'text-muted-foreground'}>{row.status}</span>}
       </td>
@@ -19,8 +21,10 @@ export default function EspelhoDayRow({ row }) {
         {formatEspelhoMinutes(row.minutes)}
         {row.status === 'Incompleto' && <span className="ml-2 text-xs text-warning">Incompleto</span>}
       </td>
-      <td className={`${cell} ${row.lateMin ? 'text-warning' : ''}`}>{formatEspelhoMinutes(row.lateMin)}</td>
-      <td className={`${cell} ${row.extraMin ? 'text-success' : ''}`}>{formatEspelhoMinutes(row.extraMin)}</td>
+      <td className={`${cell} ${row.lateMin ? 'text-warning' : ''}`}>{row.lateMin ? formatEspelhoMinutes(row.lateMin) : '—'}</td>
+      <td className={cell}>{row.hasEntries && row.tolerancia ? `${row.tolerancia}min` : '—'}</td>
+      <td className={`${cell} ${row.descontoValor > 0 ? 'font-medium text-destructive' : 'text-muted-foreground'}`}>{row.descontoValor > 0 ? brl(row.descontoValor) : '—'}</td>
+      <td className={`${cell} ${row.extraMin ? 'text-success' : ''}`}>{row.extraMin ? formatEspelhoMinutes(row.extraMin) : '—'}</td>
       <td className="min-w-40 px-3 py-2.5">
         <div className="flex items-center gap-2" title={row.endereco ? `Endereço original: ${row.endereco}` : undefined}>
           <span className="break-words">{row.local}</span>

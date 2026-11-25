@@ -4,7 +4,7 @@ import EspelhoDayRow from '@/components/hr/EspelhoDayRow';
 export default function EspelhoTable({ rows }) {
   return (
     <div className="glass overflow-x-auto rounded-2xl" data-espelho-days={rows.length}>
-      <table className="w-full min-w-[1100px] text-sm">
+      <table className="w-full min-w-[1320px] text-sm">
         <caption className="sr-only">Espelho mensal completo, incluindo todos os dias sem marcação</caption>
         <thead>
           <tr className="text-xs text-muted-foreground">
