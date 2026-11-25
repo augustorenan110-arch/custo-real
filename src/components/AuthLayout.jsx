@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { MessageCircle, Mail } from "lucide-react";
 import { Logo, Wordmark } from "@/components/Brand";
 import { Image } from "@/components/ui/image";
 
@@ -33,9 +34,17 @@ export default function AuthLayout({ title, subtitle, footer, children }) {
           <span className="h-3 w-px bg-white/15" />
           <Link to="/termos" className="transition hover:text-foreground">Termos de Uso</Link>
         </div>
-        <p className="mt-3 text-center text-[11px] text-muted-foreground">
-          Custo Real · RH IA. Sua empresa mais forte.
-        </p>
+        <div className="mt-4 text-center text-[11px] text-muted-foreground">
+          <p>Precisa de ajuda?</p>
+          <a href="https://wa.me/5518997046427" target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1.5 transition hover:text-foreground">
+            <MessageCircle className="h-3 w-3 text-save-tech" /> WhatsApp: (18) 99704-6427
+          </a>
+          <a href="mailto:rhcustoreal@gmail.com" className="mt-0.5 inline-flex items-center gap-1.5 transition hover:text-foreground">
+            <Mail className="h-3 w-3" /> rhcustoreal@gmail.com
+          </a>
+          <p className="mt-1">Atendimento: Segunda a Sexta, das 8h às 18h</p>
+          <p className="mt-2">© 2026 Custo Real - Todos os direitos reservados</p>
+        </div>
       </div>
     </div>
   );

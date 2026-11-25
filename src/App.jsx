@@ -49,6 +49,8 @@ import Indicacao from './pages/Indicacao';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 import FuncionarioShell from './components/FuncionarioShell';
+import SiteLayout from './components/site/SiteLayout';
+import HelpButton from './components/help/HelpButton';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -78,17 +80,19 @@ const AuthenticatedApp = () => {
     <Routes>
       {/* Add your page Route elements here */}
       <Route path="/" element={<Landing />} />
-      <Route path="/privacidade" element={<Privacy />} />
-      <Route path="/termos" element={<Terms />} />
-      <Route path="/excluir-dados" element={<DeleteData />} />
+      <Route element={<SiteLayout />}>
+        <Route path="/privacidade" element={<Privacy />} />
+        <Route path="/termos" element={<Terms />} />
+        <Route path="/excluir-dados" element={<DeleteData />} />
+        <Route path="/contador" element={<Contador />} />
+        <Route path="/ativar/:id" element={<Ativar />} />
+        <Route path="/r/:code" element={<Indicacao />} />
+        <Route path="/video-promo" element={<VideoPromo />} />
+      </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/contador" element={<Contador />} />
-      <Route path="/ativar/:id" element={<Ativar />} />
-      <Route path="/r/:code" element={<Indicacao />} />
-      <Route path="/video-promo" element={<VideoPromo />} />
       <Route path="/entrar" element={<Entrar />} />
       <Route path="/entrar/empresa" element={<EntrarEmpresa />} />
       <Route path="/entrar/empresa/cadastro" element={<EmpresaCadastro />} />
@@ -138,6 +142,7 @@ function App() {
         <Router>
           <ScrollToTop />
           <AuthenticatedApp />
+          <HelpButton />
         </Router>
         <Toaster />
       </QueryClientProvider>

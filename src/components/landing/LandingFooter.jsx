@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Scale, Mail, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Scale, Mail, MessageCircle, ArrowRight } from 'lucide-react';
 import { Logo, Wordmark } from '@/components/Brand';
 import StoreButtons from '@/components/StoreButtons';
 
@@ -70,11 +70,20 @@ export default function LandingFooter({ startTo }) {
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80">Contato</p>
             <a
-              href="mailto:dpo@custo-real.com.br"
+              href="https://wa.me/5518997046427"
+              target="_blank"
+              rel="noreferrer"
               className="mt-3 inline-flex items-center gap-2 text-xs text-muted-foreground transition hover:text-foreground"
             >
-              <Mail className="h-3.5 w-3.5" /> dpo@custo-real.com.br
+              <MessageCircle className="h-3.5 w-3.5 text-save-tech" /> WhatsApp: (18) 99704-6427
             </a>
+            <a
+              href="mailto:rhcustoreal@gmail.com"
+              className="mt-1 inline-flex items-center gap-2 text-xs text-muted-foreground transition hover:text-foreground"
+            >
+              <Mail className="h-3.5 w-3.5" /> rhcustoreal@gmail.com
+            </a>
+            <p className="mt-1 text-[10px] text-muted-foreground">Segunda a Sexta, das 8h às 18h</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-2.5 py-1 text-[10px] text-foreground/70">
                 <ShieldCheck className="h-3 w-3 text-save-tech" /> Conforme LGPD
@@ -89,7 +98,7 @@ export default function LandingFooter({ startTo }) {
         <StoreButtons />
 
         <p className="mt-2 border-t border-white/10 pt-5 text-center text-[11px] text-muted-foreground">
-          © {new Date().getFullYear()} Custo Real · custo-real.com · Todos os direitos reservados
+          © 2026 Custo Real - Todos os direitos reservados
         </p>
       </div>
     </footer>
