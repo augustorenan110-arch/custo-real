@@ -27,20 +27,17 @@ export default function EmpresaStep({ nome, onCreated }) {
     }
     setSalvando(true);
     try {
-      const empresa = await base44.entities.Company.create({
-        name: form.nome_fantasia,
+      // Chama o backend: cria a empresa E promove quem cadastrou a ADMIN/OWNER.
+      // Nunca cria direto — senão o usuário fica como colaborador.
+      const res = await base44.functions.invoke('empresaSignup', {
         cnpj: form.cnpj,
+        nome: form.nome_fantasia,
         employee_count: Number(form.funcionarios) || 0,
-        status_assinatura: 'trialing',
-        plano_atual: 'trial_premium',
-        trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        data_cadastro: new Date().toISOString().slice(0, 10),
-        limite_funcionarios: 3,
       });
-      toast({ title: 'Empresa cadastrada!', description: `Agora cadastre o primeiro funcionário de ${empresa.name}.` });
-      onCreated?.(empresa);
+      toast({ title: 'Empresa cadastrada!', description: 'Você é o administrador da empresa.' });
+      onCreated?.(res?.data || res);
     } catch (err) {
-      setErro('Não foi possível cadastrar a empresa. Tente novamente.');
+      setErro(err?.response?.data?.error || 'Não foi possível cadastrar a empresa. Tente novamente.');
     } finally {
       setSalvando(false);
     }

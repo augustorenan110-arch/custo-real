@@ -17,6 +17,7 @@ export default async function (req) {
     const nome = String(body?.nome || '').trim().slice(0, 120);
     const cnpj = soDigitos(body?.cnpj);
     const responsavel = String(body?.responsavel || '').trim().slice(0, 120);
+    const employeeCount = Number(body?.employee_count) || 0;
     if (nome.length < 2) return Response.json({ error: 'Informe o nome da empresa.' }, { status: 400 });
     if (cnpj.length !== 14) {
       return Response.json({ error: 'Informe um CNPJ válido (14 dígitos).' }, { status: 400 });
@@ -56,14 +57,17 @@ export default async function (req) {
       status_assinatura: 'trialing',
       trial_ends_at: new Date(Date.now() + 7 * 86400000).toISOString(),
       limite_funcionarios: 3,
+      ...(employeeCount ? { employee_count: employeeCount } : {}),
     });
 
-    // Vira ADMIN (RH): gerencia funcionários, ponto, despesas e relatórios.
+    // Vira ADMIN/OWNER (RH): gerencia funcionários, ponto, despesas e relatórios.
+    // NUNCA colaborador — colaborador só existe quando a empresa convida.
     await sr.entities.User.update(user.id, {
       role: 'admin',
       tipo_conta: 'empresa',
       ...(responsavel ? { full_name: responsavel } : {}),
     });
+    console.log(`[empresaSignup] ${user.email} promovido a admin da empresa ${empresa.name} (${empresa.id})`);
 
     return Response.json({
       ok: true,

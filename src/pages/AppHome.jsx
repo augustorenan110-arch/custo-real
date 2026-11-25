@@ -41,6 +41,10 @@ export default function AppHome() {
   const recarregar = () => {
     queryClient.invalidateQueries({ queryKey: ['minhas-empresas'] });
     queryClient.invalidateQueries({ queryKey: ['meus-funcionarios'] });
+    // empresaSignup promoveu o usuário a admin: recarrega o perfil e a empresa.
+    queryClient.invalidateQueries({ queryKey: ['me'] });
+    queryClient.invalidateQueries({ queryKey: ['company'] });
+    queryClient.invalidateQueries({ queryKey: ['employees'] });
   };
 
   const nome = (me?.full_name || me?.email || '').split(' ')[0];
