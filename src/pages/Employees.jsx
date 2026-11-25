@@ -38,13 +38,13 @@ export default function Employees() {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-semibold">
-            <Users className="h-6 w-6 text-primary" /> Colaboradores
+            <Users className="h-6 w-6 text-primary" /> Funcionários
           </h1>
           <p className="text-sm text-muted-foreground">Fichas, rosto, holerite, espelho e gastos.</p>
         </div>
         {!bloqueado && (
           <Button onClick={() => setCreating(true)}>
-            <Plus className="h-4 w-4" /> Cadastrar
+            <Plus className="h-4 w-4" /> Cadastrar Funcionário
           </Button>
         )}
       </div>
@@ -62,7 +62,7 @@ export default function Employees() {
       {isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
       {!isLoading && employees.length === 0 && (
         <div className="glass rounded-2xl p-6 text-center text-sm text-muted-foreground">
-          Nenhum colaborador ainda. Cadastre o primeiro.
+          Nenhum funcionário ainda. Cadastre o primeiro.
         </div>
       )}
 

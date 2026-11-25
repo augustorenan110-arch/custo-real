@@ -40,7 +40,7 @@ export default function EmployeeForm({ open, onOpenChange, units = [] }) {
       }
       await queryClient.invalidateQueries({ queryKey: ['employees'] });
       toast({
-        title: 'Colaborador cadastrado',
+        title: 'Funcionário cadastrado',
         description: email ? 'Convite de acesso enviado para o e-mail dele.' : undefined,
       });
       setForm(empty);
@@ -63,7 +63,7 @@ export default function EmployeeForm({ open, onOpenChange, units = [] }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Novo colaborador</DialogTitle>
+          <DialogTitle>Cadastrar funcionário</DialogTitle>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3">
           {field('full_name', 'Nome completo')}

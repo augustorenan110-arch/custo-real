@@ -90,17 +90,17 @@ export default function AppShell() {
 
   const nav = [
     { to: '/p', label: 'Início', icon: Home },
+    ...(isAdmin ? [{ to: '/colaboradores', label: 'Funcionários', icon: Users }] : []),
     { to: '/painel', label: 'Painel', icon: LayoutDashboard },
     { to: '/ponto', label: 'Ponto', icon: Clock },
     { to: '/espelho', label: 'Espelho de Ponto', icon: CalendarClock },
     { to: '/despesas', label: 'Despesas', icon: Receipt },
     ...(isAdmin ? [{ to: '/aprovacoes', label: 'Aprovações', icon: CheckSquare }] : []),
     { to: '/politica', label: 'Política', icon: ScrollText },
+    ...(isAdmin ? [{ to: '/auditoria', label: 'Auditoria', icon: ShieldCheck }] : []),
   ];
   const adminNav = isAdmin
     ? [
-        { to: '/colaboradores', label: 'Funcionários', icon: Users },
-        { to: '/auditoria', label: 'Auditoria', icon: ShieldCheck },
         { to: '/assistente', label: 'Assistente IA', icon: Bot },
         { to: '/calculadoras', label: 'Calculadoras', icon: Calculator },
         { to: '/tabelas-oficiais', label: 'Tabelas Oficiais', icon: Scale },

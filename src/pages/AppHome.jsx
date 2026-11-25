@@ -1,24 +1,14 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useMe } from '@/hooks/useMe';
 import EmpresaStep from '@/components/p/EmpresaStep';
-import FuncionarioStep from '@/components/p/FuncionarioStep';
-import PassivoModal from '@/components/p/PassivoModal';
 import ResumoReal from '@/components/p/ResumoReal';
 import StoreButtons from '@/components/StoreButtons';
-import { custoDemissao } from '@/lib/campanha';
-import { monthsBetween } from '@/lib/rescisao';
-
-const hojeISO = () => new Date().toISOString().slice(0, 10);
 
 export default function AppHome() {
   const { data: me, isLoading: loadingMe } = useMe();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [passivo, setPassivo] = useState(null);
 
   const empresasQuery = useQuery({
     queryKey: ['minhas-empresas', me?.id],
@@ -48,8 +38,6 @@ export default function AppHome() {
   const funcionarios = funcionariosQuery.data || [];
   const empresa = empresas[0];
 
-  const passivoDe = (f) => custoDemissao(f?.salary, monthsBetween(f?.admission_date, hojeISO()));
-
   const recarregar = () => {
     queryClient.invalidateQueries({ queryKey: ['minhas-empresas'] });
     queryClient.invalidateQueries({ queryKey: ['meus-funcionarios'] });
@@ -65,36 +53,12 @@ export default function AppHome() {
     );
   }
 
+  // Sem empresa: cadastro único (sem onboarding de funcionário).
   if (!empresa) {
     return (
       <>
         <EmpresaStep nome={nome} onCreated={recarregar} />
         <StoreButtons />
-      </>
-    );
-  }
-
-  if (!funcionarios.length) {
-    return (
-      <>
-        <FuncionarioStep
-          empresaNome={empresa.name}
-          onCreated={(f) => {
-            recarregar();
-            setPassivo({ funcionario: f, dados: passivoDe(f) });
-          }}
-        />
-        <StoreButtons />
-        <PassivoModal
-          open={!!passivo}
-          onOpenChange={(v) => !v && setPassivo(null)}
-          funcionario={passivo?.funcionario}
-          passivo={passivo?.dados}
-          onVerRanking={() => {
-            setPassivo(null);
-            navigate('/ranking');
-          }}
-        />
       </>
     );
   }

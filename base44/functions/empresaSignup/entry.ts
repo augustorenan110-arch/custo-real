@@ -16,6 +16,7 @@ export default async function (req) {
     const body = await req.json().catch(() => ({}));
     const nome = String(body?.nome || '').trim().slice(0, 120);
     const cnpj = soDigitos(body?.cnpj);
+    const responsavel = String(body?.responsavel || '').trim().slice(0, 120);
     if (nome.length < 2) return Response.json({ error: 'Informe o nome da empresa.' }, { status: 400 });
     if (cnpj.length !== 14) {
       return Response.json({ error: 'Informe um CNPJ válido (14 dígitos).' }, { status: 400 });
@@ -58,7 +59,11 @@ export default async function (req) {
     });
 
     // Vira ADMIN (RH): gerencia funcionários, ponto, despesas e relatórios.
-    await sr.entities.User.update(user.id, { role: 'admin', tipo_conta: 'empresa' });
+    await sr.entities.User.update(user.id, {
+      role: 'admin',
+      tipo_conta: 'empresa',
+      ...(responsavel ? { full_name: responsavel } : {}),
+    });
 
     return Response.json({
       ok: true,

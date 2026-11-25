@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Building2, Loader2, Lock, Mail, UserPlus } from 'lucide-react';
+import { Building2, Loader2, Lock, Mail, User, UserPlus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,7 @@ export default function EmpresaCadastro() {
   const [cnpj, setCnpj] = useState('');
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
+  const [responsavel, setResponsavel] = useState('');
   const [password, setPassword] = useState('');
   const [confirmar, setConfirmar] = useState('');
   const [otpCode, setOtpCode] = useState('');
@@ -65,7 +66,7 @@ export default function EmpresaCadastro() {
       const resultado = await base44.auth.verifyOtp({ email, otpCode });
       if (resultado?.access_token) base44.auth.setToken(resultado.access_token);
       try {
-        await base44.functions.invoke('empresaSignup', { cnpj: onlyDigits(cnpj), nome });
+        await base44.functions.invoke('empresaSignup', { cnpj: onlyDigits(cnpj), nome, responsavel });
       } catch (err) {
         // A conta já existe: o painel abre mesmo assim, com o cadastro pendente.
         setAviso(err?.response?.data?.error || 'Não foi possível registrar a empresa agora.');
@@ -173,6 +174,20 @@ export default function EmpresaCadastro() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="voce@empresa.com.br"
+              className="h-12 pl-10"
+              required
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="responsavel">Nome do responsável</Label>
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="responsavel"
+              value={responsavel}
+              onChange={(e) => setResponsavel(e.target.value)}
+              placeholder="Seu nome completo"
               className="h-12 pl-10"
               required
             />
