@@ -57,18 +57,23 @@ export const trialDaysLeft = (company) => {
 /** Plano gratuito (teste de 7 dias) — sem assinatura paga. */
 export const isFree = (company) => !company?.plano_atual || PLANOS_GRATIS.includes(company.plano_atual);
 
+/** Empresa liberada para testes pelo Super Admin: nunca bloqueia por pagamento. */
+export const isEmpresaTeste = (company) => !!company?.is_empresa_teste;
+
 export const isTrialActive = (company) => isFree(company) && trialDaysLeft(company) > 0;
 
-/** Teste grátis vencido: holerites e recursos liberados ficam bloqueados. */
-export const freeBloqueado = (company) => isFree(company) && trialDaysLeft(company) <= 0;
+/** Teste grátis vencido: holerites e recursos liberados ficam bloqueados.
+ *  Empresa de teste (is_empresa_teste) nunca bloqueia. */
+export const freeBloqueado = (company) => !isEmpresaTeste(company) && isFree(company) && trialDaysLeft(company) <= 0;
 
 export const trialExpired = (company) => freeBloqueado(company);
 
-/** PREMIUM liberado (assinatura ou teste PREMIUM em andamento). */
-export const hasPremium = (company) => isTrialActive(company) || company?.plano_atual === 'premium';
+/** PREMIUM liberado (assinatura, teste PREMIUM em andamento ou empresa de teste). */
+export const hasPremium = (company) => isEmpresaTeste(company) || isTrialActive(company) || company?.plano_atual === 'premium';
 
-/** Limite de funcionários: 3 no plano grátis, 5 no STARTER, ilimitado no PREMIUM. */
+/** Limite de funcionários: 3 no plano grátis, 5 no STARTER, ilimitado no PREMIUM ou empresa de teste. */
 export const limiteFuncionarios = (company) => {
+  if (isEmpresaTeste(company)) return null;
   if (isFree(company)) return FREE_LIMIT;
   if (company?.plano_atual === 'premium') return null;
   return company?.limite_funcionarios ?? 5;
@@ -80,6 +85,7 @@ export const limiteAtingido = (company, total = 0) => {
 };
 
 export const planLabel = (company) => {
+  if (isEmpresaTeste(company)) return 'PREMIUM · Teste (liberado)';
   if (isTrialActive(company)) return `Teste PREMIUM · faltam ${trialDaysLeft(company)} dia(s)`;
   if (company?.plano_atual === 'premium') return 'PREMIUM ativo';
   if (company?.plano_atual === 'starter') return 'STARTER ativo';

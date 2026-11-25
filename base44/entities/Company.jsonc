@@ -111,6 +111,11 @@
     "limite_funcionarios": {
       "type": "number",
       "title": "Limite de funcion\u00e1rios"
+    },
+    "is_empresa_teste": {
+      "type": "boolean",
+      "title": "Empresa de teste (liberada pelo Super Admin, nunca bloqueia por pagamento)",
+      "default": false
     }
   },
   "required": [

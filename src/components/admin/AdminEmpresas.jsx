@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Search, Building2, Trash2, Power, PowerOff, Loader2 } from 'lucide-react';
+import { Search, Building2, Trash2, Power, PowerOff, Loader2, FlaskConical } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,27 @@ export default function AdminEmpresas() {
     const novo = c.status_assinatura === 'cancelado' ? 'ativo' : 'cancelado';
     try {
       await base44.entities.Company.update(c.id, { status_assinatura: novo });
+      refresh();
+    } catch (e) {
+      alert('Erro: ' + (e?.message || ''));
+    } finally {
+      setActing(null);
+    }
+  };
+
+  const toggleTeste = async (c) => {
+    const liberar = !c.is_empresa_teste;
+    if (liberar && !confirm(`Liberar "${c.name}" para testes? Ela não será bloqueada por pagamento enquanto estiver liberada. Apenas você (Super Admin) pode revogar.`)) return;
+    setActing(c.id);
+    const trial = new Date();
+    trial.setDate(trial.getDate() + 30);
+    try {
+      await base44.entities.Company.update(c.id, {
+        is_empresa_teste: liberar,
+        ...(liberar
+          ? { plano_atual: 'premium', status_assinatura: 'ativo', trial_ends_at: trial.toISOString(), limite_funcionarios: null }
+          : {}),
+      });
       refresh();
     } catch (e) {
       alert('Erro: ' + (e?.message || ''));
@@ -92,9 +113,16 @@ export default function AdminEmpresas() {
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">CNPJ: {cnpjBR(c.cnpj) || '—'}</p>
                 </div>
-                <span className={`shrink-0 text-xs font-medium ${statusColor(c.status_assinatura)}`}>
-                  {statusLabel(c.status_assinatura)}
-                </span>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <span className={`text-xs font-medium ${statusColor(c.status_assinatura)}`}>
+                    {statusLabel(c.status_assinatura)}
+                  </span>
+                  {c.is_empresa_teste && (
+                    <span className="flex items-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                      <FlaskConical className="h-3 w-3" /> Teste
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -113,6 +141,17 @@ export default function AdminEmpresas() {
                 >
                   {acting === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : c.status_assinatura === 'cancelado' ? <Power className="h-4 w-4" /> : <PowerOff className="h-4 w-4" />}
                   {c.status_assinatura === 'cancelado' ? 'Ativar' : 'Desativar'}
+                </Button>
+                <Button
+                  onClick={() => toggleTeste(c)}
+                  disabled={acting === c.id}
+                  variant={c.is_empresa_teste ? 'default' : 'outline'}
+                  size="sm"
+                  className="h-9"
+                  title={c.is_empresa_teste ? 'Revogar liberação de testes' : 'Liberar para testes (não bloqueia por pagamento)'}
+                >
+                  {acting === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <FlaskConical className="h-4 w-4" />}
+                  {c.is_empresa_teste ? 'Revogar testes' : 'Liberar p/ testes'}
                 </Button>
                 <Button
                   onClick={() => excluir(c)}
