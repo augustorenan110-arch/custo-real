@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import AuthLayout from '@/components/AuthLayout';
 import { onlyDigits } from '@/lib/format';
+import { emailJaCadastrado } from '@/lib/authErrors';
 
 // Máscara enquanto digita: 00.000.000/0000-00
 const mascaraCnpj = (v) =>
@@ -50,10 +51,12 @@ export default function EmpresaCadastro() {
     try {
       await base44.auth.register({ email, password });
       setEtapaOtp(true);
-    } catch {
-      setError(
-        'Não foi possível criar a conta. Este e-mail já pode estar cadastrado ou a senha é fraca (use 8+ caracteres).',
-      );
+    } catch (err) {
+      if (emailJaCadastrado(err)) {
+        setError('Este e-mail já está cadastrado. Faça login em "Já tenho conta · Entrar" ou use outro e-mail.');
+      } else {
+        setError('Não foi possível criar a conta. Verifique os dados ou use uma senha mais forte (8+ caracteres).');
+      }
     } finally {
       setLoading(false);
     }

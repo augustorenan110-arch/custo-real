@@ -10,6 +10,7 @@ import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import { toast } from "@/components/ui/use-toast";
 import { safeReturnTo, hasReturnTo } from "@/lib/authReturnTo";
+import { emailJaCadastrado } from "@/lib/authErrors";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -32,7 +33,11 @@ export default function Register() {
       await base44.auth.register({ email, password });
       setShowOtp(true);
     } catch (err) {
-      setError("Não foi possível criar a conta. Este e-mail já pode estar cadastrado ou a senha é fraca (use 8+ caracteres).");
+      if (emailJaCadastrado(err)) {
+        setError("Este e-mail já está cadastrado. Faça login em \"Entrar\" ou use outro e-mail.");
+      } else {
+        setError("Não foi possível criar a conta. Verifique os dados ou use uma senha mais forte (8+ caracteres).");
+      }
     } finally {
       setLoading(false);
     }
