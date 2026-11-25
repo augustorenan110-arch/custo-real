@@ -29,7 +29,8 @@ export default function JustifyPunchDialog({ open, onOpenChange, employee }) {
     }
     setBusy(true);
     const note = `Editado pelo Gestor - ${motivo.trim()}`;
-    const stamp = { note, edited_by: me?.email || 'RH', edited_at: new Date().toISOString() };
+    const companyId = employee?.company_id || '';
+    const stamp = { note, edited_by: me?.email || 'RH', edited_at: new Date().toISOString(), company_id: companyId || undefined };
     try {
       const entries = await base44.entities.TimeEntry.filter(
         { employee_id: employee.id, day },
@@ -53,14 +54,15 @@ export default function JustifyPunchDialog({ open, onOpenChange, employee }) {
         });
       } else {
         await base44.entities.TimeEntry.bulkCreate([
-          { employee_id: employee.id, employee_name: employee.full_name, kind: 'entrada', punched_at: at(day, entrada), day, ...stamp },
-          { employee_id: employee.id, employee_name: employee.full_name, kind: 'saida', punched_at: at(day, saida), day, ...stamp },
+          { employee_id: employee.id, employee_name: employee.full_name, company_id: companyId || undefined, kind: 'entrada', punched_at: at(day, entrada), day, ...stamp },
+          { employee_id: employee.id, employee_name: employee.full_name, company_id: companyId || undefined, kind: 'saida', punched_at: at(day, saida), day, ...stamp },
         ]);
       }
 
       await base44.entities.AuditLog.create({
         action: 'Ajuste de ponto pelo gestor',
         result: 'sucesso',
+        company_id: companyId || undefined,
         employee_id: employee.id,
         employee_name: employee.full_name,
         actor_email: me?.email || '',

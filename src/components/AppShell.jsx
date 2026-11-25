@@ -52,9 +52,10 @@ export default function AppShell() {
     carregarFiscal().catch(() => {});
   }, []);
 
-  // Primeiro acesso (e-mail ou Google): abre 7 dias de teste grátis (3 funcionários).
+  // Primeiro acesso: abre 7 dias de teste grátis (3 funcionários) na empresa já cadastrada.
+  // A criação da empresa (e o set de company_id + admin) acontece só no empresaSignup.
   useEffect(() => {
-    if (!isAdmin || company === undefined || company?.plano_atual) return;
+    if (!isAdmin || company === undefined || !company?.id || company?.plano_atual) return;
     const hoje = new Date().toISOString().slice(0, 10);
     const trial = {
       plano_atual: TRIAL_PLAN.plan,
@@ -63,11 +64,10 @@ export default function AppShell() {
       data_cadastro: hoje,
       limite_funcionarios: TRIAL_PLAN.limite,
     };
-    const run = company?.id
-      ? base44.entities.Company.update(company.id, trial)
-      : base44.entities.Company.create({ name: me?.full_name || 'Minha empresa', ...trial });
-    run.then(() => queryClient.invalidateQueries({ queryKey: ['company'] })).catch(() => {});
-  }, [isAdmin, company, me?.full_name, queryClient]);
+    base44.entities.Company.update(company.id, trial)
+      .then(() => queryClient.invalidateQueries({ queryKey: ['company'] }))
+      .catch(() => {});
+  }, [isAdmin, company, queryClient]);
 
   // Tabela users: completa tipo_conta / plano / data_cadastro / limite_funcionarios.
   useEffect(() => {

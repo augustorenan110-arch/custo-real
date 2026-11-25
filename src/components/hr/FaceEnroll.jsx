@@ -22,6 +22,7 @@ export default function FaceEnroll({ employee, label, buttonClassName }) {
       await base44.entities.AuditLog.create({
         action: 'rosto_cadastrado',
         result: 'sucesso',
+        company_id: employee?.company_id || undefined,
         employee_id: employee.id,
         employee_name: employee.full_name,
         details: 'Foto de referência cadastrada/atualizada.',

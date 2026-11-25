@@ -64,12 +64,12 @@
           "created_by_id": "{{user.id}}"
         },
         {
-          "user_condition": {
-            "role": "admin"
-          }
+          "data.employee_email": "{{user.email}}"
         },
         {
-          "data.employee_email": "{{user.email}}"
+          "user_condition": {
+            "data.is_super_admin": true
+          }
         }
       ]
     },
@@ -80,7 +80,7 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "data.is_super_admin": true
           }
         }
       ]
@@ -92,7 +92,7 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "data.is_super_admin": true
           }
         }
       ]
@@ -104,7 +104,7 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "data.is_super_admin": true
           }
         }
       ]

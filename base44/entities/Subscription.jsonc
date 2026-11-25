@@ -93,7 +93,7 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "data.is_super_admin": true
           }
         }
       ]
@@ -105,14 +105,14 @@
         },
         {
           "user_condition": {
-            "role": "admin"
+            "data.is_super_admin": true
           }
         }
       ]
     },
     "delete": {
       "user_condition": {
-        "role": "admin"
+        "data.is_super_admin": true
       }
     }
   }

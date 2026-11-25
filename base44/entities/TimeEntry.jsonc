@@ -2,6 +2,10 @@
   "name": "TimeEntry",
   "type": "object",
   "properties": {
+    "company_id": {
+      "type": "string",
+      "title": "Empresa (id) \u2014 isola os pontos por empresa"
+    },
     "employee_id": {
       "type": "string",
       "title": "Colaborador (id)"
@@ -104,15 +108,18 @@
     "read": {
       "$or": [
         {
-          "user_condition": {
-            "role": "admin"
-          }
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "data.employee_email": "{{user.email}}"
         },
         {
           "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "data.is_super_admin": true
+          }
         }
       ]
     },
@@ -122,14 +129,28 @@
       }
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "data.is_super_admin": true
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        },
+        {
+          "user_condition": {
+            "data.is_super_admin": true
+          }
+        }
+      ]
     }
   }
 }

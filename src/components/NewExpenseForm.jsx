@@ -111,6 +111,13 @@ export default function NewExpenseForm() {
         }
       }
       const me = await base44.auth.me();
+      // company_id da ficha do colaborador: isola a despesa na empresa dele.
+      let companyId = '';
+      try {
+        const empRes = await base44.entities.Employee.filter({ email: me?.email }, { limit: 1 });
+        const empList = Array.isArray(empRes) ? empRes : empRes?.items || [];
+        companyId = empList[0]?.company_id || '';
+      } catch {}
       await base44.entities.Expense.create({
         amount,
         expense_date: form.date,
@@ -123,6 +130,7 @@ export default function NewExpenseForm() {
         ai_notes: verdict?.notes || '',
         employee_name: me?.full_name || me?.email || '',
         employee_email: me?.email || '',
+        company_id: companyId || undefined,
       });
       await queryClient.invalidateQueries({ queryKey: ['expenses'] });
       toast({ title: 'Despesa enviada para aprovação' });

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { useCompany } from '@/hooks/useHr';
 
 const empty = { full_name: '', email: '', cpf: '', role_title: '', unit: '', salary: '', admission_date: '' };
 
@@ -15,6 +16,7 @@ export default function EmployeeForm({ open, onOpenChange, units = [] }) {
   const [busy, setBusy] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { data: company } = useCompany();
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   async function submit(e) {
@@ -32,6 +34,7 @@ export default function EmployeeForm({ open, onOpenChange, units = [] }) {
         salary: Number(form.salary),
         admission_date: form.admission_date || undefined,
         active: true,
+        company_id: company?.id || undefined,
       });
       // Convite de acesso: o funcionário cria a senha pelo e-mail e depois entra
       // em /entrar/funcionario com CPF + senha.

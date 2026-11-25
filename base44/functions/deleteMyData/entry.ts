@@ -16,10 +16,12 @@ export default async function (req: Request): Promise<Response> {
 
     // 1) Biometria: remove a foto de referência da ficha do próprio colaborador.
     let employeeId = '';
+    let companyId = '';
     if (email) {
       const employees = await svc.entities.Employee.filter({ email }, { limit: 5 });
       for (const emp of employees) {
         employeeId = emp.id;
+        companyId = emp.company_id || companyId;
         await svc.entities.Employee.update(emp.id, { face_ref_uri: '' });
         deleted.employee_biometria = (deleted.employee_biometria || 0) + 1;
       }
@@ -43,6 +45,7 @@ export default async function (req: Request): Promise<Response> {
     await svc.entities.AuditLog.create({
       action: 'Exclusão de dados do titular (LGPD art. 18)',
       result: 'sucesso',
+      company_id: companyId || undefined,
       employee_id: employeeId || undefined,
       actor_email: me.email || '',
       details: `Pedido do próprio titular às ${new Date().toISOString()} · registros apagados: ${JSON.stringify(deleted)}`,

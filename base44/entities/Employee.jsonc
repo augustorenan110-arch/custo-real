@@ -2,6 +2,10 @@
   "name": "Employee",
   "type": "object",
   "properties": {
+    "company_id": {
+      "type": "string",
+      "title": "Empresa (id) \u2014 isola os dados por empresa"
+    },
     "full_name": {
       "type": "string",
       "title": "Nome completo"
@@ -155,32 +159,44 @@
     "read": {
       "$or": [
         {
-          "user_condition": {
-            "role": "admin"
-          }
+          "created_by_id": "{{user.id}}"
         },
         {
           "data.email": "{{user.email}}"
         },
         {
-          "created_by_id": "{{user.id}}"
+          "user_condition": {
+            "data.is_super_admin": true
+          }
         }
       ]
     },
     "create": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "created_by_id": "{{user.id}}"
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "data.is_super_admin": true
+          }
+        }
+      ]
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "data.is_super_admin": true
+          }
+        }
+      ]
     }
   }
 }

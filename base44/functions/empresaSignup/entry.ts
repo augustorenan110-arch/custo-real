@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
+import { isSuperAdmin } from '../../shared/superAdmin.ts';
 
 // Cadastro da empresa (primeiro acesso): cria a ficha da empresa e transforma
 // quem cadastrou em administrador (RH) — com 7 dias de teste do plano completo.
@@ -65,6 +66,8 @@ export default async function (req) {
     await sr.entities.User.update(user.id, {
       role: 'admin',
       tipo_conta: 'empresa',
+      company_id: empresa.id,
+      is_super_admin: isSuperAdmin(user),
       ...(responsavel ? { full_name: responsavel } : {}),
     });
     console.log(`[empresaSignup] ${user.email} promovido a admin da empresa ${empresa.name} (${empresa.id})`);

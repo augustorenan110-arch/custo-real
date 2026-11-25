@@ -46,6 +46,7 @@ export default async function (req) {
       await sr.entities.AuditLog.create({
         action: 'ponto_tentativa_outro_usuario',
         result: 'recusado',
+        company_id: emp.company_id || undefined,
         employee_id: emp.id,
         employee_name: emp.full_name,
         actor_email: user.email,
@@ -96,6 +97,7 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
       await sr.entities.AuditLog.create({
         action: 'ponto_facial',
         result: 'recusado',
+        company_id: emp.company_id || undefined,
         employee_id: emp.id,
         employee_name: emp.full_name,
         actor_email: user.email,
@@ -127,6 +129,7 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
       employee_id: emp.id,
       employee_name: emp.full_name,
       employee_email: (emp.email || '').toLowerCase(),
+      company_id: emp.company_id || undefined,
       kind,
       punched_at: now.toISOString(),
       day,
@@ -146,6 +149,7 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
     await sr.entities.AuditLog.create({
       action: 'ponto_facial',
       result: 'sucesso',
+      company_id: emp.company_id || undefined,
       employee_id: emp.id,
       employee_name: emp.full_name,
       actor_email: user.email,
