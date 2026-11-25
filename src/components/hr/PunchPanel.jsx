@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, XCircle, Loader2, MapPin, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import CameraCapture from '@/components/hr/CameraCapture';
-import { getPosition, reverseGeocode, mapsUrl } from '@/lib/geo';
+import { getPosition, mapsUrl } from '@/lib/geo';
 
 const KIND_LABEL = {
   entrada: 'Entrada',
@@ -26,16 +26,9 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
         base44.integrations.Core.UploadPrivateFile({ file }),
         getPosition(),
       ]);
-      let addr = null;
-      let lat = null;
-      let lng = null;
-      let accuracy = null;
-      if (pos) {
-        lat = pos.lat;
-        lng = pos.lng;
-        accuracy = pos.accuracy;
-        addr = await reverseGeocode(pos.lat, pos.lng);
-      }
+      const lat = pos?.lat ?? null;
+      const lng = pos?.lng ?? null;
+      const accuracy = pos?.accuracy ?? null;
       const { data } = await base44.functions.invoke('punchClock', {
         employee_id: employee.id,
         selfie_uri: file_uri,
@@ -43,10 +36,6 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
         lng,
         kind,
         accuracy,
-        endereco: addr?.endereco || '',
-        rua: addr?.rua || '',
-        bairro: addr?.bairro || '',
-        cidade_uf: addr?.cidade_uf || '',
       });
       setResult({
         ...data,
@@ -54,10 +43,10 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
         lat,
         lng,
         accuracy,
-        rua: addr?.rua || data?.rua || '—',
-        bairro: addr?.bairro || data?.bairro || '—',
-        cidade_uf: addr?.cidade_uf || data?.cidade_uf || '—',
-        endereco: addr?.endereco || data?.endereco || '',
+        rua: data?.rua || '—',
+        bairro: data?.bairro || '—',
+        cidade_uf: data?.cidade_uf || '—',
+        endereco: data?.endereco || '',
       });
       queryClient.invalidateQueries({ queryKey: ['timeEntries'] });
     } catch (e) {

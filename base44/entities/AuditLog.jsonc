@@ -41,6 +41,22 @@
     "lng": {
       "type": "number"
     },
+    "endereco": {
+      "type": "string",
+      "title": "Endere\u00e7o completo (geocodifica\u00e7\u00e3o reversa)"
+    },
+    "rua": {
+      "type": "string",
+      "title": "Rua / n\u00famero"
+    },
+    "bairro": {
+      "type": "string",
+      "title": "Bairro"
+    },
+    "cidade_uf": {
+      "type": "string",
+      "title": "Cidade - UF"
+    },
     "selfie_uri": {
       "type": "string"
     }

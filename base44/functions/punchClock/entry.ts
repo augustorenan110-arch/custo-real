@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { nearestUnit } from '../../shared/geo.ts';
+import { reverseGeocode } from '../../shared/reverseGeocode.ts';
 
 const asList = (p) => (Array.isArray(p) ? p : p?.items ?? []);
 
@@ -22,10 +23,10 @@ export default async function (req) {
     const lat = typeof body?.lat === 'number' ? body.lat : null;
     const lng = typeof body?.lng === 'number' ? body.lng : null;
     const accuracy = typeof body?.accuracy === 'number' ? body.accuracy : null;
-    const endereco = typeof body?.endereco === 'string' ? body.endereco.slice(0, 200) : '';
-    const rua = typeof body?.rua === 'string' ? body.rua.slice(0, 120) : '';
-    const bairro = typeof body?.bairro === 'string' ? body.bairro.slice(0, 120) : '';
-    const cidadeUf = typeof body?.cidade_uf === 'string' ? body.cidade_uf.slice(0, 120) : '';
+    let endereco = typeof body?.endereco === 'string' ? body.endereco.slice(0, 200) : '';
+    let rua = typeof body?.rua === 'string' ? body.rua.slice(0, 120) : '';
+    let bairro = typeof body?.bairro === 'string' ? body.bairro.slice(0, 120) : '';
+    let cidadeUf = typeof body?.cidade_uf === 'string' ? body.cidade_uf.slice(0, 120) : '';
     // Tipo de batida explícito (entrada / intervalo_inicio / intervalo_fim / saida).
     // Se não vier, mantém o comportamento legado (alterna entrada/saida pela paridade).
     const KINDS = ['entrada', 'intervalo_inicio', 'intervalo_fim', 'saida'];
@@ -62,6 +63,17 @@ export default async function (req) {
 
     const company = asList(await sr.entities.Company.list({ limit: 1 }))[0] || null;
     const minConfidence = Number(company?.min_confidence) || 80;
+
+    // Geocodificação reversa server-side (Google Maps -> OpenStreetMap) para o endereço real.
+    if (lat !== null && lng !== null) {
+      const geo = await reverseGeocode(lat, lng);
+      if (geo) {
+        rua = geo.rua || rua;
+        bairro = geo.bairro || bairro;
+        cidadeUf = geo.cidade_uf || cidadeUf;
+        endereco = geo.endereco || endereco;
+      }
+    }
 
     const [refSigned, selfieSigned] = await Promise.all([
       sr.integrations.Core.CreateFileSignedUrl({ file_uri: emp.face_ref_uri, expires_in: 300 }),
@@ -105,6 +117,10 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
         details: reason || 'Rosto não reconhecido.',
         lat: lat ?? undefined,
         lng: lng ?? undefined,
+        endereco: endereco || undefined,
+        rua: rua || undefined,
+        bairro: bairro || undefined,
+        cidade_uf: cidadeUf || undefined,
         selfie_uri: selfieUri,
       });
       return Response.json({ accepted: false, confidence, reason });
@@ -159,6 +175,10 @@ Também verifique se a segunda imagem é uma selfie real e ao vivo de um rosto h
       }. ${reason}`.trim(),
       lat: lat ?? undefined,
       lng: lng ?? undefined,
+      endereco: endereco || undefined,
+      rua: rua || undefined,
+      bairro: bairro || undefined,
+      cidade_uf: cidadeUf || undefined,
       selfie_uri: selfieUri,
     });
 
