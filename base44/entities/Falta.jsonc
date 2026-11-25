@@ -2,6 +2,10 @@
   "name": "Falta",
   "type": "object",
   "properties": {
+    "company_id": {
+      "type": "string",
+      "title": "Empresa (id) \u2014 isola as faltas por empresa"
+    },
     "employee_id": {
       "type": "string",
       "title": "Colaborador (id)"
@@ -61,7 +65,7 @@
     "read": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "data.employee_email": "{{user.email}}"
@@ -74,21 +78,19 @@
       ]
     },
     "create": {
-      "$or": [
+      "$and": [
         {
           "created_by_id": "{{user.id}}"
         },
         {
-          "user_condition": {
-            "data.is_super_admin": true
-          }
+          "data.company_id": "{{user.data.company_id}}"
         }
       ]
     },
     "update": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "user_condition": {
@@ -100,7 +102,7 @@
     "delete": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "user_condition": {

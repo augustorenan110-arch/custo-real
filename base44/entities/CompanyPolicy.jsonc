@@ -2,6 +2,10 @@
   "name": "CompanyPolicy",
   "type": "object",
   "properties": {
+    "company_id": {
+      "type": "string",
+      "title": "Empresa (id) \u2014 isola a pol\u00edtica por empresa"
+    },
     "content": {
       "type": "string",
       "title": "Pol\u00edtica de despesas"
@@ -13,7 +17,7 @@
         "read": {
           "$or": [
             {
-              "created_by_id": "{{user.id}}"
+              "data.company_id": "{{user.data.company_id}}"
             },
             {
               "user_condition": {
@@ -32,7 +36,7 @@
     "read": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "user_condition": {
@@ -42,21 +46,19 @@
       ]
     },
     "create": {
-      "$or": [
+      "$and": [
         {
           "created_by_id": "{{user.id}}"
         },
         {
-          "user_condition": {
-            "data.is_super_admin": true
-          }
+          "data.company_id": "{{user.data.company_id}}"
         }
       ]
     },
     "update": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "user_condition": {

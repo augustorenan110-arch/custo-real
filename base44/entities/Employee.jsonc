@@ -159,7 +159,7 @@
     "read": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "data.email": "{{user.email}}"
@@ -172,12 +172,19 @@
       ]
     },
     "create": {
-      "created_by_id": "{{user.id}}"
+      "$and": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.company_id": "{{user.data.company_id}}"
+        }
+      ]
     },
     "update": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "user_condition": {
@@ -189,7 +196,7 @@
     "delete": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.company_id": "{{user.data.company_id}}"
         },
         {
           "user_condition": {

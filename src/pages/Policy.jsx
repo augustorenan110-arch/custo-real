@@ -31,7 +31,7 @@ export default function Policy() {
           updated_by: me?.email || '',
         });
       } else {
-        await base44.entities.CompanyPolicy.create({ content: text, updated_by: me?.email || '' });
+        await base44.entities.CompanyPolicy.create({ content: text, updated_by: me?.email || '', company_id: me?.company_id || undefined });
       }
       await queryClient.invalidateQueries({ queryKey: ['policy'] });
       toast({ title: 'Política atualizada', description: 'A IA já usa as novas regras.' });

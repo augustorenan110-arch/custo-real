@@ -20,6 +20,7 @@ export default function FaltaModalJustificada({ employee, month, mesLabel, onClo
       }
 
       await base44.entities.Falta.create({
+        company_id: employee.company_id || undefined,
         employee_id: employee.id,
         employee_name: employee.full_name,
         employee_email: (employee.email || '').toLowerCase(),
