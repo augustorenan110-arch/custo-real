@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, ArrowRight, Check, Clock, Loader2, Lock, X } from 'lucide-react';
 import AnimatedIcon from '@/components/ui/AnimatedIcon';
+import PaywallExits from '@/components/PaywallExits';
 import { startPlanCheckout } from '@/lib/checkout';
 
 const BLOQUEADOS = [
@@ -115,6 +116,8 @@ export default function PaywallModal({
             Já assinei - verificar meu plano
           </button>
         )}
+
+        <PaywallExits />
       </div>
     </div>
   );

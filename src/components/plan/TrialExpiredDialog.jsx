@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import PaywallExits from '@/components/PaywallExits';
 import { PLANS } from '@/lib/plan';
 
 export default function TrialExpiredDialog({ open }) {
@@ -42,6 +43,7 @@ export default function TrialExpiredDialog({ open }) {
           Também disponível em <span className="text-foreground/80">{starter.monthly.priceId}</span> e{' '}
           <span className="text-foreground/80">{premium.monthly.priceId}</span>
         </p>
+        <PaywallExits />
       </DialogContent>
     </Dialog>
   );
