@@ -172,12 +172,21 @@
       ]
     },
     "create": {
-      "$and": [
+      "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "$and": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "data.company_id": "{{user.data.company_id}}"
+            }
+          ]
         },
         {
-          "data.company_id": "{{user.data.company_id}}"
+          "user_condition": {
+            "data.is_super_admin": true
+          }
         }
       ]
     },
