@@ -26,8 +26,12 @@ export default function EspelhoDayRow({ row }) {
       <td className={`${cell} ${row.descontoValor > 0 ? 'font-medium text-destructive' : 'text-muted-foreground'}`}>{row.descontoValor > 0 ? brl(row.descontoValor) : '—'}</td>
       <td className={`${cell} ${row.extraMin ? 'text-success' : ''}`}>{row.extraMin ? formatEspelhoMinutes(row.extraMin) : '—'}</td>
       <td className="min-w-40 px-3 py-2.5">
-        <div className="flex items-center gap-2" title={row.endereco ? `Endereço original: ${row.endereco}` : undefined}>
-          <span className="break-words">{row.local}</span>
+        <div className="flex items-center gap-2" title={row.endereco ? `Endereço: ${row.endereco}` : undefined}>
+          <span className="break-words">
+            {row.semEndereco && row.lat != null
+              ? `Endereço não encontrado - Lat: ${row.lat.toFixed(6)}, Long: ${row.lng.toFixed(6)}`
+              : row.local}
+          </span>
           {row.hasSelfie && <Camera className="h-3.5 w-3.5 shrink-0 text-success" aria-label="Com foto registrada" />}
         </div>
         {row.lat != null && row.lng != null && (

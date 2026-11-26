@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, XCircle, Loader2, MapPin, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import CameraCapture from '@/components/hr/CameraCapture';
-import { getPosition, mapsUrl } from '@/lib/geo';
+import { getPosition, reverseGeocode, mapsUrl } from '@/lib/geo';
 
 const KIND_LABEL = {
   entrada: 'Entrada',
@@ -16,7 +16,29 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
   const [kind, setKind] = useState(defaultKind);
+  const [preview, setPreview] = useState(null);
   const queryClient = useQueryClient();
+
+  // Pré-busca de localização + endereço para mostrar "Você está em: ..." antes da selfie.
+  useEffect(() => {
+    let active = true;
+    setPreview({ loading: true });
+    getPosition().then(async (pos) => {
+      if (!active) return;
+      if (!pos) { setPreview(null); return; }
+      const addr = await reverseGeocode(pos.lat, pos.lng);
+      if (!active) return;
+      setPreview({
+        loading: false,
+        endereco: addr?.endereco || '',
+        accuracy: pos.accuracy,
+        lat: pos.lat,
+        lng: pos.lng,
+        lowGps: pos.accuracy > 50,
+      });
+    });
+    return () => { active = false; };
+  }, []);
 
   async function punch(file) {
     setBusy(true);
@@ -60,7 +82,7 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
     return (
       <div className="flex flex-col items-center gap-3 py-12 text-sm text-muted-foreground">
         <Loader2 className="h-7 w-7 animate-spin text-primary" />
-        Conferindo o rosto…
+        Conferindo o rosto… Buscando endereço…
       </div>
     );
   }
@@ -101,6 +123,9 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
                 {result.accuracy != null ? `${result.accuracy} metros` : '—'}
               </div>
             </dl>
+            {result.accuracy != null && result.accuracy > 50 && (
+              <p className="mt-2 text-xs font-semibold text-warning">⚠ Ligue o GPS para localização exata</p>
+            )}
             <a
               href={mapsUrl(result.lat, result.lng)}
               target="_blank"
@@ -125,6 +150,24 @@ export default function PunchPanel({ employee, defaultKind = 'entrada' }) {
 
   return (
     <div className="space-y-4">
+      {preview && (
+        <div className="rounded-2xl border border-border bg-white/5 p-3 text-left">
+          <p className="flex items-center gap-2 text-xs font-semibold">
+            <MapPin className="h-4 w-4 text-primary" /> Você está em:
+          </p>
+          {preview.loading ? (
+            <p className="mt-1 text-xs text-muted-foreground">Buscando endereço...</p>
+          ) : (
+            <p className="mt-1 break-words text-xs text-foreground/80">{preview.endereco || '—'}</p>
+          )}
+          {preview.accuracy != null && (
+            <p className="mt-1 text-xs text-muted-foreground">Precisão: {preview.accuracy}m</p>
+          )}
+          {preview.lowGps && (
+            <p className="mt-1 text-xs font-medium text-warning">⚠ Ligue o GPS para localização exata</p>
+          )}
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-2">
         {['entrada', 'intervalo_inicio', 'intervalo_fim', 'saida'].map((k) => (
           <button

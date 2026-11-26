@@ -66,15 +66,17 @@ export function buildEspelho(entries, month, { workdayHours = 8, monthlyHours = 
     const descontoMin = Math.max(0, atrasoMin - ATRASO_TOLERANCIA_MIN);
     const descontoValor = descontoMin * minuteRate;
     const extraMin = Math.max(0, minutes - Number(workdayHours) * 60);
-    const location = list.find((item) => item.cidade_uf || item.endereco) || list[0] || {};
+    const location = list.find((item) => item.rua || item.endereco || item.cidade_uf) || list[0] || {};
     const gps = list.find((item) => item.lat != null && item.lng != null) || {};
     return {
       day, weekday: WEEKDAYS[weekdayIndex], weekend, hasEntries: !!list.length,
       previsto: entryTime, entrada, saidaAlmoco: displayClock(lunchOut), voltaAlmoco: displayClock(lunchBack), saida: displayClock(exit),
       minutes, lateMin: atrasoMin, tolerancia: entry ? ATRASO_TOLERANCIA_MIN : 0, descontoMin, descontoValor, extraMin, inferred: !!inferred,
       status: !list.length ? (weekend ? 'Folga' : 'Falta') : incomplete ? 'Incompleto' : '',
-      local: list.length ? city || location.cidade_uf || location.endereco || location.unit || '--' : '--',
-      endereco: location.endereco || location.cidade_uf || '', lat: gps.lat ?? null, lng: gps.lng ?? null,
+      local: list.length ? location.rua || location.endereco || location.cidade_uf || city || location.unit || '--' : '--',
+      endereco: location.endereco || location.cidade_uf || '', rua: location.rua || '',
+      semEndereco: !!list.length && !(location.rua || location.endereco || location.cidade_uf),
+      lat: gps.lat ?? null, lng: gps.lng ?? null,
       hasSelfie: list.some((item) => item.selfie_uri), unit: location.unit || '',
     };
   });

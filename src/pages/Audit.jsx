@@ -57,11 +57,15 @@ export default function Audit() {
             {l.details && <p className="mt-1 text-xs text-foreground/70">{l.details}</p>}
             <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
               {l.actor_email && <span>por {l.actor_email}</span>}
-              {l.endereco && (
+              {l.endereco ? (
                 <span className="flex items-center gap-1 break-words">
                   <MapPin className="h-3 w-3 text-primary" /> {l.endereco}
                 </span>
-              )}
+              ) : typeof l.lat === 'number' ? (
+                <span className="flex items-center gap-1 break-words">
+                  <MapPin className="h-3 w-3 text-warning" /> Endereço não encontrado - Lat: {l.lat.toFixed(6)}, Long: {l.lng.toFixed(6)}
+                </span>
+              ) : null}
               {typeof l.lat === 'number' && (
                 <a href={mapsUrl(l.lat, l.lng)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
                   <ExternalLink className="h-3 w-3" /> Ver no mapa
