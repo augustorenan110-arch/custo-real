@@ -126,6 +126,24 @@ export default function Register() {
             Reenviar código
           </button>
         </p>
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-3 text-muted-foreground">ou</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={handleGoogle}
+          className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border border-border bg-background text-sm font-medium transition hover:bg-accent"
+        >
+          <GoogleIcon className="w-5 h-5" /> Continuar com Google
+        </button>
+        <p className="mt-2 text-center text-xs text-muted-foreground">
+          Se o código não chegar, entre com o Google para não ficar travado.
+        </p>
       </AuthLayout>
     );
   }
