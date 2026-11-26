@@ -142,6 +142,34 @@ export default function AppShell() {
   // O SUPER_ADMIN (criador) sempre acessa o painel completo da empresa.
   if (funcionario && !isSuperAdmin) return <Navigate to="/meu/colaborador" replace />;
 
+  // Sem empresa cadastrada: trava no cadastro da primeira empresa. Qualquer outra
+  // rota volta para /p e os menus ficam bloqueados ("Bloqueado - cadastre empresa")
+  // até concluir o cadastro. O SUPER_ADMIN (criador) tem acesso livre.
+  const semEmpresa = !isSuperAdmin && company === null;
+  if (semEmpresa && pathname !== '/p') return <Navigate to="/p" replace />;
+
+  if (semEmpresa) {
+    return (
+      <div className="min-h-screen">
+        <header className="sticky top-0 z-30 border-b border-white/10 bg-background/75 backdrop-blur-xl lg:hidden">
+          <div className="mx-auto flex max-w-2xl items-center justify-between gap-2 px-4 py-3">
+            <Logo className="h-8" />
+            <button
+              onClick={signOut}
+              aria-label="Sair"
+              className="rounded-lg p-2 text-muted-foreground transition hover:text-destructive"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        </header>
+        <main className="mx-auto max-w-3xl px-4 pb-12 pt-5 sm:px-6 lg:pt-10">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen lg:flex">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-white/10 bg-sidebar/80 p-5 backdrop-blur-xl lg:flex">

@@ -61,7 +61,7 @@ export default function AppHome() {
   if (!empresa) {
     return (
       <>
-        <EmpresaStep nome={nome} onCreated={recarregar} />
+        <EmpresaStep nome={nome} email={me?.email} onCreated={recarregar} />
         <StoreButtons />
       </>
     );

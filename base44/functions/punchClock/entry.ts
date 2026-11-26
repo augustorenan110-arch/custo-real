@@ -64,7 +64,7 @@ export default async function (req) {
     const company = asList(await sr.entities.Company.list({ limit: 1 }))[0] || null;
     const minConfidence = Number(company?.min_confidence) || 80;
 
-    // Geocodificação reversa server-side (Google Maps -> OpenStreetMap) para o endereço real.
+    // Geocodificação reversa server-side (OpenStreetMap Nominatim, grátis, sem chave) para o endereço real.
     if (lat !== null && lng !== null) {
       const geo = await reverseGeocode(lat, lng);
       if (geo) {

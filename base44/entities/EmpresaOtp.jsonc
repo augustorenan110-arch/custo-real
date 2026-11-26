@@ -1,0 +1,79 @@
+{
+  "name": "EmpresaOtp",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "title": "E-mail destinat\u00e1rio do c\u00f3digo"
+    },
+    "code": {
+      "type": "string",
+      "title": "C\u00f3digo de 6 d\u00edgitos"
+    },
+    "expires_at": {
+      "type": "string",
+      "title": "Expira em (ISO)"
+    },
+    "used": {
+      "type": "boolean",
+      "title": "J\u00e1 usado",
+      "default": false
+    },
+    "tentativas": {
+      "type": "number",
+      "title": "Tentativas de verifica\u00e7\u00e3o",
+      "default": 0
+    },
+    "cnpj": {
+      "type": "string",
+      "title": "CNPJ (rascunho do cadastro)"
+    },
+    "nome": {
+      "type": "string",
+      "title": "Nome da empresa (rascunho)"
+    },
+    "funcionarios": {
+      "type": "number",
+      "title": "Qtd de funcion\u00e1rios (rascunho)"
+    }
+  },
+  "required": [
+    "email",
+    "code",
+    "expires_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "data.is_super_admin": true
+          }
+        }
+      ]
+    },
+    "create": {
+      "created_by_id": "{{user.id}}"
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "data.is_super_admin": true
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "data.is_super_admin": true
+      }
+    }
+  }
+}
